@@ -1,0 +1,43 @@
+[gd_scene load_steps=6 format=3]
+
+[ext_resource type="PackedScene" path="res://player/Player.tscn" id="1"]
+[ext_resource type="Script" path="res://levels/_shared/CameraRig.gd" id="2"]
+[ext_resource type="Script" path="res://levels/_shared/Respawn.gd" id="3"]
+[ext_resource type="Texture2D" path="res://icon.svg" id="4"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_ground"]
+size = Vector2(1000, 40)
+
+[node name="Template" type="Node2D"]
+
+[node name="Ground" type="StaticBody2D" parent="."]
+position = Vector2(0, 150)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Ground"]
+shape = SubResource("RectangleShape2D_ground")
+
+[node name="Visual" type="Polygon2D" parent="Ground"]
+color = Color(0.32, 0.55, 0.27, 1)
+polygon = PackedVector2Array(-500, -20, 500, -20, 500, 20, -500, 20)
+
+[node name="Player" parent="." instance=ExtResource("1")]
+position = Vector2(0, -50)
+
+[node name="Visual" type="Node2D" parent="Player"]
+groups=["player_visual"]
+
+[node name="Sprite2D" type="Sprite2D" parent="Player/Visual"]
+scale = Vector2(0.25, 0.25)
+texture = ExtResource("4")
+
+[node name="Mechanics" type="Node2D" parent="Player"]
+
+[node name="Juice" type="Node2D" parent="Player"]
+
+[node name="Camera2D" type="Camera2D" parent="."]
+position = Vector2(0, 50)
+script = ExtResource("2")
+enabled = true
+
+[node name="Respawn" type="Node" parent="."]
+script = ExtResource("3")

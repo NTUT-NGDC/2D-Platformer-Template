@@ -1,3 +1,9 @@
 # Godot 4+ specific ignores
 .godot/
 /android/
+
+# 匯出產物
+build/
+
+# 保留匯出設定（學員需要它才能一鍵打包）
+!export_presets.cfg

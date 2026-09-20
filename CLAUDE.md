@@ -24,6 +24,13 @@
 
 ---
 
+## 溝通語言
+
+Claude Code 在這個專案裡的所有對話回覆、進度回報、驗收結果說明，一律使用**繁體中文**。
+程式碼裡的識別字仍照下面「命名規範」執行（英文變數名、`@export` 欄位英文變數名搭配中文 `##` doc comment tooltip），這一條只規範跟使用者的溝通。
+
+---
+
 ## 五條鐵律
 
 ### 1. 零連線
@@ -51,13 +58,15 @@
 
 所有組件在 `setup()` 失敗時必須 `push_warning()` 並在 `_ready()` 印出中文訊息到輸出面板。
 
-### 4. Inspector 全中文、零打字
+### 4. Inspector 全英文變數名 + 中文說明、零打字
 
-所有 `@export` 欄位：
-- 變數名用**繁體中文**（GDScript 支援 UAX#31 Unicode 識別字，已驗證可行）
-- 只能是 `@export_enum` 下拉選單、`@export_range` 拉桿、或 `bool` 勾選框
-- **不得出現需要學員打字的欄位**（String、NodePath、自由數值輸入）
-- 變數名不可含 emoji（識別字限制），但 `@export_group("⛔ 本週禁止修改")` 的字串參數可以
+所有 @export 欄位：
+
+變數名用英文 snake_case，選字限定在新手能一眼猜到的簡單字（speed / strength / duration / enabled / delay / min_ / max_），避開 threshold、multiplier 這類詞
+每個 @export 上方必須有 ## 文件註解寫中文說明，Inspector 滑過去會顯示為 tooltip
+@export_group 的群組名用中文（參數是字串）
+@export_enum 的選項用中文（參數是字串）
+只能是 @export_enum 下拉、@export_range 拉桿、或 bool 勾選框，不得有需要打字的欄位
 
 ### 5. 組件之間不准打架
 
@@ -72,10 +81,23 @@
 |---|---|---|
 | 檔案／節點名 | 英文 PascalCase | `Mechanic_GravityFlip.tscn` |
 | 腳本內部變數、函式 | 英文 snake_case | `_on_landed`, `impact_force` |
-| `@export` 欄位 | **繁體中文** | `@export_range(0.0, 2.0) var 強度` |
+| `@export` 欄位 | 英文 snake_case + 上方 `##` 中文 doc comment | `## 影響跳躍高度，數值越大跳越高`<br>`@export_range(0.0, 2.0) var strength` |
 | `@export_enum` 選項字串 | **繁體中文** | `@export_enum("跳躍時", "落地時")` |
 | 輸出面板訊息 | **繁體中文** | `print("[重力翻轉] 已啟用")` |
-| 程式註解 | 繁體中文 | |
+| 程式註解 | 繁體中文，規則見下方「函式註解規則」 | |
+
+### 函式註解規則
+
+- 每個函式上方加一行中文註解，說這個函式**在做什麼**，不解釋怎麼做。私有函式（`_` 開頭）也要加。
+- 用 `#`，不要用 `##`——`##` 保留給 `@export` 欄位的 Inspector tooltip，不要跟函式註解混用。
+- 公開 API（機制卡／Juice 作者會呼叫或覆寫的函式，例如 Player 提供的那些）要寫成**使用者看得懂的角度**：
+
+  ```gdscript
+  # 翻轉重力方向，重力翻轉卡用這個
+  func flip_gravity() -> void:
+  ```
+
+- 不要加檔頭大段說明，不要加 `# ----` 分隔線以外的裝飾。
 
 ---
 

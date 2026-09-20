@@ -115,14 +115,18 @@ signal stopped_moving
 ### 3.3 匯出參數
 
 ```gdscript
-@export_group("⛔ 本週禁止修改")
+@export_group("移動參數")
+## 水平移動速度，數值愈大角色跑得愈快。
 @export_range(50.0, 500.0) var 移動速度: float = 200.0
+## 跳躍瞬間的初始速度，數值愈大跳得愈高。
 @export_range(100.0, 800.0) var 跳躍力: float = 400.0
+## 重力加速度，數值愈大角色下墜（或重力翻轉後上升）愈快。
 @export_range(200.0, 2000.0) var 重力: float = 980.0
+## 地面摩擦係數：0 = 像冰面一樣滑不停，1 = 放開方向鍵立刻煞停。
 @export_range(0.0, 1.0) var 地面摩擦: float = 0.8
 ```
 
-`@export_group` 預設收折。W1 要調手感時展開，W3 起用視覺方式阻止手癢。
+這是課程規則，不是物件身分的一部分，所以群組名稱用平實的「移動參數」，預設展開，不用警示圖示——紅色禁止圖示對新手來說容易被誤認成錯誤訊息。W1 一開始就要讓學員自己調跳躍／移動手感，每個變數上方用 `##` 寫中文說明，滑鼠停在 Inspector 欄位上會顯示成 tooltip。
 
 **機制卡的參數一律不放在這裡**，放在各自的機制節點上（見 `01-week1-mechanics.md`）。
 
@@ -274,6 +278,9 @@ func _connect_trigger(callback: Callable) -> void:
 `Gym.tscn` 與 `_Template.tscn` 都必須內建（學員不會碰到）：
 
 - `Camera2D`，掛 `CameraRig.gd`：接 `Events.shake_requested`，執行螢幕震動
+  - **固定視角，不跟隨玩家。** `Camera2D` 是關卡場景根節點底下的獨立節點，**不掛在 Player 實例底下**，跟 Player 之間沒有父子關係。
+  - 每個關卡場景自行決定 `Camera2D` 要放在哪個座標（通常對準該關卡的可視範圍中心），之後所有週次的新關卡都比照辦理，不會因為切場景而改成跟隨。
+  - 螢幕震動照樣透過 `Events.shake_requested` 接收，跟掛在哪裡無關，所以這個規則不影響零連線設計。
 - `HitStopManager`（Autoload 或關卡節點）：接 `Events.hitstop_requested`
   - **`Engine.time_scale` 是全域的，必須有單例保護**
   - 時長上限鎖 `0.3` 秒

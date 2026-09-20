@@ -1,0 +1,42 @@
+[gd_scene format=3 uid="uid://8ec4u3tu5nc2"]
+
+[ext_resource type="PackedScene" path="res://player/Player.tscn" id="1"]
+[ext_resource type="Script" uid="uid://ddmv38ww06tgv" path="res://levels/_shared/CameraRig.gd" id="2"]
+[ext_resource type="Script" uid="uid://c4810j2rrbvpo" path="res://levels/_shared/Respawn.gd" id="3"]
+[ext_resource type="Texture2D" uid="uid://dgpmutukqrhj2" path="res://icon.svg" id="4"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_ground"]
+size = Vector2(1000, 40)
+
+[node name="Gym" type="Node2D" unique_id=1987537775]
+
+[node name="Ground" type="StaticBody2D" parent="." unique_id=1078061849]
+position = Vector2(0, 150)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Ground" unique_id=2145044078]
+shape = SubResource("RectangleShape2D_ground")
+
+[node name="Visual" type="Polygon2D" parent="Ground"]
+color = Color(0.32, 0.55, 0.27, 1)
+polygon = PackedVector2Array(-500, -20, 500, -20, 500, 20, -500, 20)
+
+[node name="Player" parent="." unique_id=1188325519 instance=ExtResource("1")]
+position = Vector2(0, -50)
+
+[node name="Visual" type="Node2D" parent="Player" unique_id=1682411840]
+groups=["player_visual"]
+
+[node name="Sprite2D" type="Sprite2D" parent="Player/Visual" unique_id=946758069]
+scale = Vector2(0.25, 0.25)
+texture = ExtResource("4")
+
+[node name="Mechanics" type="Node2D" parent="Player" unique_id=2056291058]
+
+[node name="Juice" type="Node2D" parent="Player" unique_id=963715139]
+
+[node name="Camera2D" type="Camera2D" parent="."]
+position = Vector2(0, 50)
+script = ExtResource("2")
+
+[node name="Respawn" type="Node" parent="." unique_id=1043687766]
+script = ExtResource("3")
