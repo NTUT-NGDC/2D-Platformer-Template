@@ -1,42 +1,678 @@
-[gd_scene format=3 uid="uid://8ec4u3tu5nc2"]
+[gd_scene load_steps=32 format=3]
 
 [ext_resource type="PackedScene" path="res://player/Player.tscn" id="1"]
-[ext_resource type="Script" uid="uid://ddmv38ww06tgv" path="res://levels/_shared/CameraRig.gd" id="2"]
-[ext_resource type="Script" uid="uid://c4810j2rrbvpo" path="res://levels/_shared/Respawn.gd" id="3"]
-[ext_resource type="Texture2D" uid="uid://dgpmutukqrhj2" path="res://icon.svg" id="4"]
+[ext_resource type="Script" path="res://levels/_shared/CameraRig.gd" id="2"]
+[ext_resource type="Script" path="res://levels/_shared/Respawn.gd" id="3"]
+[ext_resource type="Texture2D" path="res://icon.svg" id="4"]
+[ext_resource type="Script" path="res://levels/_shared/PatrolEnemy.gd" id="5"]
+[ext_resource type="Script" path="res://levels/_shared/MovingPlatform.gd" id="6"]
+[ext_resource type="Script" path="res://levels/_shared/Spring.gd" id="7"]
+[ext_resource type="Script" path="res://levels/_shared/FallKillZone.gd" id="8"]
 
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_ground"]
-size = Vector2(1000, 40)
+[sub_resource type="RectangleShape2D" id="S_700x40"]
+size = Vector2(700, 40)
+[sub_resource type="RectangleShape2D" id="S_Ramp207x40"]
+size = Vector2(207.05, 40)
+[sub_resource type="RectangleShape2D" id="S_Block60x40"]
+size = Vector2(60, 40)
+[sub_resource type="RectangleShape2D" id="S_Block40x40"]
+size = Vector2(40, 40)
+[sub_resource type="RectangleShape2D" id="S_RampSteep130x40"]
+size = Vector2(130.54, 40)
+[sub_resource type="RectangleShape2D" id="S_500x40"]
+size = Vector2(500, 40)
+[sub_resource type="RectangleShape2D" id="S_Wall40x300"]
+size = Vector2(40, 300)
+[sub_resource type="RectangleShape2D" id="S_Slot200x20"]
+size = Vector2(200, 20)
+[sub_resource type="RectangleShape2D" id="S_Step80x64"]
+size = Vector2(80, 64)
+[sub_resource type="RectangleShape2D" id="S_Step80x88"]
+size = Vector2(80, 88)
+[sub_resource type="RectangleShape2D" id="S_Step80x112"]
+size = Vector2(80, 112)
+[sub_resource type="RectangleShape2D" id="S_Step80x136"]
+size = Vector2(80, 136)
+[sub_resource type="RectangleShape2D" id="S_Step80x160"]
+size = Vector2(80, 160)
+[sub_resource type="RectangleShape2D" id="S_Landing100x40"]
+size = Vector2(100, 40)
+[sub_resource type="RectangleShape2D" id="S_150x40"]
+size = Vector2(150, 40)
+[sub_resource type="RectangleShape2D" id="S_Floor100x40"]
+size = Vector2(100, 40)
+[sub_resource type="RectangleShape2D" id="S_1200x40"]
+size = Vector2(1200, 40)
+[sub_resource type="RectangleShape2D" id="S_Box32"]
+size = Vector2(32, 32)
+[sub_resource type="RectangleShape2D" id="S_SpringPad60x20"]
+size = Vector2(60, 20)
+[sub_resource type="RectangleShape2D" id="S_SpringArea60x30"]
+size = Vector2(60, 30)
+[sub_resource type="RectangleShape2D" id="S_Platform100x20"]
+size = Vector2(100, 20)
+[sub_resource type="RectangleShape2D" id="S_Enemy16x32"]
+size = Vector2(16, 32)
+[sub_resource type="RectangleShape2D" id="S_KillZone8000x200"]
+size = Vector2(8000, 200)
 
-[node name="Gym" type="Node2D" unique_id=1987537775]
+[node name="Gym" type="Node2D"]
 
-[node name="Ground" type="StaticBody2D" parent="." unique_id=1078061849]
-position = Vector2(0, 150)
+[node name="Player" parent="." instance=ExtResource("1")]
+position = Vector2(150, 284)
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Ground" unique_id=2145044078]
-shape = SubResource("RectangleShape2D_ground")
-
-[node name="Visual" type="Polygon2D" parent="Ground"]
-color = Color(0.32, 0.55, 0.27, 1)
-polygon = PackedVector2Array(-500, -20, 500, -20, 500, 20, -500, 20)
-
-[node name="Player" parent="." unique_id=1188325519 instance=ExtResource("1")]
-position = Vector2(0, -50)
-
-[node name="Visual" type="Node2D" parent="Player" unique_id=1682411840]
+[node name="Visual" type="Node2D" parent="Player"]
 groups=["player_visual"]
 
-[node name="Sprite2D" type="Sprite2D" parent="Player/Visual" unique_id=946758069]
+[node name="Sprite2D" type="Sprite2D" parent="Player/Visual"]
 scale = Vector2(0.25, 0.25)
 texture = ExtResource("4")
 
-[node name="Mechanics" type="Node2D" parent="Player" unique_id=2056291058]
+[node name="Mechanics" type="Node2D" parent="Player"]
 
-[node name="Juice" type="Node2D" parent="Player" unique_id=963715139]
+[node name="Juice" type="Node2D" parent="Player"]
 
 [node name="Camera2D" type="Camera2D" parent="."]
-position = Vector2(0, 50)
+position = Vector2(350, 150)
+zoom = Vector2(0.65, 0.65)
 script = ExtResource("2")
 
-[node name="Respawn" type="Node" parent="." unique_id=1043687766]
+[node name="Respawn" type="Node" parent="."]
 script = ExtResource("3")
+
+[node name="FallKillZone" type="Area2D" parent="."]
+position = Vector2(3850, 1200)
+collision_layer = 0
+collision_mask = 1
+script = ExtResource("8")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="FallKillZone"]
+shape = SubResource("S_KillZone8000x200")
+
+[node name="Zones" type="Node2D" parent="."]
+
+[node name="Zone0_Start" type="Node2D" parent="Zones"]
+
+[node name="Label" type="Label" parent="Zones/Zone0_Start"]
+position = Vector2(20, -40)
+text = "0. 起點平地"
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 4
+theme_override_font_sizes/font_size = 22
+
+[node name="Floor" type="StaticBody2D" parent="Zones/Zone0_Start"]
+position = Vector2(350, 320)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Zones/Zone0_Start/Floor"]
+shape = SubResource("S_700x40")
+
+[node name="Visual" type="Polygon2D" parent="Zones/Zone0_Start/Floor"]
+color = Color(0.32, 0.55, 0.27, 1)
+polygon = PackedVector2Array(-350, -20, 350, -20, 350, 20, -350, 20)
+
+[node name="Zone1_Slopes" type="Node2D" parent="Zones"]
+
+[node name="Label" type="Label" parent="Zones/Zone1_Slopes"]
+position = Vector2(720, -40)
+text = "1. 斜坡組（緩坡15°／陡坡40°）"
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 4
+theme_override_font_sizes/font_size = 22
+
+[node name="RampGentleUp" type="StaticBody2D" parent="Zones/Zone1_Slopes"]
+position = Vector2(805.18, 292.52)
+rotation = -0.261799
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Zones/Zone1_Slopes/RampGentleUp"]
+shape = SubResource("S_Ramp207x40")
+
+[node name="Visual" type="Polygon2D" parent="Zones/Zone1_Slopes/RampGentleUp"]
+color = Color(0.55, 0.5, 0.2, 1)
+polygon = PackedVector2Array(-103.5, -20, 103.5, -20, 103.5, 20, -103.5, 20)
+
+[node name="PlateauGentle" type="StaticBody2D" parent="Zones/Zone1_Slopes"]
+position = Vector2(930, 266.41)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Zones/Zone1_Slopes/PlateauGentle"]
+shape = SubResource("S_Block60x40")
+
+[node name="Visual" type="Polygon2D" parent="Zones/Zone1_Slopes/PlateauGentle"]
+color = Color(0.55, 0.5, 0.2, 1)
+polygon = PackedVector2Array(-30, -20, 30, -20, 30, 20, -30, 20)
+
+[node name="RampGentleDown" type="StaticBody2D" parent="Zones/Zone1_Slopes"]
+position = Vector2(1054.82, 292.52)
+rotation = 0.261799
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Zones/Zone1_Slopes/RampGentleDown"]
+shape = SubResource("S_Ramp207x40")
+
+[node name="Visual" type="Polygon2D" parent="Zones/Zone1_Slopes/RampGentleDown"]
+color = Color(0.55, 0.5, 0.2, 1)
+polygon = PackedVector2Array(-103.5, -20, 103.5, -20, 103.5, 20, -103.5, 20)
+
+[node name="GapFlat" type="StaticBody2D" parent="Zones/Zone1_Slopes"]
+position = Vector2(1180, 320)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Zones/Zone1_Slopes/GapFlat"]
+shape = SubResource("S_Block40x40")
+
+[node name="Visual" type="Polygon2D" parent="Zones/Zone1_Slopes/GapFlat"]
+color = Color(0.55, 0.5, 0.2, 1)
+polygon = PackedVector2Array(-20, -20, 20, -20, 20, 20, -20, 20)
+
+[node name="RampSteepUp" type="StaticBody2D" parent="Zones/Zone1_Slopes"]
+position = Vector2(1262.86, 273.37)
+rotation = -0.698132
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Zones/Zone1_Slopes/RampSteepUp"]
+shape = SubResource("S_RampSteep130x40")
+
+[node name="Visual" type="Polygon2D" parent="Zones/Zone1_Slopes/RampSteepUp"]
+color = Color(0.6, 0.35, 0.15, 1)
+polygon = PackedVector2Array(-65.27, -20, 65.27, -20, 65.27, 20, -65.27, 20)
+
+[node name="PlateauSteep" type="StaticBody2D" parent="Zones/Zone1_Slopes"]
+position = Vector2(1320, 236.09)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Zones/Zone1_Slopes/PlateauSteep"]
+shape = SubResource("S_Block40x40")
+
+[node name="Visual" type="Polygon2D" parent="Zones/Zone1_Slopes/PlateauSteep"]
+color = Color(0.6, 0.35, 0.15, 1)
+polygon = PackedVector2Array(-20, -20, 20, -20, 20, 20, -20, 20)
+
+[node name="RampSteepDown" type="StaticBody2D" parent="Zones/Zone1_Slopes"]
+position = Vector2(1377.14, 273.37)
+rotation = 0.698132
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Zones/Zone1_Slopes/RampSteepDown"]
+shape = SubResource("S_RampSteep130x40")
+
+[node name="Visual" type="Polygon2D" parent="Zones/Zone1_Slopes/RampSteepDown"]
+color = Color(0.6, 0.35, 0.15, 1)
+polygon = PackedVector2Array(-65.27, -20, 65.27, -20, 65.27, 20, -65.27, 20)
+
+[node name="TailFlat" type="StaticBody2D" parent="Zones/Zone1_Slopes"]
+position = Vector2(1470, 320)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Zones/Zone1_Slopes/TailFlat"]
+shape = SubResource("S_Block60x40")
+
+[node name="Visual" type="Polygon2D" parent="Zones/Zone1_Slopes/TailFlat"]
+color = Color(0.55, 0.5, 0.2, 1)
+polygon = PackedVector2Array(-30, -20, 30, -20, 30, 20, -30, 20)
+
+[node name="Zone2_Wall" type="Node2D" parent="Zones"]
+
+[node name="Label" type="Label" parent="Zones/Zone2_Wall"]
+position = Vector2(1520, -40)
+text = "2. 垂直牆"
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 4
+theme_override_font_sizes/font_size = 22
+
+[node name="Floor" type="StaticBody2D" parent="Zones/Zone2_Wall"]
+position = Vector2(1750, 320)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Zones/Zone2_Wall/Floor"]
+shape = SubResource("S_500x40")
+
+[node name="Visual" type="Polygon2D" parent="Zones/Zone2_Wall/Floor"]
+color = Color(0.4, 0.4, 0.45, 1)
+polygon = PackedVector2Array(-250, -20, 250, -20, 250, 20, -250, 20)
+
+[node name="WallLeft" type="StaticBody2D" parent="Zones/Zone2_Wall"]
+position = Vector2(1650, 150)
+groups=["wall"]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Zones/Zone2_Wall/WallLeft"]
+shape = SubResource("S_Wall40x300")
+
+[node name="Visual" type="Polygon2D" parent="Zones/Zone2_Wall/WallLeft"]
+color = Color(0.25, 0.25, 0.3, 1)
+polygon = PackedVector2Array(-20, -150, 20, -150, 20, 150, -20, 150)
+
+[node name="WallRight" type="StaticBody2D" parent="Zones/Zone2_Wall"]
+position = Vector2(1850, 150)
+groups=["wall"]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Zones/Zone2_Wall/WallRight"]
+shape = SubResource("S_Wall40x300")
+
+[node name="Visual" type="Polygon2D" parent="Zones/Zone2_Wall/WallRight"]
+color = Color(0.25, 0.25, 0.3, 1)
+polygon = PackedVector2Array(-20, -150, 20, -150, 20, 150, -20, 150)
+
+[node name="Zone3_Ceiling" type="Node2D" parent="Zones"]
+
+[node name="Label" type="Label" parent="Zones/Zone3_Ceiling"]
+position = Vector2(2020, -40)
+text = "3. 天花板走廊"
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 4
+theme_override_font_sizes/font_size = 22
+
+[node name="Floor" type="StaticBody2D" parent="Zones/Zone3_Ceiling"]
+position = Vector2(2250, 320)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Zones/Zone3_Ceiling/Floor"]
+shape = SubResource("S_500x40")
+
+[node name="Visual" type="Polygon2D" parent="Zones/Zone3_Ceiling/Floor"]
+color = Color(0.3, 0.4, 0.55, 1)
+polygon = PackedVector2Array(-250, -20, 250, -20, 250, 20, -250, 20)
+
+[node name="Ceiling" type="StaticBody2D" parent="Zones/Zone3_Ceiling"]
+position = Vector2(2250, 80)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Zones/Zone3_Ceiling/Ceiling"]
+shape = SubResource("S_500x40")
+
+[node name="Visual" type="Polygon2D" parent="Zones/Zone3_Ceiling/Ceiling"]
+color = Color(0.3, 0.4, 0.55, 1)
+polygon = PackedVector2Array(-250, -20, 250, -20, 250, 20, -250, 20)
+
+[node name="Zone4_Narrow" type="Node2D" parent="Zones"]
+
+[node name="Label" type="Label" parent="Zones/Zone4_Narrow"]
+position = Vector2(2520, -40)
+text = "4. 窄縫（縮小才進得去）"
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 4
+theme_override_font_sizes/font_size = 22
+
+[node name="Floor" type="StaticBody2D" parent="Zones/Zone4_Narrow"]
+position = Vector2(2750, 320)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Zones/Zone4_Narrow/Floor"]
+shape = SubResource("S_500x40")
+
+[node name="Visual" type="Polygon2D" parent="Zones/Zone4_Narrow/Floor"]
+color = Color(0.45, 0.3, 0.55, 1)
+polygon = PackedVector2Array(-250, -20, 250, -20, 250, 20, -250, 20)
+
+[node name="EntryStep" type="StaticBody2D" parent="Zones/Zone4_Narrow"]
+position = Vector2(2650, 260)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Zones/Zone4_Narrow/EntryStep"]
+shape = SubResource("S_Slot200x20")
+
+[node name="Visual" type="Polygon2D" parent="Zones/Zone4_Narrow/EntryStep"]
+color = Color(0.6, 0.4, 0.7, 1)
+polygon = PackedVector2Array(-100, -10, 100, -10, 100, 10, -100, 10)
+
+[node name="SlotTop" type="StaticBody2D" parent="Zones/Zone4_Narrow"]
+position = Vector2(2750, 200)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Zones/Zone4_Narrow/SlotTop"]
+shape = SubResource("S_Slot200x20")
+
+[node name="Visual" type="Polygon2D" parent="Zones/Zone4_Narrow/SlotTop"]
+color = Color(0.6, 0.4, 0.7, 1)
+polygon = PackedVector2Array(-100, -10, 100, -10, 100, 10, -100, 10)
+
+[node name="SlotBottom" type="StaticBody2D" parent="Zones/Zone4_Narrow"]
+position = Vector2(2750, 240)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Zones/Zone4_Narrow/SlotBottom"]
+shape = SubResource("S_Slot200x20")
+
+[node name="Visual" type="Polygon2D" parent="Zones/Zone4_Narrow/SlotBottom"]
+color = Color(0.6, 0.4, 0.7, 1)
+polygon = PackedVector2Array(-100, -10, 100, -10, 100, 10, -100, 10)
+
+[node name="Zone5_Pit" type="Node2D" parent="Zones"]
+
+[node name="Label" type="Label" parent="Zones/Zone5_Pit"]
+position = Vector2(3050, -40)
+text = "5. 深坑"
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 4
+theme_override_font_sizes/font_size = 22
+
+[node name="Zone6_Springs" type="Node2D" parent="Zones"]
+
+[node name="Label" type="Label" parent="Zones/Zone6_Springs"]
+position = Vector2(3520, -40)
+text = "6. 彈簧"
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 4
+theme_override_font_sizes/font_size = 22
+
+[node name="Floor" type="StaticBody2D" parent="Zones/Zone6_Springs"]
+position = Vector2(3750, 320)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Zones/Zone6_Springs/Floor"]
+shape = SubResource("S_500x40")
+
+[node name="Visual" type="Polygon2D" parent="Zones/Zone6_Springs/Floor"]
+color = Color(0.2, 0.55, 0.5, 1)
+polygon = PackedVector2Array(-250, -20, 250, -20, 250, 20, -250, 20)
+
+[node name="SpringPad1" type="StaticBody2D" parent="Zones/Zone6_Springs"]
+position = Vector2(3620, 290)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Zones/Zone6_Springs/SpringPad1"]
+shape = SubResource("S_SpringPad60x20")
+
+[node name="Visual" type="Polygon2D" parent="Zones/Zone6_Springs/SpringPad1"]
+color = Color(0.9, 0.8, 0.2, 1)
+polygon = PackedVector2Array(-30, -10, 30, -10, 30, 10, -30, 10)
+
+[node name="Spring1" type="Area2D" parent="Zones/Zone6_Springs"]
+position = Vector2(3620, 272)
+script = ExtResource("7")
+bounce_force = 500.0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Zones/Zone6_Springs/Spring1"]
+shape = SubResource("S_SpringArea60x30")
+
+[node name="SpringPad2" type="StaticBody2D" parent="Zones/Zone6_Springs"]
+position = Vector2(3900, 290)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Zones/Zone6_Springs/SpringPad2"]
+shape = SubResource("S_SpringPad60x20")
+
+[node name="Visual" type="Polygon2D" parent="Zones/Zone6_Springs/SpringPad2"]
+color = Color(0.95, 0.6, 0.15, 1)
+polygon = PackedVector2Array(-30, -10, 30, -10, 30, 10, -30, 10)
+
+[node name="Spring2" type="Area2D" parent="Zones/Zone6_Springs"]
+position = Vector2(3900, 272)
+script = ExtResource("7")
+bounce_force = 850.0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Zones/Zone6_Springs/Spring2"]
+shape = SubResource("S_SpringArea60x30")
+
+[node name="Zone7_Boxes" type="Node2D" parent="Zones"]
+
+[node name="Label" type="Label" parent="Zones/Zone7_Boxes"]
+position = Vector2(4020, -40)
+text = "7. 可推箱子"
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 4
+theme_override_font_sizes/font_size = 22
+
+[node name="Floor" type="StaticBody2D" parent="Zones/Zone7_Boxes"]
+position = Vector2(4250, 320)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Zones/Zone7_Boxes/Floor"]
+shape = SubResource("S_500x40")
+
+[node name="Visual" type="Polygon2D" parent="Zones/Zone7_Boxes/Floor"]
+color = Color(0.5, 0.35, 0.2, 1)
+polygon = PackedVector2Array(-250, -20, 250, -20, 250, 20, -250, 20)
+
+[node name="Box1" type="RigidBody2D" parent="Zones/Zone7_Boxes"]
+position = Vector2(4150, 284)
+groups=["box"]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Zones/Zone7_Boxes/Box1"]
+shape = SubResource("S_Box32")
+
+[node name="Visual" type="Polygon2D" parent="Zones/Zone7_Boxes/Box1"]
+color = Color(0.8, 0.6, 0.3, 1)
+polygon = PackedVector2Array(-16, -16, 16, -16, 16, 16, -16, 16)
+
+[node name="Box2" type="RigidBody2D" parent="Zones/Zone7_Boxes"]
+position = Vector2(4250, 284)
+groups=["box"]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Zones/Zone7_Boxes/Box2"]
+shape = SubResource("S_Box32")
+
+[node name="Visual" type="Polygon2D" parent="Zones/Zone7_Boxes/Box2"]
+color = Color(0.8, 0.6, 0.3, 1)
+polygon = PackedVector2Array(-16, -16, 16, -16, 16, 16, -16, 16)
+
+[node name="Box3" type="RigidBody2D" parent="Zones/Zone7_Boxes"]
+position = Vector2(4350, 284)
+groups=["box"]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Zones/Zone7_Boxes/Box3"]
+shape = SubResource("S_Box32")
+
+[node name="Visual" type="Polygon2D" parent="Zones/Zone7_Boxes/Box3"]
+color = Color(0.8, 0.6, 0.3, 1)
+polygon = PackedVector2Array(-16, -16, 16, -16, 16, 16, -16, 16)
+
+[node name="Zone8_MovingPlatforms" type="Node2D" parent="Zones"]
+
+[node name="Label" type="Label" parent="Zones/Zone8_MovingPlatforms"]
+position = Vector2(4520, -40)
+text = "8. 來回平台"
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 4
+theme_override_font_sizes/font_size = 22
+
+[node name="FloorStart" type="StaticBody2D" parent="Zones/Zone8_MovingPlatforms"]
+position = Vector2(4575, 320)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Zones/Zone8_MovingPlatforms/FloorStart"]
+shape = SubResource("S_150x40")
+
+[node name="Visual" type="Polygon2D" parent="Zones/Zone8_MovingPlatforms/FloorStart"]
+color = Color(0.3, 0.45, 0.6, 1)
+polygon = PackedVector2Array(-75, -20, 75, -20, 75, 20, -75, 20)
+
+[node name="FloorEnd" type="StaticBody2D" parent="Zones/Zone8_MovingPlatforms"]
+position = Vector2(5025, 320)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Zones/Zone8_MovingPlatforms/FloorEnd"]
+shape = SubResource("S_150x40")
+
+[node name="Visual" type="Polygon2D" parent="Zones/Zone8_MovingPlatforms/FloorEnd"]
+color = Color(0.3, 0.45, 0.6, 1)
+polygon = PackedVector2Array(-75, -20, 75, -20, 75, 20, -75, 20)
+
+[node name="PlatformHorizontal" type="AnimatableBody2D" parent="Zones/Zone8_MovingPlatforms"]
+position = Vector2(4700, 290)
+script = ExtResource("6")
+offset = Vector2(200, 0)
+speed = 60.0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Zones/Zone8_MovingPlatforms/PlatformHorizontal"]
+shape = SubResource("S_Platform100x20")
+
+[node name="Visual" type="Polygon2D" parent="Zones/Zone8_MovingPlatforms/PlatformHorizontal"]
+color = Color(0.85, 0.5, 0.2, 1)
+polygon = PackedVector2Array(-50, -10, 50, -10, 50, 10, -50, 10)
+
+[node name="PlatformVertical" type="AnimatableBody2D" parent="Zones/Zone8_MovingPlatforms"]
+position = Vector2(4800, 150)
+script = ExtResource("6")
+offset = Vector2(0, 140)
+speed = 50.0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Zones/Zone8_MovingPlatforms/PlatformVertical"]
+shape = SubResource("S_Platform100x20")
+
+[node name="Visual" type="Polygon2D" parent="Zones/Zone8_MovingPlatforms/PlatformVertical"]
+color = Color(0.85, 0.5, 0.2, 1)
+polygon = PackedVector2Array(-50, -10, 50, -10, 50, 10, -50, 10)
+
+[node name="Zone9_Enemies" type="Node2D" parent="Zones"]
+
+[node name="Label" type="Label" parent="Zones/Zone9_Enemies"]
+position = Vector2(5120, -40)
+text = "9. 笨敵人"
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 4
+theme_override_font_sizes/font_size = 22
+
+[node name="Floor" type="StaticBody2D" parent="Zones/Zone9_Enemies"]
+position = Vector2(5350, 320)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Zones/Zone9_Enemies/Floor"]
+shape = SubResource("S_500x40")
+
+[node name="Visual" type="Polygon2D" parent="Zones/Zone9_Enemies/Floor"]
+color = Color(0.3, 0.45, 0.3, 1)
+polygon = PackedVector2Array(-250, -20, 250, -20, 250, 20, -250, 20)
+
+[node name="Enemy1" type="CharacterBody2D" parent="Zones/Zone9_Enemies"]
+position = Vector2(5250, 284)
+script = ExtResource("5")
+patrol_distance = 80.0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Zones/Zone9_Enemies/Enemy1"]
+shape = SubResource("S_Enemy16x32")
+
+[node name="Visual" type="Polygon2D" parent="Zones/Zone9_Enemies/Enemy1"]
+color = Color(0.7, 0.2, 0.2, 1)
+polygon = PackedVector2Array(-8, -16, 8, -16, 8, 16, -8, 16)
+
+[node name="Enemy2" type="CharacterBody2D" parent="Zones/Zone9_Enemies"]
+position = Vector2(5450, 284)
+script = ExtResource("5")
+patrol_distance = 80.0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Zones/Zone9_Enemies/Enemy2"]
+shape = SubResource("S_Enemy16x32")
+
+[node name="Visual" type="Polygon2D" parent="Zones/Zone9_Enemies/Enemy2"]
+color = Color(0.7, 0.2, 0.2, 1)
+polygon = PackedVector2Array(-8, -16, 8, -16, 8, 16, -8, 16)
+
+[node name="Zone10_Stairs" type="Node2D" parent="Zones"]
+
+[node name="Label" type="Label" parent="Zones/Zone10_Stairs"]
+position = Vector2(5620, -40)
+text = "10. 連續小台階"
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 4
+theme_override_font_sizes/font_size = 22
+
+[node name="Step0" type="StaticBody2D" parent="Zones/Zone10_Stairs"]
+position = Vector2(5640, 308)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Zones/Zone10_Stairs/Step0"]
+shape = SubResource("S_Step80x64")
+
+[node name="Visual" type="Polygon2D" parent="Zones/Zone10_Stairs/Step0"]
+color = Color(0.6, 0.55, 0.35, 1)
+polygon = PackedVector2Array(-40, -32, 40, -32, 40, 32, -40, 32)
+
+[node name="Step1" type="StaticBody2D" parent="Zones/Zone10_Stairs"]
+position = Vector2(5720, 296)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Zones/Zone10_Stairs/Step1"]
+shape = SubResource("S_Step80x88")
+
+[node name="Visual" type="Polygon2D" parent="Zones/Zone10_Stairs/Step1"]
+color = Color(0.6, 0.55, 0.35, 1)
+polygon = PackedVector2Array(-40, -44, 40, -44, 40, 44, -40, 44)
+
+[node name="Step2" type="StaticBody2D" parent="Zones/Zone10_Stairs"]
+position = Vector2(5800, 284)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Zones/Zone10_Stairs/Step2"]
+shape = SubResource("S_Step80x112")
+
+[node name="Visual" type="Polygon2D" parent="Zones/Zone10_Stairs/Step2"]
+color = Color(0.6, 0.55, 0.35, 1)
+polygon = PackedVector2Array(-40, -56, 40, -56, 40, 56, -40, 56)
+
+[node name="Step3" type="StaticBody2D" parent="Zones/Zone10_Stairs"]
+position = Vector2(5880, 272)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Zones/Zone10_Stairs/Step3"]
+shape = SubResource("S_Step80x136")
+
+[node name="Visual" type="Polygon2D" parent="Zones/Zone10_Stairs/Step3"]
+color = Color(0.6, 0.55, 0.35, 1)
+polygon = PackedVector2Array(-40, -68, 40, -68, 40, 68, -40, 68)
+
+[node name="Step4" type="StaticBody2D" parent="Zones/Zone10_Stairs"]
+position = Vector2(5960, 260)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Zones/Zone10_Stairs/Step4"]
+shape = SubResource("S_Step80x160")
+
+[node name="Visual" type="Polygon2D" parent="Zones/Zone10_Stairs/Step4"]
+color = Color(0.6, 0.55, 0.35, 1)
+polygon = PackedVector2Array(-40, -80, 40, -80, 40, 80, -40, 80)
+
+[node name="Landing" type="StaticBody2D" parent="Zones/Zone10_Stairs"]
+position = Vector2(6050, 200)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Zones/Zone10_Stairs/Landing"]
+shape = SubResource("S_Landing100x40")
+
+[node name="Visual" type="Polygon2D" parent="Zones/Zone10_Stairs/Landing"]
+color = Color(0.6, 0.55, 0.35, 1)
+polygon = PackedVector2Array(-50, -20, 50, -20, 50, 20, -50, 20)
+
+[node name="Zone11_Lava" type="Node2D" parent="Zones"]
+
+[node name="Label" type="Label" parent="Zones/Zone11_Lava"]
+position = Vector2(6120, -40)
+text = "11. 岩漿地板"
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 4
+theme_override_font_sizes/font_size = 22
+
+[node name="FloorA" type="StaticBody2D" parent="Zones/Zone11_Lava"]
+position = Vector2(6175, 320)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Zones/Zone11_Lava/FloorA"]
+shape = SubResource("S_150x40")
+
+[node name="Visual" type="Polygon2D" parent="Zones/Zone11_Lava/FloorA"]
+color = Color(0.35, 0.3, 0.25, 1)
+polygon = PackedVector2Array(-75, -20, 75, -20, 75, 20, -75, 20)
+
+[node name="FloorLava" type="StaticBody2D" parent="Zones/Zone11_Lava"]
+position = Vector2(6325, 320)
+groups=["lava"]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Zones/Zone11_Lava/FloorLava"]
+shape = SubResource("S_150x40")
+
+[node name="Visual" type="Polygon2D" parent="Zones/Zone11_Lava/FloorLava"]
+color = Color(0.85, 0.3, 0.1, 1)
+polygon = PackedVector2Array(-75, -20, 75, -20, 75, 20, -75, 20)
+
+[node name="FloorB" type="StaticBody2D" parent="Zones/Zone11_Lava"]
+position = Vector2(6450, 320)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Zones/Zone11_Lava/FloorB"]
+shape = SubResource("S_Floor100x40")
+
+[node name="Visual" type="Polygon2D" parent="Zones/Zone11_Lava/FloorB"]
+color = Color(0.35, 0.3, 0.25, 1)
+polygon = PackedVector2Array(-50, -20, 50, -20, 50, 20, -50, 20)
+
+[node name="Zone12_Open" type="Node2D" parent="Zones"]
+
+[node name="Label" type="Label" parent="Zones/Zone12_Open"]
+position = Vector2(6520, -40)
+text = "12. 開闊區（後座力需要空間）"
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 4
+theme_override_font_sizes/font_size = 22
+
+[node name="Floor" type="StaticBody2D" parent="Zones/Zone12_Open"]
+position = Vector2(7100, 320)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Zones/Zone12_Open/Floor"]
+shape = SubResource("S_1200x40")
+
+[node name="Visual" type="Polygon2D" parent="Zones/Zone12_Open/Floor"]
+color = Color(0.4, 0.6, 0.35, 1)
+polygon = PackedVector2Array(-600, -20, 600, -20, 600, 20, -600, 20)

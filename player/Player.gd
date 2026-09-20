@@ -85,7 +85,7 @@ func _physics_process(delta: float) -> void:
 	_apply_horizontal(ctx, delta)
 	_apply_vertical(ctx, delta)
 
-	if pre_on_floor and not ctx.input_locked and Input.is_action_just_pressed("jump"):
+	if pre_on_floor and not ctx.input_locked and not ctx.jump_locked and Input.is_action_just_pressed("jump"):
 		force_jump(ctx.jump_scale)
 
 	move_and_slide()
