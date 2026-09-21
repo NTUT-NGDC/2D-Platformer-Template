@@ -1,7 +1,9 @@
 extends Camera2D
 
 # 接 Events.shake_requested，執行螢幕震動。
-# 掛在關卡場景裡 Player 實例底下（見 Gym.tscn / _Template.tscn），跟著玩家移動。
+# 固定視角，不跟隨玩家：掛在關卡場景根節點底下，跟 Player 是平行關係
+# （見 levels/_shared/LevelBase.tscn，Gym.tscn 與 _Template.tscn 皆繼承自此）。
+# 每個關卡如果要對準不同的可視範圍，改這個節點的 position，不要改成跟隨玩家。
 
 var _shake_strength: float = 0.0
 var _shake_duration: float = 0.0

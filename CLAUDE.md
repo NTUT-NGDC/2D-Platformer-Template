@@ -127,7 +127,7 @@ godot --headless --import --path .
 godot --headless --path . res://_tests/SmokeTest.tscn
 ```
 
-`_tests/SmokeTest.tscn` 的規格見 `specs/00-foundation.md`。
+`_tests/SmokeTest.tscn` 的規格見 `documents/00_foundation.md`。
 **任何新增的機制卡或 Juice 組件都必須加進煙霧測試的清單。**
 
 ---
@@ -136,8 +136,8 @@ godot --headless --path . res://_tests/SmokeTest.tscn
 
 一次只做一週。不要提前實作未指定的週次。
 
-1. `specs/00-foundation.md` — 地基（所有週次的前提）
-2. `specs/01-week1-mechanics.md` — W1：12 張機制卡 + Gym
+1. `documents/00_foundation.md` — 地基（所有週次的前提）
+2. `documents/01_week1 mechanics.md` — W1：12 張機制卡 + Gym
 3. 之後的週次規格會在該週開課前才提供
 
 ---

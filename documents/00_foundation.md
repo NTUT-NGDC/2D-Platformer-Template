@@ -1,7 +1,7 @@
 # 00 — 地基
 
 > 前置閱讀：`CLAUDE.md`
-> 這份規格是所有週次的前提，必須先完成並通過驗收才進行 `01-week1-mechanics.md`。
+> 這份規格是所有週次的前提，必須先完成並通過驗收才進行 `documents/01_week1 mechanics.md`。
 
 ---
 
@@ -31,8 +31,11 @@ res://
 │       └── JuiceBase.gd
 ├── blocks/                   # W2：平台、機關、敵人
 ├── levels/
-│   ├── Gym.tscn              # W1 通用測試場
-│   ├── _Template.tscn        # W2 已框好的空關卡
+│   ├── _shared/
+│   │   ├── CameraRig.gd
+│   │   └── Respawn.gd
+│   ├── Gym.tscn              # W1 通用測試場，含地板，供學員參考佈置
+│   ├── _Template.tscn        # W2 已框好的關卡起點，同樣附上基本地板（避免重生掉出畫面）
 │   ├── _starts/              # 中途加入者的起始場景
 │   │   └── .gdkeep
 │   └── examples/             # W2 臨摹範例
@@ -117,18 +120,18 @@ signal stopped_moving
 ```gdscript
 @export_group("移動參數")
 ## 水平移動速度，數值愈大角色跑得愈快。
-@export_range(50.0, 500.0) var 移動速度: float = 200.0
+@export_range(50.0, 500.0) var move_speed: float = 200.0
 ## 跳躍瞬間的初始速度，數值愈大跳得愈高。
-@export_range(100.0, 800.0) var 跳躍力: float = 400.0
+@export_range(100.0, 800.0) var jump_force: float = 400.0
 ## 重力加速度，數值愈大角色下墜（或重力翻轉後上升）愈快。
-@export_range(200.0, 2000.0) var 重力: float = 980.0
+@export_range(200.0, 2000.0) var gravity: float = 980.0
 ## 地面摩擦係數：0 = 像冰面一樣滑不停，1 = 放開方向鍵立刻煞停。
-@export_range(0.0, 1.0) var 地面摩擦: float = 0.8
+@export_range(0.0, 1.0) var ground_friction: float = 0.8
 ```
 
 這是課程規則，不是物件身分的一部分，所以群組名稱用平實的「移動參數」，預設展開，不用警示圖示——紅色禁止圖示對新手來說容易被誤認成錯誤訊息。W1 一開始就要讓學員自己調跳躍／移動手感，每個變數上方用 `##` 寫中文說明，滑鼠停在 Inspector 欄位上會顯示成 tooltip。
 
-**機制卡的參數一律不放在這裡**，放在各自的機制節點上（見 `01-week1-mechanics.md`）。
+**機制卡的參數一律不放在這裡**，放在各自的機制節點上（見 `documents/01_week1 mechanics.md`）。
 
 ### 3.4 零連線的發現機制
 
@@ -226,23 +229,26 @@ Player 的 `_physics_process` 流程固定為：
 extends Node2D
 class_name MechanicBase
 
-@export var 啟用: bool = true
+## 關閉時這張機制卡不會生效，但仍會顯示在場景裡。
+@export var enabled: bool = true
 
 var player: Node = null
 
+# Player 呼叫，註冊自己並執行子類別初始化
 func setup(p: Node) -> void:
     player = p
     _on_setup()
     print("[%s] 已啟用" % name)
 
-## 子類別覆寫：接訊號、初始化
+# 機制卡在這裡做初始化，例如接訊號、設定初始狀態
 func _on_setup() -> void:
     pass
 
-## 子類別覆寫：每個物理幀修改移動參數
+# 機制卡在這裡影響每個物理幀的移動參數
 func apply(_ctx: MoveContext) -> void:
     pass
 
+# 檢查有沒有被正確掛在 Mechanics 底下，沒有就發警告
 func _ready() -> void:
     # 沒有被 setup 就是掛錯位置了，要看得見
     await get_tree().process_frame
@@ -257,10 +263,11 @@ func _ready() -> void:
 
 ```gdscript
 @export_enum("跳躍時", "落地時", "受傷時", "死亡時", "撞牆時", "不自動觸發")
-var 觸發時機: int = 1
+var timing: int = 1
 
+# 依「觸發時機」把 callback 接到對應的 Player 訊號，Juice 組件用這個省去自己判斷要接哪個訊號
 func _connect_trigger(callback: Callable) -> void:
-    match 觸發時機:
+    match timing:
         0: player.jumped.connect(callback)
         1: player.landed.connect(func(_f): callback.call())
         2: player.hurt.connect(callback)
@@ -275,23 +282,44 @@ func _connect_trigger(callback: Callable) -> void:
 
 ### 5.1 共用元件
 
-`Gym.tscn` 與 `_Template.tscn` 都必須內建（學員不會碰到）：
+`Gym.tscn` 與 `_Template.tscn` 是兩個各自獨立、內容完整的普通場景（**不是**繼承場景，
+兩者都可以直接打開看到全部節點，不需要理解 Godot 的場景繼承機制）。兩者都內建
+（學員不會碰到）：
 
-- `Camera2D`，掛 `CameraRig.gd`：接 `Events.shake_requested`，執行螢幕震動
-  - **固定視角，不跟隨玩家。** `Camera2D` 是關卡場景根節點底下的獨立節點，**不掛在 Player 實例底下**，跟 Player 之間沒有父子關係。
-  - 每個關卡場景自行決定 `Camera2D` 要放在哪個座標（通常對準該關卡的可視範圍中心），之後所有週次的新關卡都比照辦理，不會因為切場景而改成跟隨。
+- `TileMapLayer`，`tile_set` 指向共用資源 `art/default_tile.tres`（基於 `art/blocks.png`
+  的 16x16 tile，含 `physics_layer_0` 碰撞多邊形）。兩個場景各自畫自己的
+  `tile_map_data`，只是共用同一份 tile 素材，改素材時兩邊都會拿到最新版本，但地形佈置
+  本身互不影響。
+- `Player`（`player/Player.tscn` 的實例），底下附好 `Visual/Sprite2D`、`Mechanics`、`Juice`
+  三個容器節點（見 3.1 節）。
+- `Camera2D`，掛 `CameraRig.gd`：接 `Events.shake_requested`，執行螢幕震動。
+  - **固定視角，不跟隨玩家。** `Camera2D` 是關卡場景根節點底下的獨立節點，**不掛在
+    Player 實例底下**，跟 Player 之間沒有父子關係。
+  - 每個關卡場景自行決定 `Camera2D` 要放在哪個座標（通常對準該關卡的可視範圍中心），
+    之後所有週次的新關卡都比照辦理，不會因為切場景而改成跟隨。
   - 螢幕震動照樣透過 `Events.shake_requested` 接收，跟掛在哪裡無關，所以這個規則不影響零連線設計。
-- `HitStopManager`（Autoload 或關卡節點）：接 `Events.hitstop_requested`
+- `Respawn.gd`：玩家死亡後 1 秒自動重生，emit `Events.level_restarted`。**兩個場景都要有
+  地板**，否則學員重生後會直接掉出畫面外。
+
+`HitStopManager`（Autoload，見第 2 節）：接 `Events.hitstop_requested`
   - **`Engine.time_scale` 是全域的，必須有單例保護**
   - 時長上限鎖 `0.3` 秒
   - 已在頓幀中時，新請求直接忽略，不得疊加
   - 結束後必須保證 `Engine.time_scale = 1.0`
-- `Respawn.gd`：玩家死亡後 1 秒自動重生，emit `Events.level_restarted`
 
-### 5.2 `_my/MyGym.tscn`
+### 5.2 `Gym.tscn` 與 `_Template.tscn` 的差別
+
+兩者現階段場景內容幾乎一樣（都有同一排基本地板），差別在角色定位：
+
+- `Gym.tscn`：**參考範例／展示櫃。** 之後每週的機制卡／Juice 組件示範佈置，會疊加在
+  這個檔案裡（佈置內容見對應週次的規格文件，例如 `documents/01_week1 mechanics.md`）。
+- `_Template.tscn`：**複製基準。** W2 開始，學員複製這個檔案到 `_my/` 底下，在既有地板
+  的基礎上繼續畫地形、蓋自己的關卡。
+
+### 5.3 `_my/MyGym.tscn`
 
 W1 開場時學員做的第一件事是把 `levels/Gym.tscn` 另存為 `_my/MyGym.tscn`。
-Gym 的內容規格見 `01-week1-mechanics.md`。
+Gym 的內容規格見 `documents/01_week1 mechanics.md`。
 
 ---
 
