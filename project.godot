@@ -21,6 +21,7 @@ Events="*res://autoload/Events.gd"
 HitStopManager="*res://autoload/HitStopManager.gd"
 InputRouter="*res://autoload/InputRouter.gd"
 Stats="*res://autoload/Stats.gd"
+StatsHud="*res://autoload/StatsHud.gd"
 
 [display]
 

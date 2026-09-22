@@ -159,7 +159,8 @@ signal value_changed(kind: String, old_value: int, new_value: int)
 
 ### 4.4 HUD
 
-- 由 `Stats` 自動生成 `CanvasLayer`，學員不用擺 UI。
+- 由另一個自動載入 `StatsHud` 訂閱 `Stats.value_changed` 自動生成 `CanvasLayer`，學員不用擺 UI；
+  `Stats` 本身只管數值，不知道也不在意畫面有沒有人在監聽，兩者分開避免混在一起。
 - 某個數值第一次在場景中被用到時才出現。
 - 血量顯示為血條，其他顯示為圖示加數字。
 
