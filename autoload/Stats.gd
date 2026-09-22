@@ -15,6 +15,12 @@ var _values: Dictionary = {}       # kind(String) -> int
 var _max_values: Dictionary = {}   # kind(String) -> int，0 代表不限
 var _known_kinds: Array[String] = []
 
+var _hud: CanvasLayer = null
+var _hud_container: VBoxContainer = null
+var _hud_bars: Dictionary = {}    # kind(String) -> ProgressBar，血量這種特殊種類用這個
+var _hud_labels: Dictionary = {}  # kind(String) -> Label，其他種類用這個顯示「名稱：數字」
+var _hud_shown: Dictionary = {}   # kind(String) -> true，記錄哪些種類已經出現在 HUD 上
+
 # 血量是系統內建的預設種類，其他種類都是第一次用到才出現，初始 0、不限
 func _ready() -> void:
 	_values[HEALTH_KIND] = 3
@@ -33,6 +39,8 @@ func add(kind: String, amount: int) -> void:
 	if new_value == old_value:
 		return
 	_values[kind] = new_value
+	_show_hud_row(kind)
+	_refresh_hud_row(kind)
 	value_changed.emit(kind, old_value, new_value)
 	Events.value_changed.emit(kind, old_value, new_value)
 
@@ -76,3 +84,51 @@ func _levenshtein(a: String, b: String) -> int:
 			curr[j] = min(prev[j] + 1, min(curr[j - 1] + 1, prev[j - 1] + cost))
 		prev = curr.duplicate()
 	return prev[len_b]
+
+# 建立 HUD 用的 CanvasLayer，只在第一次真的需要顯示東西時才做
+func _ensure_hud() -> void:
+	if _hud != null:
+		return
+	_hud = CanvasLayer.new()
+	add_child(_hud)
+	_hud_container = VBoxContainer.new()
+	_hud_container.position = Vector2(4, 4)
+	_hud.add_child(_hud_container)
+
+# 這個種類第一次被實際加減到時，幫它在 HUD 加一列；血量用血條，其他種類用「圖示＋數字」
+func _show_hud_row(kind: String) -> void:
+	if _hud_shown.has(kind):
+		return
+	_hud_shown[kind] = true
+	_ensure_hud()
+	var row := HBoxContainer.new()
+	if kind == HEALTH_KIND:
+		var title := Label.new()
+		title.text = "血量"
+		var bar := ProgressBar.new()
+		bar.custom_minimum_size = Vector2(60, 12)
+		bar.show_percentage = false
+		row.add_child(title)
+		row.add_child(bar)
+		_hud_bars[kind] = bar
+	else:
+		var icon := ColorRect.new()
+		icon.custom_minimum_size = Vector2(10, 10)
+		var hue: float = float(absi(hash(kind)) % 360) / 360.0
+		icon.color = Color.from_hsv(hue, 0.6, 0.9)
+		var label := Label.new()
+		row.add_child(icon)
+		row.add_child(label)
+		_hud_labels[kind] = label
+	_hud_container.add_child(row)
+
+# 把 HUD 上某個種類那一列的畫面內容同步成目前的數值
+func _refresh_hud_row(kind: String) -> void:
+	if _hud_bars.has(kind):
+		var bar: ProgressBar = _hud_bars[kind]
+		var max_value: int = _max_values.get(kind, 0)
+		bar.max_value = max_value if max_value > 0 else max(_values.get(kind, 0), 1)
+		bar.value = _values.get(kind, 0)
+	elif _hud_labels.has(kind):
+		var label: Label = _hud_labels[kind]
+		label.text = "%s：%d" % [kind, _values.get(kind, 0)]
