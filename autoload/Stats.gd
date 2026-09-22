@@ -15,6 +15,7 @@ signal value_changed(kind: String, old_value: int, new_value: int)
 var _values: Dictionary = {}       # kind(String) -> int
 var _max_values: Dictionary = {}   # kind(String) -> int，0 代表不限
 var _known_kinds: Array[String] = []
+var _hud_visible: Dictionary = {}  # kind(String) -> bool，沒設定過的種類預設 true
 
 # 血量是系統內建的預設種類，其他種類都是第一次用到才出現，初始 0、不限
 func _ready() -> void:
@@ -37,6 +38,18 @@ func add(kind: String, amount: int) -> void:
 	value_changed.emit(kind, old_value, new_value)
 	Events.value_changed.emit(kind, old_value, new_value)
 
+# 場景設定節點 ValueSettings 用這個套用初始值、上限、要不要顯示在 HUD，
+# 搶在同場景其他節點用到這個數值之前生效（ValueSettings 在 _enter_tree 呼叫，比一般 _ready 早）
+func configure(kind: String, start_value: int, max_value: int, show_in_hud: bool) -> void:
+	_check_typo(kind)
+	_max_values[kind] = max_value
+	var clamped := start_value
+	if max_value > 0:
+		clamped = min(clamped, max_value)
+	clamped = max(clamped, 0)
+	_values[kind] = clamped
+	_hud_visible[kind] = show_in_hud
+
 # 查詢目前數值
 func get_value(kind: String) -> int:
 	_check_typo(kind)
@@ -56,6 +69,10 @@ func consume(kind: String, n: int) -> bool:
 		return false
 	add(kind, -n)
 	return true
+
+# 查詢某個種類是否允許顯示在 HUD，沒被 ValueSettings 設定過的種類預設允許
+func is_hud_visible(kind: String) -> bool:
+	return _hud_visible.get(kind, true)
 
 # 第一次看到這個名稱時，跟已經用過的名稱比對，太像但不一樣就印警告，抓可能的打錯字
 func _check_typo(kind: String) -> void:

@@ -12,8 +12,11 @@ var _labels: Dictionary = {}  # kind(String) -> Label，其他種類用這個顯
 func _ready() -> void:
 	Stats.value_changed.connect(_on_value_changed)
 
-# 數值變動時：第一次看到這個種類就先生一列出來，然後把畫面同步成最新的值
+# 數值變動時：第一次看到這個種類就先生一列出來，然後把畫面同步成最新的值。
+# ValueSettings 把 show_in_hud 關掉的種類永遠不出現在畫面上。
 func _on_value_changed(kind: String, _old_value: int, _new_value: int) -> void:
+	if not Stats.is_hud_visible(kind):
+		return
 	if not _bars.has(kind) and not _labels.has(kind):
 		_add_row(kind)
 	_refresh_row(kind)
