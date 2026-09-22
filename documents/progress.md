@@ -1,0 +1,134 @@
+# 實作進度清單
+
+> 依 `01a_shared_systems.md`～`01d_showroom_and_toybox.md` 拆成可逐一驗收的小單位。
+> 每個單位對應一個能在 Godot 編輯器裡親眼驗證的東西（一個系統行為、一張卡、一個零件）。
+> 完成一個就打勾，順序已經照依賴關係排好，原則上照順序做；如果要跳著做，注意標註的依賴。
+
+---
+
+## 階段 0：環境設定
+
+- [ ] U01 `project.godot` 碰撞圖層命名（Project Settings → Layer Names → 2D Physics，依
+      `01a_shared_systems.md` §2 的 6 個圖層）
+- [ ] U02 `project.godot` Input Map 精簡：保留 `move_left`/`move_right`/`move_up`/`move_down`/
+      `jump`/`restart`，移除 `interact`（驗證：Input Map 分頁只剩這 6 個動作）
+
+## 階段 1：InputRouter
+
+- [ ] U03 `InputRouter` 自動載入：`bind()` / `bind_key()` 基本攔截與優先權（驗證：寫一個臨時測試
+      節點，兩個不同優先權綁同一個按鍵，確認只有高優先的收到）
+- [ ] U04 `InputRouter`：`owner` 離場自動解除綁定、按鍵衝突印中文警告、學員按鍵「只聽不搶」規則
+      （驗證：臨時測試節點模擬學員綁定，確認搶不走高優先輸入）
+
+## 階段 2：Stats
+
+- [ ] U05 `Stats` 自動載入：`add`/`get_value`/`has_at_least`/`consume` 四個 API + `value_changed`
+      + 同步 `Events.value_changed`（驗證：在輸出面板印數值變化）
+- [ ] U06 `Stats` HUD 自動生成：數值第一次被用到時才出現 `CanvasLayer`（驗證：畫面上看到血條/圖示）
+- [ ] U07 `ValueSettings` 場景設定節點（`start_value`/`max_value`/`show_in_hud`，驗證：改血量上限，
+      HUD 顯示對應變化）
+- [ ] U08 `Player.take_damage()` 改內部委派給 `Stats.add(血量, -amount)`，`MoveContext` 新增
+      `damage_scale` 欄位（驗證：扣血後 HUD 血條同步減少，血量歸零觸發 `kill()`）
+
+## 階段 3：零件基礎設施（先做兩個零件，才能驗證訊號系統）
+
+- [ ] U09 `Button.tscn`（`01c_blocks_and_abilities.md` §2.1，驗證三種模式 + `turned_on`/`turned_off`）
+- [ ] U10 `Door.tscn` + `Receiver` 介面（`activate`/`deactivate`/`toggle`，驗證：手動在編輯器把
+      `Button.turned_on` 連到 `Door.activate`，踩按鈕門會開）
+- [ ] U11 連線驗證器：函式不存在／參數數量不對／目標節點已刪除／連到危險內建函式，四種情況各測一次
+      （驗證：故意接錯，看輸出面板中文警告）
+- [ ] U12 `Checkpoint.tscn`（`01c` §2.1，驗證：踩到時 emit `reached`，`Events.checkpoint_reached`
+      正確轉發）
+
+## 階段 4：死亡與重生
+
+- [ ] U13 `RespawnMemory` 自動載入 + 死亡重生流程（依賴 U12 的 Checkpoint；驗證：踩重生點後死亡，
+      在重生點復活、血量補滿、`01a` §5.2 表格列的項目正確還原）
+
+## 階段 5：其餘觸發／接收零件
+
+- [ ] U14 `KeyTrigger.tscn`（驗證：`key_source` 切換預設動作／自訂按鍵，`_validate_property` 正確
+      顯示對應欄位）
+- [ ] U15 `Portal.tscn`（驗證：A→B 傳送、B 自動連回 A、0.3 秒內不重複觸發）
+- [ ] U16 `Goal.tscn`（驗證：踩到 emit `Events.level_cleared`）
+- [ ] U17 `MovingPlatform.tscn`（驗證：`activate`/`deactivate`/`toggle` 正確控制移動）
+- [ ] U18 `Fan.tscn`（驗證：`activate`/`deactivate`/`toggle` 正確控制風力）
+
+## 階段 6：地形類／物件類零件
+
+- [ ] U19 `Breakable.tscn` + `Hittable` 介面（驗證：`take_hit()` 扣耐久，歸零時 `broken`；
+      `Events.hit` 正確 emit）
+- [ ] U20 `CrumbleFloor.tscn`（驗證：踩上去抖動→碎裂→依 `respawn_time` 重生或不重生）
+- [ ] U21 `OneWayPlatform.tscn`（驗證：下方穿過、上方可站立）
+- [ ] U22 `Lava.tscn`（驗證：站上去依 `instant_kill` 扣血或即死）
+- [ ] U23 `SwitchBlock.tscn`（驗證：手動改 `color` 欄位，`switch_red`/`switch_blue` group 正確加入；
+      玩家重疊時延後實體化）
+- [ ] U24 `Box.tscn`（驗證：可推動、受擊只擊退不受傷）
+- [ ] U25 `Pickup.tscn`（驗證：四種 `kind` 各自正確加值，血包不超過上限）
+- [ ] U26 `Launcher.tscn`（驗證：彈簧固定力道、彈跳床依落下速度反彈）
+- [ ] U27 `Spike.tscn`（驗證：依 `penalty` 扣血或即死）
+- [ ] U28 `Enemy.tscn`（驗證：左右巡邏、撞牆轉身、受擊、血量歸零消失、重生後復活）
+
+## 階段 7：攻擊能力
+
+- [ ] U29 Player 節點結構新增 `Abilities` 容器（零連線發現機制註冊，驗證：印出「已啟用」訊息）
+- [ ] U30 `Ability_Melee.tscn`（驗證：`key` 欄位可自訂，攻擊判定命中 `Hittable` 物件）
+- [ ] U31 `Ability_Ranged.tscn`（驗證：`key` 欄位可自訂，子彈飛行、命中消失）
+
+## 階段 8：機制卡 — 主限制卡
+
+- [ ] U32 煞車失靈 `Mechanic_NoFriction`
+- [ ] U33 只能往前 `Mechanic_AutoRun`
+- [ ] U34 彈珠台體質 `Mechanic_PinballBody`（`MoveContext` 新增 `damage_scale` 已在 U08 加過，這裡
+      驗證擊飛行為）
+- [ ] U35 重力翻轉 `Mechanic_GravityFlip`（本卡第一次用到 `key` 欄位 + `_validate_property` 顯示
+      規則，之後幾張卡沿用同一手法）
+- [ ] U36 彈性宇宙 `Mechanic_BouncyWorld`（驗證：不會無限抖動）
+- [ ] U37 越跑越快 `Mechanic_SpeedRamp`
+- [ ] U38 忽大忽小 `Mechanic_SizeShift`（`MoveContext` 新增 `knockback_scale`/`push_scale`；驗證：
+      不會卡進地形，5 欄位版面正常顯示）
+- [ ] U39 蓄力青蛙跳 `Mechanic_ChargeJump`（用 `InputRouter.bind()` 優先權攔截 `jump`，驗證：攔截
+      期間 Player 自己的低優先跳躍不會誤觸發）
+- [ ] U40 只能用滑鼠控制 `Mechanic_Slingshot`
+- [ ] U41 只用後座力移動 `Mechanic_RecoilMove`
+
+## 階段 9：機制卡 — 規則卡
+
+- [ ] U42 黏黏身體 `Mechanic_StickyBody`（驗證：黏在移動平台上會跟著移動）
+- [ ] U43 移動會扣血 `Mechanic_Stamina`
+- [ ] U44 碰觸即死 `Mechanic_TouchDeath`
+- [ ] U45 存活計時 `Mechanic_SurvivalTimer`
+- [ ] U46 停下即死 `Mechanic_StopDeath`（跟 U39 蓄力青蛙跳同時掛上時，蓄力中應暫停計時）
+- [ ] U47 血量流失 `Mechanic_HealthDrain`（驗證：讀寫 `Stats` 血量，沒有自己的「總血量」欄位）
+- [ ] U48 地板是岩漿 `Mechanic_FloorIsLava`
+- [ ] U49 開關世界 `Mechanic_SwitchWorld`（依賴 U23 `SwitchBlock`）
+
+## 階段 10：備品庫（可延後，非正式卡池）
+
+- [ ] U50 `Extra_DoubleJump`
+- [ ] U51 `Extra_Dash`
+- [ ] U52 `Extra_WallJump`
+- [ ] U53 `Extra_StickyFloor`
+- [ ] U54 `Extra_Magnet`
+- [ ] U55 `Extra_TimeSlow`
+- [ ] U56 `Extra_StompOnly`
+
+## 階段 11：訊號連接收尾
+
+- [ ] U57 連線視覺化 `@tool` 虛線（`signal_source` 零件讀取自己的訊號連接，畫線到目標節點；驗證：
+      在編輯器裡打開 U09/U10 的 Button→Door 連接，看得到虛線）
+
+## 階段 12：展示間與玩具箱
+
+- [ ] U58 `Showroom.tscn` 地形區（高牆、天花板走廊、窄縫、深坑、連續台階、開闊空地，驗證：帶一張
+      機制卡走過去看物理反應）
+- [ ] U59 `Showroom.tscn` 零件區 + 2-3 個組合小劇場（驗證：小劇場可玩，虛線正確顯示；整體維持單一
+      螢幕內）
+- [ ] U60 `levels/_starts/W1_ToyBox.tscn` + `MyControls` 節點 + `_my/my_controls.gd` 範例（驗證：
+      另存到 `_my/` 後 `git status` 只有 `_my/` 變更）
+
+## 階段 13：整體收尾
+
+- [ ] U61 `_tests/SmokeTest.gd` 掃到所有新增的 `mechanics/`／`juice/`（沿用既有掃描邏輯，確認新卡片
+      都能跑滿 60 幀不報錯）
+- [ ] U62 Web export 驗證：整包成功匯出並在瀏覽器可玩

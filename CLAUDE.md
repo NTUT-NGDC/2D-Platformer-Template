@@ -137,7 +137,11 @@ godot --headless --path . res://_tests/SmokeTest.tscn
 一次只做一週。不要提前實作未指定的週次。
 
 1. `documents/00_foundation.md` — 地基（所有週次的前提）
-2. `documents/01_week1 mechanics.md` — W1：12 張機制卡 + Gym
+2. W1（依序）：
+   - `documents/01a_shared_systems.md` — 共用系統（輸入路由／數值／死亡重生／訊號連接）
+   - `documents/01b_mechanic_cards.md` — 18 張機制卡（10 張主限制卡 + 8 張規則卡）+ 備品庫
+   - `documents/01c_blocks_and_abilities.md` — 零件（`blocks/`）與攻擊能力（`abilities/`）
+   - `documents/01d_showroom_and_toybox.md` — 展示間與玩具箱
 3. 之後的週次規格會在該週開課前才提供
 
 ---
