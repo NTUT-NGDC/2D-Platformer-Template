@@ -8,23 +8,25 @@
 
 ## 階段 0：環境設定
 
-- [ ] U01 `project.godot` 碰撞圖層命名（Project Settings → Layer Names → 2D Physics，依
+- [x] U01 `project.godot` 碰撞圖層命名（Project Settings → Layer Names → 2D Physics，依
       `01a_shared_systems.md` §2 的 6 個圖層）
-- [ ] U02 `project.godot` Input Map 精簡：保留 `move_left`/`move_right`/`move_up`/`move_down`/
+- [x] U02 `project.godot` Input Map 精簡：保留 `move_left`/`move_right`/`move_up`/`move_down`/
       `jump`/`restart`，移除 `interact`（驗證：Input Map 分頁只剩這 6 個動作）
 
 ## 階段 1：InputRouter
 
-- [ ] U03 `InputRouter` 自動載入：`bind()` / `bind_key()` 基本攔截與優先權（驗證：寫一個臨時測試
+- [x] U03 `InputRouter` 自動載入：`bind()` / `bind_key()` 基本攔截與優先權（驗證：寫一個臨時測試
       節點，兩個不同優先權綁同一個按鍵，確認只有高優先的收到）
-- [ ] U04 `InputRouter`：`owner` 離場自動解除綁定、按鍵衝突印中文警告、學員按鍵「只聽不搶」規則
+- [x] U04 `InputRouter`：`owner` 離場自動解除綁定、按鍵衝突印中文警告、學員按鍵「只聽不搶」規則
       （驗證：臨時測試節點模擬學員綁定，確認搶不走高優先輸入）
 
 ## 階段 2：Stats
 
-- [ ] U05 `Stats` 自動載入：`add`/`get_value`/`has_at_least`/`consume` 四個 API + `value_changed`
+- [x] U05 `Stats` 自動載入：`add`/`get_value`/`has_at_least`/`consume` 四個 API + `value_changed`
       + 同步 `Events.value_changed`（驗證：在輸出面板印數值變化）
-- [ ] U06 `Stats` HUD 自動生成：數值第一次被用到時才出現 `CanvasLayer`（驗證：畫面上看到血條/圖示）
+      　　→ 數值種類改成學員自訂字串（原規格是固定 enum），細節見 `CLAUDE.md` 鐵律 4 例外說明
+- [x] U06 `Stats` HUD 自動生成：數值第一次被用到時才出現 `CanvasLayer`（驗證：畫面上看到血條/圖示）
+      　　→ HUD 邏輯拆成獨立的 `StatsHud` 自動載入，訂閱 `Stats.value_changed`，`Stats` 本身不管畫面
 - [ ] U07 `ValueSettings` 場景設定節點（`start_value`/`max_value`/`show_in_hud`，驗證：改血量上限，
       HUD 顯示對應變化）
 - [ ] U08 `Player.take_damage()` 改內部委派給 `Stats.add(血量, -amount)`，`MoveContext` 新增
