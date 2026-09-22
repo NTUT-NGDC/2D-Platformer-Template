@@ -1,43 +1,47 @@
-[gd_scene load_steps=5 format=3]
+[gd_scene load_steps=6 format=3]
 
 [ext_resource type="Script" path="res://tests/ButtonTest.gd" id="1"]
 [ext_resource type="PackedScene" path="res://player/Player.tscn" id="2"]
-[ext_resource type="PackedScene" path="res://blocks/Button.tscn" id="3"]
-
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_floor"]
-size = Vector2(320, 16)
+[ext_resource type="TileSet" uid="uid://6xyxoqkb30in" path="res://art/default_tile.tres" id="3"]
+[ext_resource type="Texture2D" path="res://art/white_block.png" id="4"]
+[ext_resource type="PackedScene" path="res://blocks/Button.tscn" id="5"]
 
 [node name="ButtonTest" type="Node2D"]
 script = ExtResource("1")
 
-[node name="Floor" type="StaticBody2D" parent="."]
-position = Vector2(150, 160)
-collision_layer = 1
-collision_mask = 0
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Floor"]
-shape = SubResource("RectangleShape2D_floor")
-
-[node name="Camera2D" type="Camera2D" parent="."]
-position = Vector2(150, 110)
-current = true
+[node name="TileMapLayer" type="TileMapLayer" parent="."]
+tile_set = ExtResource("3")
+tile_map_data = PackedByteArray("AADx/wsAAAADAAEAAADy/wsAAAADAAEAAADz/wsAAAADAAEAAAD0/wsAAAADAAEAAAD1/wsAAAADAAEAAAD2/wsAAAADAAEAAAD3/wsAAAADAAEAAAD4/wsAAAADAAEAAAD5/wsAAAADAAEAAAD6/wsAAAADAAEAAAD7/wsAAAADAAEAAAD8/wsAAAADAAEAAAD9/wsAAAADAAEAAAD+/wsAAAADAAEAAAD//wsAAAADAAEAAAAAAAsAAAADAAEAAAABAAsAAAADAAEAAAACAAsAAAADAAEAAAADAAsAAAADAAEAAAAEAAsAAAADAAEAAAAFAAsAAAADAAEAAAAGAAsAAAADAAEAAAAHAAsAAAADAAEAAAAIAAsAAAADAAEAAAAJAAsAAAADAAEAAAAKAAsAAAADAAEAAAALAAsAAAADAAEAAAAMAAsAAAADAAEAAAANAAsAAAADAAEAAAAOAAsAAAADAAEAAAA=")
 
 [node name="Player" parent="." instance=ExtResource("2")]
-position = Vector2(20, 100)
+position = Vector2(1, 95)
 
 [node name="Visual" type="Node2D" parent="Player"]
 
-[node name="Button_HoldMode" parent="." instance=ExtResource("3")]
-position = Vector2(60, 149)
+[node name="Sprite2D" type="Sprite2D" parent="Player/Visual"]
+texture = ExtResource("4")
+region_enabled = true
+region_rect = Rect2(0, 0, 16, 32)
 
-[node name="Button_ToggleMode" parent="." instance=ExtResource("3")]
-position = Vector2(120, 149)
+[node name="Mechanics" type="Node2D" parent="Player"]
+
+[node name="Juice" type="Node2D" parent="Player"]
+
+[node name="Camera2D" type="Camera2D" parent="."]
+position = Vector2(0, 57)
+current = true
+
+[node name="Button_HoldMode" parent="." instance=ExtResource("5")]
+position = Vector2(-100, 110)
+
+[node name="Button_ToggleMode" parent="." instance=ExtResource("5")]
+position = Vector2(-30, 110)
 mode = 1
 
-[node name="Button_PermanentMode" parent="." instance=ExtResource("3")]
-position = Vector2(180, 149)
+[node name="Button_PermanentMode" parent="." instance=ExtResource("5")]
+position = Vector2(40, 110)
 mode = 2
 
-[node name="Button_HitMode" parent="." instance=ExtResource("3")]
-position = Vector2(240, 149)
+[node name="Button_HitMode" parent="." instance=ExtResource("5")]
+position = Vector2(110, 110)
 mode = 3
