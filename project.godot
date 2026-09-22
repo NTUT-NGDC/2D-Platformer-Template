@@ -53,6 +53,15 @@ interact={
 ]
 }
 
+[layer_names]
+
+2d_physics/layer_1="玩家"
+2d_physics/layer_2="地形"
+2d_physics/layer_3="箱子"
+2d_physics/layer_4="敵人"
+2d_physics/layer_5="感應"
+2d_physics/layer_6="攻擊"
+
 [physics]
 
 3d/physics_engine="Jolt Physics"
