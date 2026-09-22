@@ -42,6 +42,8 @@ func add(kind: String, amount: int) -> void:
 	_values[kind] = new_value
 	value_changed.emit(kind, old_value, new_value)
 	Events.value_changed.emit(kind, old_value, new_value)
+	if kind == HEALTH_KIND and new_value <= 0:
+		_kill_player()
 
 # 場景設定節點 ValueSettings 用這個套用初始值、上限、要不要顯示在 HUD，
 # 搶在同場景其他節點用到這個數值之前生效（ValueSettings 在 _enter_tree 呼叫，比一般 _ready 早）
@@ -78,6 +80,12 @@ func consume(kind: String, n: int) -> bool:
 # 查詢某個種類是否允許顯示在 HUD，沒被 ValueSettings 設定過的種類預設允許
 func is_hud_visible(kind: String) -> bool:
 	return _hud_visible.get(kind, true)
+
+# 血量歸零時呼叫，找到場景裡的 Player 讓它死亡；用 group 找，不記節點路徑
+func _kill_player() -> void:
+	for p in get_tree().get_nodes_in_group("player"):
+		if p.has_method("kill"):
+			p.kill()
 
 # 第一次看到這個名稱時，跟已經用過的名稱比對，太像但不一樣就印警告，抓可能的打錯字
 func _check_typo(kind: String) -> void:

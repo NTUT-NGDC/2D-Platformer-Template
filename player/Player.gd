@@ -23,7 +23,6 @@ signal stopped_moving
 @export_range(0.0, 1.0) var ground_friction: float = 0.8
 
 var visual: Node2D = null
-var health: float = 3.0
 var size_factor: float = 1.0
 
 var _mechanics: Array[Node] = []
@@ -31,6 +30,7 @@ var _last_direction: int = 0
 var _was_moving: bool = false
 var _was_on_wall: bool = false
 var _is_dead: bool = false
+var _damage_scale: float = 1.0
 
 # 啟動時找視覺節點，並掃描 Mechanics／Juice 底下現有的組件逐一註冊
 func _ready() -> void:
@@ -78,6 +78,7 @@ func _physics_process(delta: float) -> void:
 	for m in _mechanics:
 		if is_instance_valid(m) and m.enabled:
 			m.apply(ctx)
+	_damage_scale = ctx.damage_scale
 
 	var pre_on_floor := is_on_floor()
 	var pre_fall_speed: float = velocity.dot(-up_direction)
@@ -152,15 +153,13 @@ func set_size_factor(f: float) -> void:
 	size_factor = f
 	scale = Vector2.ONE * f
 
-# 讓角色受到傷害，血量歸零會自動觸發死亡
+# 讓角色受到傷害，內部委派給 Stats 扣血量；血量歸零時 Stats 會自動呼叫 kill()
 func take_damage(amount: float = 1.0) -> void:
 	if _is_dead:
 		return
-	health -= amount
+	Stats.add(Stats.HEALTH_KIND, -roundi(amount * _damage_scale))
 	hurt.emit()
 	Events.player_hurt.emit()
-	if health <= 0.0:
-		kill()
 
 # 立刻讓角色死亡
 func kill() -> void:
