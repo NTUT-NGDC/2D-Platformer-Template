@@ -121,31 +121,41 @@ InputRouter.bind_key(owner: Node, key: Key, phase: int, callback: Callable, prio
 
 ### 4.1 數值種類
 
-固定四種，全部用下拉選單選擇，不用打字：**金幣、鑰匙、血量、分數**。
+種類名稱由學員自訂，是一個字串（例如「金幣」「鑰匙」「血量」「分數」，或學員自己取的任何名稱），
+不是固定的下拉選單。這是 `CLAUDE.md` 鐵律 4「零打字」在這裡的唯一例外，理由跟防呆機制見
+`CLAUDE.md` 該條的例外說明。
+
+`血量`（`Stats.HEALTH_KIND` 常數）是唯一有系統行為綁在名稱上的種類：歸零時觸發玩家死亡（見
+4.5 節）。其他名稱純粹是學員自己的分類，系統不理解它們的意義。
+
+**打錯字防呆**：`Stats` 在種類名稱第一次出現時，會跟所有已經用過的名稱比對編輯距離，太像但不
+完全一樣（例如「金幣」跟「金幤」）就 `push_warning()` 印中文警告，提醒可能打錯字，但不會阻擋
+執行——打錯字的那個名稱一樣會被當成一個新的獨立種類記錄下來。
 
 ### 4.2 程式介面
 
 ```gdscript
-Stats.add(kind, amount)             ## 增加（負數即減少）
-Stats.get_value(kind) -> int        ## 查詢
-Stats.has_at_least(kind, n) -> bool ## 是否達標
-Stats.consume(kind, n) -> bool      ## 足夠就扣掉並回傳 true
-signal value_changed(kind, old_value, new_value)
+Stats.add(kind: String, amount: int)             ## 增加（負數即減少）
+Stats.get_value(kind: String) -> int             ## 查詢
+Stats.has_at_least(kind: String, n: int) -> bool ## 是否達標
+Stats.consume(kind: String, n: int) -> bool      ## 足夠就扣掉並回傳 true
+signal value_changed(kind: String, old_value: int, new_value: int)
 ```
 
 所有變動同步 emit `Events.value_changed`，供 W3 果汁組件訂閱。
 
 ### 4.3 場景設定節點 `ValueSettings`
 
-每個場景可以放一個，沒放就用預設值。Inspector 以數值種類分群組（中文群組標題），每群組最多 3 欄：
+每個場景可以放一個或多個，沒放就用預設值。每一筆設定對應一個數值種類，欄位：
 
 | 欄位 | 說明 |
 |---|---|
+| `kind` | 種類名稱（字串，學員自己打；打字防呆見 4.1） |
 | `start_value` | 初始值 |
 | `max_value` | 上限（0 為不限） |
 | `show_in_hud` | 是否顯示在 HUD |
 
-預設：血量初始 3、上限 3；其他初始 0、不限。
+預設（沒有任何 `ValueSettings` 時）：`血量` 初始 3、上限 3；其他種類第一次用到時初始 0、不限。
 
 ### 4.4 HUD
 
@@ -156,7 +166,7 @@ signal value_changed(kind, old_value, new_value)
 ### 4.5 血量與傷害
 
 - `Player.take_damage(amount: float = 1.0)` 對外簽名不變，機制卡呼叫端不用改。內部改為呼叫
-  `Stats.add(血量, -amount)`，`ctx.damage_scale` 在呼叫前於 Player 內部生效。
+  `Stats.add(Stats.HEALTH_KIND, -amount)`，`ctx.damage_scale` 在呼叫前於 Player 內部生效。
 - 血量歸零時由 `Stats` 呼叫 `player.kill()`。
 - `kill()` 繞過血量與 `damage_scale`，直接死亡。
 
@@ -276,8 +286,10 @@ Godot 的訊號對話框本身只能部分過濾（Method 下拉主要列腳本�
 - [ ] `Stats.add` / `get_value` / `has_at_least` / `consume` 行為正確，`value_changed` 正確 emit
       並同步 `Events.value_changed`
 - [ ] 某數值第一次被用到時，對應的 HUD 元件才出現
-- [ ] `Player.take_damage()` 對外簽名不變，內部正確委派給 `Stats.add(血量, -amount)`；血量歸零時
-      `Stats` 呼叫 `kill()`；`kill()` 繞過 `damage_scale`
+- [ ] `Player.take_damage()` 對外簽名不變，內部正確委派給 `Stats.add(Stats.HEALTH_KIND, -amount)`；
+      血量歸零時 `Stats` 呼叫 `kill()`；`kill()` 繞過 `damage_scale`
+- [ ] 數值種類名稱打錯字（跟已用過的名稱編輯距離很近但不同）時，輸出面板／偵錯器出現中文警告，
+      但不會擋住執行
 - [ ] 死亡後重新載入場景：沒踩過重生點時完全回到初始狀態；踩過重生點時在正確位置重生，且第 5.2 節
       表格列出的項目都正確還原，血量永遠補滿
 - [ ] `persistent` 與 `signal_source` 兩個 group 由對應零件自動加入，學員不用手動設定

@@ -68,6 +68,12 @@ Claude Code 在這個專案裡的所有對話回覆、進度回報、驗收結�
 @export_enum 的選項用中文（參數是字串）
 只能是 @export_enum 下拉、@export_range 拉桿、或 bool 勾選框，不得有需要打字的欄位
 
+**例外：Stats 數值種類名稱。** 數值種類（金幣、血量…）由學員自訂，無法預先窮舉成下拉選單，
+所以這一個地方允許 `@export var kind: String` 讓學員打字。作為零打字鐵律在這裡的替代防呆，
+`Stats` 在執行時會比對新名稱跟已經用過的名稱有多像，太像但不完全一樣就 `push_warning()` 印中文
+警告提醒可能打錯字（見 `autoload/Stats.gd`、`documents/01a_shared_systems.md` §4.1）。除了這個
+用途，其他任何 @export 欄位都不適用這個例外。
+
 ### 5. 組件之間不准打架
 
 任意組合、任意數量的機制卡與 Juice 組件同時存在時，遊戲不得崩潰或卡死。
