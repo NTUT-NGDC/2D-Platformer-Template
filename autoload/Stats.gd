@@ -17,11 +17,16 @@ var _max_values: Dictionary = {}   # kind(String) -> int，0 代表不限
 var _known_kinds: Array[String] = []
 var _hud_visible: Dictionary = {}  # kind(String) -> bool，沒設定過的種類預設 true
 
-# 血量是系統內建的預設種類，其他種類都是第一次用到才出現，初始 0、不限
+# 血量是系統內建的預設種類，其他種類都是第一次用到才出現，初始 0、不限。
+# 用 has() 檢查而不是直接覆蓋：遊戲第一次啟動時，主場景裡 ValueSettings 的 _enter_tree
+# 會搶在這個 _ready 之前執行（見 ValueSettings.gd 註解），已經套用的設定不能被這裡蓋掉。
 func _ready() -> void:
-	_values[HEALTH_KIND] = 3
-	_max_values[HEALTH_KIND] = 3
-	_known_kinds.append(HEALTH_KIND)
+	if not _values.has(HEALTH_KIND):
+		_values[HEALTH_KIND] = 3
+	if not _max_values.has(HEALTH_KIND):
+		_max_values[HEALTH_KIND] = 3
+	if HEALTH_KIND not in _known_kinds:
+		_known_kinds.append(HEALTH_KIND)
 
 # 增加數值，amount 給負數就是減少；會被夾在 0 到上限之間（上限 0 代表不限）
 func add(kind: String, amount: int) -> void:
