@@ -52,12 +52,18 @@ func _scan_node(node: Node) -> void:
 		for connection in node.get_signal_connection_list(signal_name):
 			_check_connection(node, signal_name, arg_count, connection["callable"])
 
-# 檢查一條連接：方法存不存在、參數數量對不對、有沒有連到危險的內建方法
+# 檢查一條連接：方法存不存在、參數數量對不對、有沒有連到危險的內建方法。
+# 連到匿名函式（lambda）的連接跳過不檢查：lambda 沒有名字，get_method() 只會給一個
+# 「<anonymous lambda>」的預留字串，get_method_list() 反射不出來，硬查只會誤判成
+# 「方法不存在」。這種連接不是本來要防的對象（學員只會用「連接訊號」對話框接到
+# 具名函式，不會寫 lambda）。
 func _check_connection(source: Node, signal_name: String, arg_count: int, callable: Callable) -> void:
+	var method_name := callable.get_method()
+	if String(method_name).begins_with("<"):
+		return
 	var target := callable.get_object()
 	if target == null or not is_instance_valid(target):
 		return
-	var method_name := callable.get_method()
 	var target_name := _describe(target)
 	if method_name in _DANGEROUS_METHODS:
 		_warn("「%s」的 %s 訊號連到「%s」的內建方法 %s()，這個方法會直接刪掉節點，請確認這是故意的" % [source.name, signal_name, target_name, method_name])
