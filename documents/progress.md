@@ -80,7 +80,7 @@
 
 ## 階段 8：機制卡 — 主限制卡
 
-- [ ] U32 煞車失靈 `Mechanic_NoFriction`
+- [x] U32 煞車失靈 `Mechanic_NoFriction`
 - [ ] U33 只能往前 `Mechanic_AutoRun`
 - [ ] U34 彈珠台體質 `Mechanic_PinballBody`（`MoveContext` 新增 `damage_scale` 已在 U08 加過，這裡
       驗證擊飛行為）
