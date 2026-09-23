@@ -1,0 +1,89 @@
+[gd_resource type="Resource" script_class="MechanicCardList" format=3]
+
+[ext_resource type="Script" path="res://data/MechanicCard.gd" id="1_7y6ay"]
+[ext_resource type="Script" path="res://data/MechanicCardList.gd" id="2_a2hne"]
+
+[sub_resource type="Resource" id="Resource_gqxqq"]
+script = ExtResource("1_7y6ay")
+card_name = "煞車失靈"
+file_name = "Mechanic_NoFriction"
+category = "操作"
+rule_text = "放開方向鍵後角色不會立刻停下來，會繼續往前滑一段距離。"
+difficulty_technical = 2
+
+[sub_resource type="Resource" id="Resource_6negd"]
+script = ExtResource("1_7y6ay")
+card_name = "只能往前"
+file_name = "Mechanic_AutoRun"
+category = "操作"
+rule_text = "角色會自動朝一個方向持續奔跑，你只能控制跳躍的時機。"
+difficulty_design = 2
+
+[sub_resource type="Resource" id="Resource_fru1p"]
+script = ExtResource("1_7y6ay")
+card_name = "蓄力青蛙跳"
+file_name = "Mechanic_ChargeJump"
+category = "操作"
+rule_text = "跳躍鍵要按住蓄力才會跳得高，蓄力時間越長跳得越遠。"
+difficulty_technical = 2
+
+[sub_resource type="Resource" id="Resource_uds27"]
+script = ExtResource("1_7y6ay")
+card_name = "只能用滑鼠控制"
+file_name = "Mechanic_Slingshot"
+category = "操作"
+rule_text = "不能用方向鍵移動，只能用滑鼠拖曳瞄準、放開發射角色，像彈弓一樣。"
+difficulty_technical = 2
+difficulty_design = 2
+
+[sub_resource type="Resource" id="Resource_eca5m"]
+script = ExtResource("1_7y6ay")
+card_name = "只用後座力移動"
+file_name = "Mechanic_RecoilMove"
+category = "操作"
+rule_text = "不能直接控制移動，要靠方向鍵觸發反方向噴射的後座力來移動。"
+difficulty_technical = 2
+difficulty_design = 2
+
+[sub_resource type="Resource" id="Resource_iq0ob"]
+script = ExtResource("1_7y6ay")
+card_name = "彈珠台體質"
+file_name = "Mechanic_PinballBody"
+category = "物理"
+rule_text = "撞到敵人或尖刺不會受傷，而是會被彈飛出去，像彈珠台一樣。"
+
+[sub_resource type="Resource" id="Resource_wjd3o"]
+script = ExtResource("1_7y6ay")
+card_name = "重力翻轉"
+file_name = "Mechanic_GravityFlip"
+category = "物理"
+rule_text = "重力方向可以翻轉，翻轉後角色會朝反方向掉落。"
+difficulty_design = 2
+
+[sub_resource type="Resource" id="Resource_0fqsw"]
+script = ExtResource("1_7y6ay")
+card_name = "彈性宇宙"
+file_name = "Mechanic_BouncyWorld"
+category = "物理"
+rule_text = "撞到任何東西都會反彈，速度不會直接歸零。"
+difficulty_design = 2
+
+[sub_resource type="Resource" id="Resource_cbnt2"]
+script = ExtResource("1_7y6ay")
+card_name = "越跑越快"
+file_name = "Mechanic_SpeedRamp"
+category = "物理"
+rule_text = "持續往同一方向移動，速度會越來越快，跳躍力也可能跟著提升。"
+
+[sub_resource type="Resource" id="Resource_wbibg"]
+script = ExtResource("1_7y6ay")
+card_name = "忽大忽小"
+file_name = "Mechanic_SizeShift"
+category = "物理"
+rule_text = "角色的體型會在大小之間切換，變大變小會影響推力、擊退和跳躍表現。"
+difficulty_technical = 2
+difficulty_design = 2
+
+[resource]
+script = ExtResource("2_a2hne")
+cards = Array[Resource]([SubResource("Resource_gqxqq"), SubResource("Resource_6negd"), SubResource("Resource_fru1p"), SubResource("Resource_uds27"), SubResource("Resource_eca5m"), SubResource("Resource_iq0ob"), SubResource("Resource_wjd3o"), SubResource("Resource_0fqsw"), SubResource("Resource_cbnt2"), SubResource("Resource_wbibg")])

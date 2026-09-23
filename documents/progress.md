@@ -145,3 +145,15 @@
 - [x] U61 `_tests/SmokeTest.gd` 掃到所有新增的 `mechanics/`／`juice/`（沿用既有掃描邏輯，確認新卡片都能跑滿 60 幀不報錯）
       　　→ 既有掃描邏輯是遞迴掃資料夾，不用改程式；純驗證，沒有程式改動
 - [x] U62 Web export 驗證：整包成功匯出並在瀏覽器可玩
+
+## 階段 14：課堂輔助工具
+
+- [x] U63 抽卡場景 `levels/CardDraw.tscn`（獨立場景，F6 直接執行；只抽 10 張主限制卡，卡面顯示卡名／
+      規則／難度／拖拽提示；卡片資料在 `data/mechanic_cards.tres`，方便事後改文字。驗證：F6 執行，按
+      「抽卡」隨機出一張，按「重抽一張」可以無限重抽，文字看得清楚）
+      　　→ 難度（技術／設計）01b 沒有逐卡資料，我先評一版 1~2 星放進 `data/mechanic_cards.tres`，
+      　　　覺得不準直接在那個檔案改數字；視窗開到 960x540（專案本體是 480x270 不是 320x180，這個
+      　　　視窗獨立於遊戲本體，不影響其他場景解析度）
+      　　→ 修過一次：`window/stretch/mode="viewport"` 會強制任何主視窗場景內部都先用 480x270 算畫面
+      　　　再縮放，跟 Window 節點自己的 size 是兩回事，害文字被裁切。`CardDraw.gd` 的 `_ready()` 執行
+      　　　時改寫 `get_tree().root.content_scale_mode` 為 DISABLED 解決，不影響遊戲本體其他場景
