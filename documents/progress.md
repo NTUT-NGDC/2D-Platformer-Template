@@ -67,7 +67,7 @@
 - [x] U23 `SwitchBlock.tscn`（驗證：手動改 `color` 欄位，`switch_red`/`switch_blue` group 正確加入；
       玩家重疊時延後實體化）
 - [x] U24 `Box.tscn`（驗證：可推動、受擊只擊退不受傷）
-- [ ] U25 `Pickup.tscn`（驗證：四種 `kind` 各自正確加值，血包不超過上限）
+- [x] U25 `Pickup.tscn`（驗證：四種 `kind` 各自正確加值，血包不超過上限）
 - [ ] U26 `Launcher.tscn`（驗證：彈簧固定力道、彈跳床依落下速度反彈）
 - [ ] U27 `Spike.tscn`（驗證：依 `penalty` 扣血或即死）
 - [ ] U28 `Enemy.tscn`（驗證：左右巡邏、撞牆轉身、受擊、血量歸零消失、重生後復活）
