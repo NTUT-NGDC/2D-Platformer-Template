@@ -107,7 +107,8 @@
 - [x] U46 停下即死 `Mechanic_StopDeath`（跟 U39 蓄力青蛙跳同時掛上時，蓄力中應暫停計時）
 - [x] U47 血量流失 `Mechanic_HealthDrain`（驗證：讀寫 `Stats` 血量，沒有自己的「總血量」欄位）
       　　→ 補血改訂閱 `Stats.value_changed`（金幣），因為 `Events.item_collected` 目前沒有任何地方會發出
-- [ ] U48 地板是岩漿 `Mechanic_FloorIsLava`
+- [x] U48 地板是岩漿 `Mechanic_FloorIsLava`
+      　　→ 偵測岩漿時額外檢查父節點（Lava.gd 把 lava group 加在根節點，玩家碰到的是子節點 Body）
 - [ ] U49 開關世界 `Mechanic_SwitchWorld`（依賴 U23 `SwitchBlock`）
 
 ## 階段 10：備品庫（可延後，非正式卡池）
