@@ -38,9 +38,15 @@ func _check_live_connections() -> void:
 	for node in get_tree().get_nodes_in_group("signal_source"):
 		_scan_node(node)
 
-# 檢查單一節點身上每個訊號的每一條連接
+# 檢查單一節點身上每個訊號的每一條連接。只看零件腳本自己宣告的訊號
+#（例如按鈕的 turned_on），不管繼承自 Node/CanvasItem 的內建訊號——
+# 那些是引擎內部自己在用的原生方法綁定，不會出現在 get_method_list() 反射結果裡，
+# 拿去檢查只會誤判成「方法不存在」。
 func _scan_node(node: Node) -> void:
-	for signal_info in node.get_signal_list():
+	var script: Script = node.get_script()
+	if script == null:
+		return
+	for signal_info in script.get_script_signal_list():
 		var signal_name: String = signal_info["name"]
 		var arg_count: int = signal_info["args"].size()
 		for connection in node.get_signal_connection_list(signal_name):
