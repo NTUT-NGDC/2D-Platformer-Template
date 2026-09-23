@@ -11,6 +11,7 @@ signal enemy_died(pos: Vector2)
 signal item_collected(pos: Vector2)
 signal level_cleared
 signal level_restarted
+signal checkpoint_reached(checkpoint: Node)
 
 # 數值事件（由 Stats 轉發，供 HUD、W3 果汁訂閱）
 signal value_changed(kind, old_value: int, new_value: int)
