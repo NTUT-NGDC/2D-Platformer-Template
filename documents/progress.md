@@ -84,7 +84,7 @@
 - [x] U33 只能往前 `Mechanic_AutoRun`
 - [x] U34 彈珠台體質 `Mechanic_PinballBody`（`MoveContext` 新增 `damage_scale` 已在 U08 加過，這裡
       驗證擊飛行為）
-- [ ] U35 重力翻轉 `Mechanic_GravityFlip`（本卡第一次用到 `key` 欄位 + `_validate_property` 顯示
+- [x] U35 重力翻轉 `Mechanic_GravityFlip`（本卡第一次用到 `key` 欄位 + `_validate_property` 顯示
       規則，之後幾張卡沿用同一手法）
 - [ ] U36 彈性宇宙 `Mechanic_BouncyWorld`（驗證：不會無限抖動）
 - [ ] U37 越跑越快 `Mechanic_SpeedRamp`
