@@ -1,0 +1,100 @@
+[gd_scene load_steps=7 format=3]
+
+[ext_resource type="Script" path="res://tests/Mechanic_RecoilMoveTest.gd" id="1"]
+[ext_resource type="PackedScene" path="res://player/Player.tscn" id="2"]
+[ext_resource type="Texture2D" path="res://art/white_block.png" id="3"]
+[ext_resource type="PackedScene" path="res://mechanics/Mechanic_RecoilMove.tscn" id="4"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_horizontal"]
+size = Vector2(520, 16)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_vertical"]
+size = Vector2(16, 260)
+
+[node name="Mechanic_RecoilMoveTest" type="Node2D"]
+script = ExtResource("1")
+
+[node name="Floor" type="StaticBody2D" parent="."]
+position = Vector2(0, 138)
+collision_layer = 2
+collision_mask = 0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Floor"]
+shape = SubResource("RectangleShape2D_horizontal")
+
+[node name="Visual" type="ColorRect" parent="Floor"]
+offset_left = -260.0
+offset_top = -8.0
+offset_right = 260.0
+offset_bottom = 8.0
+color = Color(0.4, 0.35, 0.3, 1)
+
+[node name="Ceiling" type="StaticBody2D" parent="."]
+position = Vector2(0, -138)
+collision_layer = 2
+collision_mask = 0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Ceiling"]
+shape = SubResource("RectangleShape2D_horizontal")
+
+[node name="Visual" type="ColorRect" parent="Ceiling"]
+offset_left = -260.0
+offset_top = -8.0
+offset_right = 260.0
+offset_bottom = 8.0
+color = Color(0.35, 0.35, 0.4, 1)
+
+[node name="Wall_Left" type="StaticBody2D" parent="."]
+position = Vector2(-260, 0)
+collision_layer = 2
+collision_mask = 0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Wall_Left"]
+shape = SubResource("RectangleShape2D_vertical")
+
+[node name="Visual" type="ColorRect" parent="Wall_Left"]
+offset_left = -8.0
+offset_top = -130.0
+offset_right = 8.0
+offset_bottom = 130.0
+color = Color(0.4, 0.3, 0.3, 1)
+
+[node name="Wall_Right" type="StaticBody2D" parent="."]
+position = Vector2(260, 0)
+collision_layer = 2
+collision_mask = 0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Wall_Right"]
+shape = SubResource("RectangleShape2D_vertical")
+
+[node name="Visual" type="ColorRect" parent="Wall_Right"]
+offset_left = -8.0
+offset_top = -130.0
+offset_right = 8.0
+offset_bottom = 130.0
+color = Color(0.4, 0.3, 0.3, 1)
+
+[node name="Player" parent="." instance=ExtResource("2")]
+position = Vector2(0, 0)
+
+[node name="Visual" type="Node2D" parent="Player"]
+
+[node name="Sprite2D" type="Sprite2D" parent="Player/Visual"]
+texture = ExtResource("3")
+region_enabled = true
+region_rect = Rect2(0, 0, 16, 32)
+
+[node name="Mechanics" type="Node2D" parent="Player"]
+
+[node name="Mechanic_RecoilMove" parent="Player/Mechanics" instance=ExtResource("4")]
+recoil_strength = 350.0
+air_charges = 3
+refill_on_land = true
+cooldown = 0.3
+
+[node name="Juice" type="Node2D" parent="Player"]
+
+[node name="Camera2D" type="Camera2D" parent="."]
+position = Vector2(0, 0)
+zoom = Vector2(0.55, 0.55)
+current = true

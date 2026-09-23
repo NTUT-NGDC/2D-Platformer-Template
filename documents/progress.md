@@ -93,7 +93,7 @@
 - [x] U39 蓄力青蛙跳 `Mechanic_ChargeJump`（用 `InputRouter.bind()` 優先權攔截 `jump`，驗證：攔截
       期間 Player 自己的低優先跳躍不會誤觸發）
 - [x] U40 只能用滑鼠控制 `Mechanic_Slingshot`
-- [ ] U41 只用後座力移動 `Mechanic_RecoilMove`
+- [x] U41 只用後座力移動 `Mechanic_RecoilMove`
 
 ## 階段 9：機制卡 — 規則卡
 

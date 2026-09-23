@@ -34,10 +34,13 @@ var _damage_scale: float = 1.0
 var _base_collision_size: Vector2 = Vector2.ZERO
 var _cached_jump_scale: float = 1.0
 var _cached_input_locked: bool = false
+var _impulse_grace_left: float = 0.0
 
 # 自己的跳躍用最低優先權掛在 InputRouter，讓蓄力青蛙跳這類卡可以用更高優先權攔截跳躍鍵，
 # 攔截成功時這裡的跳躍完全不會被呼叫（見 InputRouter 的優先權機制）
 const _JUMP_PRIORITY := -1000
+# add_impulse() 之後這段時間內不套用地面摩擦力，讓衝量至少有機會真正發揮效果
+const _IMPULSE_GRACE_DURATION := 0.15
 
 # 啟動時找視覺節點，記住碰撞形狀原始尺寸，註冊自己的跳躍，並掃描 Mechanics／Juice／Abilities
 # 底下現有的組件逐一註冊
@@ -124,6 +127,9 @@ func _physics_process(delta: float) -> void:
 
 # 依輸入或機制卡指定的方向計算水平速度
 func _apply_horizontal(ctx: MoveContext, delta: float) -> void:
+	if _impulse_grace_left > 0.0:
+		_impulse_grace_left -= delta
+
 	var input_dir := 0.0
 	if ctx.auto_run_dir != 0:
 		input_dir = float(ctx.auto_run_dir)
@@ -136,10 +142,11 @@ func _apply_horizontal(ctx: MoveContext, delta: float) -> void:
 		if not _was_moving:
 			_was_moving = true
 			started_moving.emit()
-	elif not ctx.input_locked or is_on_floor():
-		# input_locked 時，只有站在地面上才套用摩擦力（落地會自然停下）；
-		# 在空中的話完全不碰水平速度，讓 add_impulse() 加上去的衝量像自由飛行一樣純粹累加，
-		# 不會被「放開方向鍵」的摩擦力邏輯誤傷（只能用滑鼠控制、只用後座力移動這類卡會用到）
+	elif (not ctx.input_locked or is_on_floor()) and _impulse_grace_left <= 0.0:
+		# input_locked 時，只有站在地面上才套用摩擦力（落地會自然停下）；在空中的話完全不碰
+		# 水平速度，讓 add_impulse() 加上去的衝量像自由飛行一樣純粹累加。另外剛加完衝量的
+		# 短時間內（_impulse_grace_left）也不套用摩擦力，不然衝量加上去同一幀就被咬一口，
+		# 之後每幀繼續咬，很快就被吃光，感覺不出效果（風扇、彈性宇宙、彈弓、後座力移動都會用到）
 		var decel: float = move_speed * lerpf(2.0, 20.0, ground_friction) * ctx.friction_scale * delta
 		velocity.x = move_toward(velocity.x, 0.0, decel)
 		if _was_moving and is_zero_approx(velocity.x):
@@ -178,6 +185,7 @@ func flip_gravity() -> void:
 # 施加一次性衝量，擊退、彈跳這類卡用這個
 func add_impulse(v: Vector2) -> void:
 	velocity += v
+	_impulse_grace_left = _IMPULSE_GRACE_DURATION
 
 # 縮放角色大小，變大變小卡用這個。不縮放整個物理節點（CharacterBody2D 的 scale
 # 對碰撞判定不可靠），只縮放視覺節點，碰撞形狀直接改尺寸
