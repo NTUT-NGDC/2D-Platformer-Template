@@ -114,7 +114,7 @@
 
 ## 階段 10：備品庫（可延後，非正式卡池）
 
-- [ ] U50 `Extra_DoubleJump`
+- [x] U50 `Extra_DoubleJump`
 - [ ] U51 `Extra_Dash`
 - [ ] U52 `Extra_WallJump`
 - [ ] U53 `Extra_StickyFloor`
