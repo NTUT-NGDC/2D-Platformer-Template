@@ -39,7 +39,7 @@
       `Button.turned_on` 連到 `Door.activate`，踩按鈕門會開）
 - [x] U11 連線驗證器：函式不存在／參數數量不對／目標節點已刪除／連到危險內建函式，四種情況各測一次
       （驗證：故意接錯，看輸出面板中文警告）
-- [ ] U12 `Checkpoint.tscn`（`01c` §2.1，驗證：踩到時 emit `reached`，`Events.checkpoint_reached`
+- [x] U12 `Checkpoint.tscn`（`01c` §2.1，驗證：踩到時 emit `reached`，`Events.checkpoint_reached`
       正確轉發）
 
 ## 階段 4：死亡與重生

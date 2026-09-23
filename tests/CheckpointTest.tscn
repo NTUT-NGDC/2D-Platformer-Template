@@ -30,5 +30,9 @@ region_rect = Rect2(0, 0, 16, 32)
 [node name="Camera2D" type="Camera2D" parent="."]
 position = Vector2(0, 57)
 
-[node name="Checkpoint" parent="." instance=ExtResource("5")]
+[node name="Checkpoint_Once" parent="." instance=ExtResource("5")]
 position = Vector2(60, 95)
+
+[node name="Checkpoint_Repeatable" parent="." instance=ExtResource("5")]
+position = Vector2(120, 95)
+repeatable = true
