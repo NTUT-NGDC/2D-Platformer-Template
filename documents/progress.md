@@ -50,7 +50,7 @@
 
 ## 階段 5：其餘觸發／接收零件
 
-- [ ] U14 `KeyTrigger.tscn`（驗證：`key_source` 切換預設動作／自訂按鍵，`_validate_property` 正確
+- [x] U14 `KeyTrigger.tscn`（驗證：`key_source` 切換預設動作／自訂按鍵，`_validate_property` 正確
       顯示對應欄位）
 - [ ] U15 `Portal.tscn`（驗證：A→B 傳送、B 自動連回 A、0.3 秒內不重複觸發）
 - [ ] U16 `Goal.tscn`（驗證：踩到 emit `Events.level_cleared`）

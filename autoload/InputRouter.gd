@@ -47,6 +47,11 @@ func bind_student_key(owner: Node, key: Key, phase: int, callback: Callable) -> 
 	var action := _ensure_key_action(key)
 	_add_binding(owner, action, phase, callback, STUDENT_PRIORITY, key, true)
 
+# 學員自己擺的按鍵觸發器選「預設動作」時用這個：一定收得到輸入，但不會擋住任何其他綁定
+@warning_ignore("shadowed_variable_base_class")
+func bind_student(owner: Node, action: StringName, phase: int, callback: Callable) -> void:
+	_add_binding(owner, action, phase, callback, STUDENT_PRIORITY, -1, true)
+
 # 幫某個實體按鍵建立（或沿用）一個只在記憶體裡存在的臨時動作
 func _ensure_key_action(key: Key) -> StringName:
 	var action := StringName("_input_router_key_%d" % key)
