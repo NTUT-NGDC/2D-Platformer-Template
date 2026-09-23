@@ -116,7 +116,7 @@
 
 - [x] U50 `Extra_DoubleJump`
 - [x] U51 `Extra_Dash`
-- [ ] U52 `Extra_WallJump`
+- [x] U52 `Extra_WallJump`
 - [ ] U53 `Extra_StickyFloor`
 - [ ] U54 `Extra_Magnet`
 - [ ] U55 `Extra_TimeSlow`
