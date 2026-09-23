@@ -1,44 +1,45 @@
-[gd_scene load_steps=7 format=3]
+[gd_scene format=4 uid="uid://cg1m58y4i00hm"]
 
-[ext_resource type="Script" path="res://tests/DoorTest.gd" id="1"]
+[ext_resource type="Script" uid="uid://b6tcljtasgulh" path="res://tests/DoorTest.gd" id="1"]
 [ext_resource type="PackedScene" path="res://player/Player.tscn" id="2"]
 [ext_resource type="TileSet" uid="uid://6xyxoqkb30in" path="res://art/default_tile.tres" id="3"]
-[ext_resource type="Texture2D" path="res://art/white_block.png" id="4"]
+[ext_resource type="Texture2D" uid="uid://cm8ymciwkvttp" path="res://art/white_block.png" id="4"]
 [ext_resource type="PackedScene" path="res://blocks/Button.tscn" id="5"]
 [ext_resource type="PackedScene" path="res://blocks/Door.tscn" id="6"]
 
-[node name="DoorTest" type="Node2D"]
+[node name="DoorTest" type="Node2D" unique_id=192347379]
 script = ExtResource("1")
 
-[node name="TileMapLayer" type="TileMapLayer" parent="."]
+[node name="TileMapLayer" type="TileMapLayer" parent="." unique_id=9120293]
+tile_map_data = PackedByteArray("AADx/wsAAAADAAEAAADy/wsAAAADAAEAAADz/wsAAAADAAEAAAD0/wsAAAADAAEAAAD1/wsAAAADAAEAAAD2/wsAAAADAAEAAAD3/wsAAAADAAEAAAD4/wsAAAADAAEAAAD5/wsAAAADAAEAAAD6/wsAAAADAAEAAAD7/wsAAAADAAEAAAD8/wsAAAADAAEAAAD9/wsAAAADAAEAAAD+/wsAAAADAAEAAAD//wsAAAADAAEAAAAAAAsAAAADAAEAAAABAAsAAAADAAEAAAACAAsAAAADAAEAAAADAAsAAAADAAEAAAAEAAsAAAADAAEAAAAFAAsAAAADAAEAAAAGAAsAAAADAAEAAAAHAAsAAAADAAEAAAAIAAsAAAADAAEAAAAJAAsAAAADAAEAAAAKAAsAAAADAAEAAAALAAsAAAADAAEAAAAMAAsAAAADAAEAAAANAAsAAAADAAEAAAAOAAsAAAADAAEAAADx/wcAAAADAAEAAADy/wcAAAADAAEAAADz/wcAAAADAAEAAAD0/wcAAAADAAEAAAD1/wcAAAADAAEAAAD2/wcAAAADAAEAAAD3/wcAAAADAAEAAAD4/wcAAAADAAEAAAD5/wcAAAADAAEAAAD6/wcAAAADAAEAAAD7/wcAAAADAAEAAAD8/wcAAAADAAEAAAD9/wcAAAADAAEAAAD+/wcAAAADAAEAAAD//wcAAAADAAEAAAAAAAcAAAADAAEAAAABAAcAAAADAAEAAAACAAcAAAADAAEAAAADAAcAAAADAAEAAAAEAAcAAAADAAEAAAAFAAcAAAADAAEAAAAGAAcAAAADAAEAAAAHAAcAAAADAAEAAAAIAAcAAAADAAEAAAAJAAcAAAADAAEAAAAKAAcAAAADAAEAAAALAAcAAAADAAEAAAA=")
 tile_set = ExtResource("3")
-tile_map_data = PackedByteArray("AADx/wsAAAADAAEAAADy/wsAAAADAAEAAADz/wsAAAADAAEAAAD0/wsAAAADAAEAAAD1/wsAAAADAAEAAAD2/wsAAAADAAEAAAD3/wsAAAADAAEAAAD4/wsAAAADAAEAAAD5/wsAAAADAAEAAAD6/wsAAAADAAEAAAD7/wsAAAADAAEAAAD8/wsAAAADAAEAAAD9/wsAAAADAAEAAAD+/wsAAAADAAEAAAD//wsAAAADAAEAAAAAAAsAAAADAAEAAAABAAsAAAADAAEAAAACAAsAAAADAAEAAAADAAsAAAADAAEAAAAEAAsAAAADAAEAAAAFAAsAAAADAAEAAAAGAAsAAAADAAEAAAAHAAsAAAADAAEAAAAIAAsAAAADAAEAAAAJAAsAAAADAAEAAAAKAAsAAAADAAEAAAALAAsAAAADAAEAAAAMAAsAAAADAAEAAAANAAsAAAADAAEAAAAOAAsAAAADAAEAAAA=")
 
-[node name="Player" parent="." instance=ExtResource("2")]
+[node name="Player" parent="." unique_id=969086242 instance=ExtResource("2")]
 position = Vector2(-150, 95)
 
-[node name="Visual" type="Node2D" parent="Player"]
+[node name="Visual" type="Node2D" parent="Player" unique_id=1187959849]
 
-[node name="Sprite2D" type="Sprite2D" parent="Player/Visual"]
+[node name="Sprite2D" type="Sprite2D" parent="Player/Visual" unique_id=354998587]
 texture = ExtResource("4")
 region_enabled = true
 region_rect = Rect2(0, 0, 16, 32)
 
-[node name="Mechanics" type="Node2D" parent="Player"]
+[node name="Mechanics" type="Node2D" parent="Player" unique_id=1041603254]
 
-[node name="Juice" type="Node2D" parent="Player"]
+[node name="Juice" type="Node2D" parent="Player" unique_id=370848299]
 
-[node name="Camera2D" type="Camera2D" parent="."]
+[node name="Camera2D" type="Camera2D" parent="." unique_id=529639363]
 position = Vector2(-55, 57)
-current = true
 
-[node name="Button_Hold" parent="." instance=ExtResource("5")]
+[node name="Button_Hold" parent="." unique_id=1032718779 instance=ExtResource("5")]
 position = Vector2(-100, 110)
 
-[node name="Door_Signal" parent="." instance=ExtResource("6")]
+[node name="Door_Signal" parent="." unique_id=1273532820 instance=ExtResource("6")]
 position = Vector2(-60, 95)
 
-[node name="Door_Key" parent="." instance=ExtResource("6")]
+[node name="Door_Key" parent="." unique_id=595001477 instance=ExtResource("6")]
 position = Vector2(20, 95)
 open_mode = 1
-required_amount = 1
+
+[connection signal="turned_off" from="Button_Hold" to="Door_Signal" method="deactivate"]
+[connection signal="turned_on" from="Button_Hold" to="Door_Signal" method="activate"]
