@@ -1,3 +1,4 @@
+@tool
 extends Node2D
 
 # 崩塌地板：實心，踩上去後先抖動提示，過 break_delay 秒後碎裂消失；依 respawn_time
@@ -17,6 +18,7 @@ signal crumbled
 
 const _WHO_PLAYER_ONLY := 0
 const _SHAKE_AMOUNT := 2.0
+const _SIGNAL_LINE_COLOR := Color(1.0, 0.85, 0.2, 0.85)
 
 @onready var _shape: CollisionShape2D = $Body/CollisionShape2D
 @onready var _visual: ColorRect = $Visual
@@ -29,6 +31,8 @@ var _shake_time_left: float = 0.0
 
 # 設定碰撞層／遮罩，記住外觀原始位置
 func _ready() -> void:
+	if Engine.is_editor_hint():
+		return
 	add_to_group("signal_source")
 	_visual_origin = _visual.position
 	_detector.collision_layer = 0
@@ -49,8 +53,12 @@ func _on_detector_entered(body: Node) -> void:
 	_shake_time_left = break_delay
 	get_tree().create_timer(break_delay).timeout.connect(_break)
 
-# 倒數期間讓外觀小幅度隨機抖動，給玩家看得到的碎裂提示
+# 倒數期間讓外觀小幅度隨機抖動，給玩家看得到的碎裂提示；編輯畫面則持續請求重畫，
+# 讓訊號連接的虛線跟著變化即時更新
 func _process(delta: float) -> void:
+	if Engine.is_editor_hint():
+		queue_redraw()
+		return
 	if _shake_time_left <= 0.0:
 		return
 	_shake_time_left -= delta
@@ -80,3 +88,18 @@ func _respawn() -> void:
 	_shape.disabled = false
 	_visual.visible = true
 	_visual.position = _visual_origin
+
+# 編輯畫面用：幫這個零件自己發出的每個訊號的每條連接畫一條虛線到目標節點
+func _draw() -> void:
+	if not Engine.is_editor_hint():
+		return
+	_draw_signal_lines(crumbled)
+
+# 畫某個訊號目前所有連接的虛線
+func _draw_signal_lines(sig: Signal) -> void:
+	for conn in sig.get_connections():
+		var callable: Callable = conn["callable"]
+		var target: Object = callable.get_object()
+		if target is Node2D:
+			var target_node: Node2D = target
+			draw_dashed_line(Vector2.ZERO, to_local(target_node.global_position), _SIGNAL_LINE_COLOR, 2.0, 6.0)

@@ -1,3 +1,4 @@
+@tool
 extends Area2D
 
 # 按鈕：踩到（或被攻擊）時發出 turned_on / turned_off，行為依「觸發方式」決定。
@@ -23,6 +24,8 @@ const _MODE_HIT := 3
 const _WHO_PLAYER_ONLY := 1
 const _WHO_BOX_ONLY := 2
 
+const _SIGNAL_LINE_COLOR := Color(1.0, 0.85, 0.2, 0.85)
+
 @onready var _visual: ColorRect = $Visual
 
 var _overlapping: Array[Node] = []
@@ -33,6 +36,8 @@ var _permanently_triggered: bool = false
 # 永久開模式被踩過一次之後，重生記憶會記住，死亡重生後要重新發出 turned_on，
 # 讓連接的目標（例如門）也一起恢復狀態。
 func _ready() -> void:
+	if Engine.is_editor_hint():
+		return
 	add_to_group("signal_source")
 	collision_layer = 1 << 4          # 圖層 5「感應」
 	collision_mask = (1 << 0) | (1 << 2)  # 圖層 1「玩家」、圖層 3「箱子」
@@ -104,3 +109,24 @@ func _update_visual() -> void:
 		return
 	var is_lit := _permanently_triggered or _is_on or (mode == _MODE_HOLD and not _overlapping.is_empty())
 	_visual.color = Color(0.3, 0.85, 0.35) if is_lit else Color(0.55, 0.55, 0.55)
+
+# 編輯畫面持續請求重畫，讓虛線跟著訊號連接的變化即時更新
+func _process(_delta: float) -> void:
+	if Engine.is_editor_hint():
+		queue_redraw()
+
+# 編輯畫面用：幫這個零件自己發出的每個訊號的每條連接畫一條虛線到目標節點
+func _draw() -> void:
+	if not Engine.is_editor_hint():
+		return
+	_draw_signal_lines(turned_on)
+	_draw_signal_lines(turned_off)
+
+# 畫某個訊號目前所有連接的虛線
+func _draw_signal_lines(sig: Signal) -> void:
+	for conn in sig.get_connections():
+		var callable: Callable = conn["callable"]
+		var target: Object = callable.get_object()
+		if target is Node2D:
+			var target_node: Node2D = target
+			draw_dashed_line(Vector2.ZERO, to_local(target_node.global_position), _SIGNAL_LINE_COLOR, 2.0, 6.0)

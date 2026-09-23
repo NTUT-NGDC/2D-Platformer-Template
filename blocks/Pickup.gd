@@ -1,3 +1,4 @@
+@tool
 extends Area2D
 
 # 道具：感應，玩家碰到時依 kind 幫對應的數值種類加值。血包直接加血量，Stats 本身就會
@@ -13,12 +14,15 @@ extends Area2D
 signal collected
 
 const _KIND_HEALTH := 2
+const _SIGNAL_LINE_COLOR := Color(1.0, 0.85, 0.2, 0.85)
 
 var _collected: bool = false
 var _stats_kind: String = ""
 
 # 依 kind 算出對應的 Stats 種類名稱，設定碰撞層／遮罩，只偵測玩家
 func _ready() -> void:
+	if Engine.is_editor_hint():
+		return
 	add_to_group("signal_source")
 	_stats_kind = _resolve_stats_kind()
 	collision_layer = 1 << 4  # 圖層 5「感應」
@@ -40,3 +44,23 @@ func _on_body_entered(body: Node) -> void:
 	Stats.add(_stats_kind, amount)
 	collected.emit()
 	queue_free()
+
+# 編輯畫面持續請求重畫，讓虛線跟著訊號連接的變化即時更新
+func _process(_delta: float) -> void:
+	if Engine.is_editor_hint():
+		queue_redraw()
+
+# 編輯畫面用：幫這個零件自己發出的每個訊號的每條連接畫一條虛線到目標節點
+func _draw() -> void:
+	if not Engine.is_editor_hint():
+		return
+	_draw_signal_lines(collected)
+
+# 畫某個訊號目前所有連接的虛線
+func _draw_signal_lines(sig: Signal) -> void:
+	for conn in sig.get_connections():
+		var callable: Callable = conn["callable"]
+		var target: Object = callable.get_object()
+		if target is Node2D:
+			var target_node: Node2D = target
+			draw_dashed_line(Vector2.ZERO, to_local(target_node.global_position), _SIGNAL_LINE_COLOR, 2.0, 6.0)

@@ -1,3 +1,4 @@
+@tool
 extends Node2D
 
 # 彈射台：實心，碰到會把玩家（或箱子）往指定方向彈出去。彈簧是固定彈出速度；
@@ -19,12 +20,15 @@ signal launched(body: Node)
 const _MODE_SPRING := 0
 const _DIRECTIONS := [Vector2.UP, Vector2.LEFT, Vector2.RIGHT]
 const _MIN_BOUNCE_RATIO := 0.5
+const _SIGNAL_LINE_COLOR := Color(1.0, 0.85, 0.2, 0.85)
 
 @onready var _shape: CollisionShape2D = $Body/CollisionShape2D
 @onready var _detector: Area2D = $Detector
 
 # 設定碰撞層／遮罩，只偵測玩家跟箱子
 func _ready() -> void:
+	if Engine.is_editor_hint():
+		return
 	add_to_group("signal_source")
 	_detector.collision_layer = 0
 	_detector.collision_mask = (1 << 0) | (1 << 2)  # 圖層 1「玩家」、圖層 3「箱子」
@@ -43,3 +47,23 @@ func _on_detector_entered(body: Node) -> void:
 	var current_along: float = current.dot(dir)
 	body.add_impulse(dir * (launch_speed - current_along))
 	launched.emit(body)
+
+# 編輯畫面持續請求重畫，讓虛線跟著訊號連接的變化即時更新
+func _process(_delta: float) -> void:
+	if Engine.is_editor_hint():
+		queue_redraw()
+
+# 編輯畫面用：幫這個零件自己發出的每個訊號的每條連接畫一條虛線到目標節點
+func _draw() -> void:
+	if not Engine.is_editor_hint():
+		return
+	_draw_signal_lines(launched)
+
+# 畫某個訊號目前所有連接的虛線
+func _draw_signal_lines(sig: Signal) -> void:
+	for conn in sig.get_connections():
+		var callable: Callable = conn["callable"]
+		var target: Object = callable.get_object()
+		if target is Node2D:
+			var target_node: Node2D = target
+			draw_dashed_line(Vector2.ZERO, to_local(target_node.global_position), _SIGNAL_LINE_COLOR, 2.0, 6.0)
