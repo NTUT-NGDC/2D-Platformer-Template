@@ -101,7 +101,8 @@
       　　→ 新增 `MoveContext.movement_frozen` 通用欄位，讓規則卡能蓋過主限制卡對方向／重力的提案
 - [x] U43 移動會扣血 `Mechanic_Stamina`
       　　→ 搭配「只能往前」時自動切換成跳躍扣體力模式 + 持續被動回復，避免卡死在懲罰狀態
-- [ ] U44 碰觸即死 `Mechanic_TouchDeath`
+- [x] U44 碰觸即死 `Mechanic_TouchDeath`
+      　　→ 敵人／箱子不在玩家碰撞遮罩內，改用貼著玩家的 Area2D 偵測；牆用碰撞法線方向判斷
 - [ ] U45 存活計時 `Mechanic_SurvivalTimer`
 - [ ] U46 停下即死 `Mechanic_StopDeath`（跟 U39 蓄力青蛙跳同時掛上時，蓄力中應暫停計時）
 - [ ] U47 血量流失 `Mechanic_HealthDrain`（驗證：讀寫 `Stats` 血量，沒有自己的「總血量」欄位）
