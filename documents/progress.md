@@ -109,7 +109,8 @@
       　　→ 補血改訂閱 `Stats.value_changed`（金幣），因為 `Events.item_collected` 目前沒有任何地方會發出
 - [x] U48 地板是岩漿 `Mechanic_FloorIsLava`
       　　→ 偵測岩漿時額外檢查父節點（Lava.gd 把 lava group 加在根節點，玩家碰到的是子節點 Body）
-- [ ] U49 開關世界 `Mechanic_SwitchWorld`（依賴 U23 `SwitchBlock`）
+- [x] U49 開關世界 `Mechanic_SwitchWorld`（依賴 U23 `SwitchBlock`）
+      　　→ 閃爍效果只用 CanvasItem 公開的 modulate，未動 SwitchBlock.gd；該卡目前是全隱藏不是降到 0.3 透明度
 
 ## 階段 10：備品庫（可延後，非正式卡池）
 
