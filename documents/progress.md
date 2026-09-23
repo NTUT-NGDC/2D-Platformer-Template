@@ -76,7 +76,7 @@
 
 - [x] U29 Player 節點結構新增 `Abilities` 容器（零連線發現機制註冊，驗證：印出「已啟用」訊息）
 - [x] U30 `Ability_Melee.tscn`（驗證：`key` 欄位可自訂，攻擊判定命中 `Hittable` 物件）
-- [ ] U31 `Ability_Ranged.tscn`（驗證：`key` 欄位可自訂，子彈飛行、命中消失）
+- [x] U31 `Ability_Ranged.tscn`（驗證：`key` 欄位可自訂，子彈飛行、命中消失）
 
 ## 階段 8：機制卡 — 主限制卡
 
