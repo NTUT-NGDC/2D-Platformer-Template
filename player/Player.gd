@@ -32,12 +32,20 @@ var _was_on_wall: bool = false
 var _is_dead: bool = false
 var _damage_scale: float = 1.0
 var _base_collision_size: Vector2 = Vector2.ZERO
+var _cached_jump_scale: float = 1.0
+var _cached_input_locked: bool = false
 
-# 啟動時找視覺節點，記住碰撞形狀原始尺寸，並掃描 Mechanics／Juice／Abilities 底下現有的組件逐一註冊
+# 自己的跳躍用最低優先權掛在 InputRouter，讓蓄力青蛙跳這類卡可以用更高優先權攔截跳躍鍵，
+# 攔截成功時這裡的跳躍完全不會被呼叫（見 InputRouter 的優先權機制）
+const _JUMP_PRIORITY := -1000
+
+# 啟動時找視覺節點，記住碰撞形狀原始尺寸，註冊自己的跳躍，並掃描 Mechanics／Juice／Abilities
+# 底下現有的組件逐一註冊
 func _ready() -> void:
 	add_to_group("player")
 	_find_visual()
 	_remember_base_collision_size()
+	InputRouter.bind(self, "jump", InputRouter.PRESSED, _on_jump_pressed, _JUMP_PRIORITY)
 	if has_node("Mechanics"):
 		_register_children($Mechanics, true)
 	if has_node("Juice"):
@@ -45,6 +53,13 @@ func _ready() -> void:
 	if has_node("Abilities"):
 		_register_children($Abilities, false)
 	RespawnMemory.apply_position(self)
+
+# 預設跳躍：地面上按下跳躍鍵就跳，除非被更高優先權的機制卡攔截掉（例如蓄力青蛙跳）
+func _on_jump_pressed() -> bool:
+	if _is_dead or _cached_input_locked or not is_on_floor():
+		return false
+	force_jump(_cached_jump_scale)
+	return true
 
 # 記住 CollisionShape2D 原始尺寸，之後 set_size_factor() 要拿來算縮放後的尺寸；
 # 順手把 shape 資源複製一份自己用，避免改到場景檔裡其他地方共用的同一份資源
@@ -93,15 +108,14 @@ func _physics_process(delta: float) -> void:
 		if is_instance_valid(m) and m.enabled:
 			m.apply(ctx)
 	_damage_scale = ctx.damage_scale
+	_cached_jump_scale = ctx.jump_scale
+	_cached_input_locked = ctx.input_locked
 
 	var pre_on_floor := is_on_floor()
 	var pre_fall_speed: float = velocity.dot(-up_direction)
 
 	_apply_horizontal(ctx, delta)
 	_apply_vertical(ctx, delta)
-
-	if pre_on_floor and not ctx.input_locked and Input.is_action_just_pressed("jump"):
-		force_jump(ctx.jump_scale)
 
 	move_and_slide()
 
