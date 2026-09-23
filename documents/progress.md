@@ -52,7 +52,7 @@
 
 - [x] U14 `KeyTrigger.tscn`（驗證：`key_source` 切換預設動作／自訂按鍵，`_validate_property` 正確
       顯示對應欄位）
-- [ ] U15 `Portal.tscn`（驗證：A→B 傳送、B 自動連回 A、0.3 秒內不重複觸發）
+- [x] U15 `Portal.tscn`（驗證：A→B 傳送、B 自動連回 A、0.3 秒內不重複觸發）
 - [ ] U16 `Goal.tscn`（驗證：踩到 emit `Events.level_cleared`）
 - [ ] U17 `MovingPlatform.tscn`（驗證：`activate`/`deactivate`/`toggle` 正確控制移動）
 - [ ] U18 `Fan.tscn`（驗證：`activate`/`deactivate`/`toggle` 正確控制風力）
