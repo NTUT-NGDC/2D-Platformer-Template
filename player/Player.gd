@@ -136,7 +136,10 @@ func _apply_horizontal(ctx: MoveContext, delta: float) -> void:
 		if not _was_moving:
 			_was_moving = true
 			started_moving.emit()
-	else:
+	elif not ctx.input_locked or is_on_floor():
+		# input_locked 時，只有站在地面上才套用摩擦力（落地會自然停下）；
+		# 在空中的話完全不碰水平速度，讓 add_impulse() 加上去的衝量像自由飛行一樣純粹累加，
+		# 不會被「放開方向鍵」的摩擦力邏輯誤傷（只能用滑鼠控制、只用後座力移動這類卡會用到）
 		var decel: float = move_speed * lerpf(2.0, 20.0, ground_friction) * ctx.friction_scale * delta
 		velocity.x = move_toward(velocity.x, 0.0, decel)
 		if _was_moving and is_zero_approx(velocity.x):

@@ -1,0 +1,13 @@
+extends Node2D
+
+# 手動驗證用：Mechanic_Slingshot 鍵盤完全鎖住，只能用滑鼠拖曳、放開往反方向射出去。
+
+func _ready() -> void:
+	Events.mechanic_event.connect(_on_mechanic_event)
+	print("[測試] 先試試看方向鍵、空白鍵：角色應該完全沒反應，鍵盤被鎖住了")
+	print("[測試] 按住滑鼠左鍵在角色旁邊拖曳，應該看到一條瞄準線；往某個方向拖越遠，線越長")
+	print("[測試] 放開滑鼠左鍵：角色應該往拖曳的反方向射出去，拖得越遠射得越用力")
+	print("[測試] ground_only 開著：如果放開後角色還在空中，這時候按住左鍵應該沒辦法開始拖曳瞄準")
+
+func _on_mechanic_event(card: String, event: String) -> void:
+	print("[測試] Events.mechanic_event：%s / %s" % [card, event])
