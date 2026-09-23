@@ -1,0 +1,49 @@
+[gd_scene format=4 uid="uid://5conjysg8tj8"]
+
+[ext_resource type="PackedScene" path="res://player/Player.tscn" id="1"]
+[ext_resource type="TileSet" uid="uid://6xyxoqkb30in" path="res://art/default_tile.tres" id="2"]
+[ext_resource type="Script" uid="uid://ddmv38ww06tgv" path="res://levels/_shared/CameraRig.gd" id="3"]
+[ext_resource type="Script" uid="uid://c4810j2rrbvpo" path="res://levels/_shared/Respawn.gd" id="4"]
+[ext_resource type="Texture2D" uid="uid://cm8ymciwkvttp" path="res://art/white_block.png" id="5"]
+[ext_resource type="Script" uid="uid://bak4gt8ywjd2q" path="res://_my/my_controls.gd" id="6"]
+[ext_resource type="PackedScene" path="res://blocks/KeyTrigger.tscn" id="7"]
+
+[node name="W1_ToyBox" type="Node2D" unique_id=1601517614]
+
+[node name="TileMapLayer" type="TileMapLayer" parent="." unique_id=246763672]
+tile_map_data = PackedByteArray("AADx/wsAAAADAAEAAADy/wsAAAADAAEAAADz/wsAAAADAAEAAAD0/wsAAAADAAEAAAD1/wsAAAADAAEAAAD2/wsAAAADAAEAAAD3/wsAAAADAAEAAAD4/wsAAAADAAEAAAD5/wsAAAADAAEAAAD6/wsAAAADAAEAAAD7/wsAAAADAAEAAAD8/wsAAAADAAEAAAD9/wsAAAADAAEAAAD+/wsAAAADAAEAAAD//wsAAAADAAEAAAAAAAsAAAADAAEAAAABAAsAAAADAAEAAAACAAsAAAADAAEAAAADAAsAAAADAAEAAAAEAAsAAAADAAEAAAAFAAsAAAADAAEAAAAGAAsAAAADAAEAAAAHAAsAAAADAAEAAAAIAAsAAAADAAEAAAAJAAsAAAADAAEAAAAKAAsAAAADAAEAAAALAAsAAAADAAEAAAAMAAsAAAADAAEAAAANAAsAAAADAAEAAAAOAAsAAAADAAEAAAA=")
+tile_set = ExtResource("2")
+
+[node name="Player" parent="." unique_id=249322644 instance=ExtResource("1")]
+position = Vector2(1, 95)
+
+[node name="Visual" type="Node2D" parent="Player" unique_id=2102791560]
+
+[node name="Sprite2D" type="Sprite2D" parent="Player/Visual" unique_id=126358357]
+texture = ExtResource("5")
+region_enabled = true
+region_rect = Rect2(0, 0, 16, 32)
+
+[node name="Mechanics" type="Node2D" parent="Player" unique_id=805614495]
+
+[node name="Juice" type="Node2D" parent="Player" unique_id=1855616012]
+
+[node name="Camera2D" type="Camera2D" parent="." unique_id=1851771415]
+position = Vector2(0, 57)
+script = ExtResource("3")
+
+[node name="Respawn" type="Node" parent="." unique_id=1284888066]
+script = ExtResource("4")
+
+[node name="MyControls" type="Node" parent="." unique_id=1469493202]
+script = ExtResource("6")
+
+[node name="KeyTrigger_E" parent="MyControls" unique_id=846756457 instance=ExtResource("7")]
+key_source = 1
+
+[node name="KeyTrigger_1" parent="MyControls" unique_id=1243177682 instance=ExtResource("7")]
+key_source = 1
+key = 49
+
+[connection signal="pressed" from="MyControls/KeyTrigger_E" to="MyControls" method="on_e_pressed"]
+[connection signal="pressed" from="MyControls/KeyTrigger_1" to="MyControls" method="on_1_pressed"]

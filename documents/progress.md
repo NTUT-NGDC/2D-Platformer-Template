@@ -132,15 +132,15 @@
 
 ## 階段 12：展示間與玩具箱
 
-- [ ] U58 `Showroom.tscn` 地形區（高牆、天花板走廊、窄縫、深坑、連續台階、開闊空地，驗證：帶一張
-      機制卡走過去看物理反應）
-- [ ] U59 `Showroom.tscn` 零件區 + 2-3 個組合小劇場（驗證：小劇場可玩，虛線正確顯示；整體維持單一
-      螢幕內）
-- [ ] U60 `levels/_starts/W1_ToyBox.tscn` + `MyControls` 節點 + `_my/my_controls.gd` 範例（驗證：
+- [x] U58 `Showroom.tscn` 地形區（高牆、天花板走廊、窄縫、深坑、連續台階、開闊空地，驗證：帶一張機制卡走過去看物理反應）
+      　　→ 高牆改放在出生點左邊當死路岔路，不擋往零件區的主線（原本卡在路中間會擋死）
+- [x] U59 `Showroom.tscn` 零件區 + 2-3 個組合小劇場（驗證：小劇場可玩，虛線正確顯示；整體維持單一螢幕內）
+      　　→ 改用鏡頭跟隨（`CameraRig.gd` 新增 `follow_player`），不是單一定格畫面；零件區跟地形區一樣
+      　　　排成一條橫向路線逛過去，不必再把兩區塞進同一個畫面
+- [x] U60 `levels/_starts/W1_ToyBox.tscn` + `MyControls` 節點 + `_my/my_controls.gd` 範例（驗證：
       另存到 `_my/` 後 `git status` 只有 `_my/` 變更）
 
 ## 階段 13：整體收尾
 
-- [ ] U61 `_tests/SmokeTest.gd` 掃到所有新增的 `mechanics/`／`juice/`（沿用既有掃描邏輯，確認新卡片
-      都能跑滿 60 幀不報錯）
+- [ ] U61 `_tests/SmokeTest.gd` 掃到所有新增的 `mechanics/`／`juice/`（沿用既有掃描邏輯，確認新卡片都能跑滿 60 幀不報錯）
 - [ ] U62 Web export 驗證：整包成功匯出並在瀏覽器可玩

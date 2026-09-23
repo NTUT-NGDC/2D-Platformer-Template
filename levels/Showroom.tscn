@@ -1,0 +1,340 @@
+[gd_scene format=3]
+
+[ext_resource type="PackedScene" path="res://player/Player.tscn" id="1"]
+[ext_resource type="TileSet" uid="uid://6xyxoqkb30in" path="res://art/default_tile.tres" id="2"]
+[ext_resource type="Script" path="res://levels/_shared/CameraRig.gd" id="3"]
+[ext_resource type="Script" path="res://levels/_shared/Respawn.gd" id="4"]
+[ext_resource type="Texture2D" path="res://art/white_block.png" id="5"]
+[ext_resource type="PackedScene" path="res://blocks/Button.tscn" id="7"]
+[ext_resource type="PackedScene" path="res://blocks/KeyTrigger.tscn" id="8"]
+[ext_resource type="PackedScene" path="res://blocks/Portal.tscn" id="9"]
+[ext_resource type="PackedScene" path="res://blocks/Checkpoint.tscn" id="10"]
+[ext_resource type="PackedScene" path="res://blocks/Goal.tscn" id="11"]
+[ext_resource type="PackedScene" path="res://blocks/Door.tscn" id="12"]
+[ext_resource type="PackedScene" path="res://blocks/MovingPlatform.tscn" id="13"]
+[ext_resource type="PackedScene" path="res://blocks/Fan.tscn" id="14"]
+[ext_resource type="PackedScene" path="res://blocks/CrumbleFloor.tscn" id="15"]
+[ext_resource type="PackedScene" path="res://blocks/OneWayPlatform.tscn" id="16"]
+[ext_resource type="PackedScene" path="res://blocks/Lava.tscn" id="17"]
+[ext_resource type="PackedScene" path="res://blocks/Breakable.tscn" id="18"]
+[ext_resource type="PackedScene" path="res://blocks/SwitchBlock.tscn" id="19"]
+[ext_resource type="PackedScene" path="res://blocks/Box.tscn" id="20"]
+[ext_resource type="PackedScene" path="res://blocks/Pickup.tscn" id="21"]
+[ext_resource type="PackedScene" path="res://blocks/Launcher.tscn" id="22"]
+[ext_resource type="PackedScene" path="res://blocks/Spike.tscn" id="23"]
+[ext_resource type="PackedScene" path="res://blocks/Enemy.tscn" id="24"]
+
+[node name="Showroom" type="Node2D"]
+
+[node name="TileMapLayer" type="TileMapLayer" parent="."]
+tile_set = ExtResource("2")
+tile_map_data = PackedByteArray("AAD2/woAAAADAAEAAAD3/woAAAADAAEAAAD4/woAAAADAAEAAAD5/woAAAADAAEAAAD6/woAAAADAAEAAAD7/woAAAADAAEAAAD8/woAAAADAAEAAAD9/woAAAADAAEAAAD+/woAAAADAAEAAAD//woAAAADAAEAAAD1/wEAAAADAAEAAAD1/wIAAAADAAEAAAD1/wMAAAADAAEAAAD1/wQAAAADAAEAAAD1/wUAAAADAAEAAAD1/wYAAAADAAEAAAD1/wcAAAADAAEAAAD1/wgAAAADAAEAAAD1/wkAAAADAAEAAAD1/woAAAADAAEAAAAAAAoAAAADAAEAAAABAAoAAAADAAEAAAACAAoAAAADAAEAAAADAAoAAAADAAEAAAAEAAoAAAADAAEAAAAFAAoAAAADAAEAAAAGAAoAAAADAAEAAAAHAAoAAAADAAEAAAAIAAoAAAADAAEAAAAJAAoAAAADAAEAAAAKAAkAAAADAAEAAAAKAAoAAAADAAEAAAALAAkAAAADAAEAAAALAAoAAAADAAEAAAAMAAgAAAADAAEAAAAMAAkAAAADAAEAAAAMAAoAAAADAAEAAAANAAgAAAADAAEAAAANAAkAAAADAAEAAAANAAoAAAADAAEAAAAOAAcAAAADAAEAAAAOAAgAAAADAAEAAAAOAAkAAAADAAEAAAAOAAoAAAADAAEAAAAPAAcAAAADAAEAAAAPAAgAAAADAAEAAAAPAAkAAAADAAEAAAAPAAoAAAADAAEAAAAQAAYAAAADAAEAAAAQAAcAAAADAAEAAAAQAAgAAAADAAEAAAAQAAkAAAADAAEAAAAQAAoAAAADAAEAAAARAAYAAAADAAEAAAARAAcAAAADAAEAAAARAAgAAAADAAEAAAARAAkAAAADAAEAAAARAAoAAAADAAEAAAASAAYAAAADAAEAAAASAAcAAAADAAEAAAASAAgAAAADAAEAAAASAAkAAAADAAEAAAASAAoAAAADAAEAAAATAAYAAAADAAEAAAATAAcAAAADAAEAAAATAAgAAAADAAEAAAATAAkAAAADAAEAAAATAAoAAAADAAEAAAAUAAYAAAADAAEAAAAUAAcAAAADAAEAAAAUAAgAAAADAAEAAAAUAAkAAAADAAEAAAAUAAoAAAADAAEAAAAVAAcAAAADAAEAAAAVAAgAAAADAAEAAAAVAAkAAAADAAEAAAAVAAoAAAADAAEAAAAWAAcAAAADAAEAAAAWAAgAAAADAAEAAAAWAAkAAAADAAEAAAAWAAoAAAADAAEAAAAXAAgAAAADAAEAAAAXAAkAAAADAAEAAAAXAAoAAAADAAEAAAAYAAgAAAADAAEAAAAYAAkAAAADAAEAAAAYAAoAAAADAAEAAAAZAAkAAAADAAEAAAAZAAoAAAADAAEAAAAaAAkAAAADAAEAAAAaAAoAAAADAAEAAAAbAAoAAAADAAEAAAAcAAoAAAADAAEAAAAdAAoAAAADAAEAAAAeAAoAAAADAAEAAAAfAAoAAAADAAEAAAAgAAoAAAADAAEAAAAhAAoAAAADAAEAAAAiAAoAAAADAAEAAAAjAAoAAAADAAEAAAAkAAoAAAADAAEAAAAlAAoAAAADAAEAAAAmAAoAAAADAAEAAAAnAAoAAAADAAEAAAAoAAoAAAADAAEAAAApAAoAAAADAAEAAAAqAAoAAAADAAEAAAArAAoAAAADAAEAAAAsAAoAAAADAAEAAAAtAAoAAAADAAEAAAAuAAoAAAADAAEAAAAvAAoAAAADAAEAAAAwAAoAAAADAAEAAAAeAAYAAAADAAEAAAAfAAYAAAADAAEAAAAgAAYAAAADAAEAAAAhAAYAAAADAAEAAAAiAAYAAAADAAEAAAAjAAYAAAADAAEAAAAkAAYAAAADAAEAAAAlAAYAAAADAAEAAAAmAAYAAAADAAEAAAAnAAYAAAADAAEAAAAoAAYAAAADAAEAAAApAAYAAAADAAEAAAAtAAgAAAADAAEAAAAuAAgAAAADAAEAAAAxAAoAAAADAAEAAAAxAAsAAAADAAEAAAAxAAwAAAADAAEAAAAxAA0AAAADAAEAAAAxAA4AAAADAAEAAAAxAA8AAAADAAEAAAAxABAAAAADAAEAAAAyABAAAAADAAEAAAAzABAAAAADAAEAAAA0ABAAAAADAAEAAAA1ABAAAAADAAEAAAA2AA8AAAADAAEAAAA2ABAAAAADAAEAAAA3AA4AAAADAAEAAAA3AA8AAAADAAEAAAA3ABAAAAADAAEAAAA4AA0AAAADAAEAAAA4AA4AAAADAAEAAAA4AA8AAAADAAEAAAA4ABAAAAADAAEAAAA5AAwAAAADAAEAAAA5AA0AAAADAAEAAAA5AA4AAAADAAEAAAA5AA8AAAADAAEAAAA5ABAAAAADAAEAAAA6AAsAAAADAAEAAAA6AAwAAAADAAEAAAA6AA0AAAADAAEAAAA6AA4AAAADAAEAAAA6AA8AAAADAAEAAAA6ABAAAAADAAEAAAA7AAoAAAADAAEAAAA7AAsAAAADAAEAAAA7AAwAAAADAAEAAAA7AA0AAAADAAEAAAA7AA4AAAADAAEAAAA7AA8AAAADAAEAAAA7ABAAAAADAAEAAAA8AAoAAAADAAEAAAA9AAoAAAADAAEAAAA+AAoAAAADAAEAAAA/AAoAAAADAAEAAABAAAoAAAADAAEAAABBAAoAAAADAAEAAABCAAoAAAADAAEAAABDAAoAAAADAAEAAABEAAoAAAADAAEAAABFAAoAAAADAAEAAABGAAoAAAADAAEAAABHAAoAAAADAAEAAABIAAoAAAADAAEAAABJAAoAAAADAAEAAABKAAoAAAADAAEAAABLAAoAAAADAAEAAABMAAoAAAADAAEAAABNAAoAAAADAAEAAABOAAoAAAADAAEAAABPAAoAAAADAAEAAABQAAoAAAADAAEAAABRAAoAAAADAAEAAABSAAoAAAADAAEAAABTAAoAAAADAAEAAABUAAoAAAADAAEAAABVAAoAAAADAAEAAABWAAoAAAADAAEAAABXAAoAAAADAAEAAABYAAoAAAADAAEAAABZAAoAAAADAAEAAABaAAoAAAADAAEAAABbAAoAAAADAAEAAABcAAoAAAADAAEAAABdAAoAAAADAAEAAABeAAoAAAADAAEAAABfAAoAAAADAAEAAABgAAoAAAADAAEAAABhAAoAAAADAAEAAABiAAoAAAADAAEAAABjAAoAAAADAAEAAABkAAoAAAADAAEAAABlAAoAAAADAAEAAABmAAoAAAADAAEAAABnAAoAAAADAAEAAABoAAoAAAADAAEAAABpAAoAAAADAAEAAABqAAoAAAADAAEAAABrAAoAAAADAAEAAABsAAoAAAADAAEAAABtAAoAAAADAAEAAABuAAoAAAADAAEAAABvAAoAAAADAAEAAABwAAoAAAADAAEAAABxAAoAAAADAAEAAAByAAoAAAADAAEAAABzAAoAAAADAAEAAAB0AAoAAAADAAEAAAB1AAoAAAADAAEAAAB2AAoAAAADAAEAAAB3AAoAAAADAAEAAAB4AAoAAAADAAEAAAB5AAoAAAADAAEAAAB6AAoAAAADAAEAAAB7AAoAAAADAAEAAAB8AAoAAAADAAEAAAB9AAoAAAADAAEAAAB+AAoAAAADAAEAAAB/AAoAAAADAAEAAACAAAoAAAADAAEAAACBAAoAAAADAAEAAACCAAoAAAADAAEAAACDAAoAAAADAAEAAACEAAoAAAADAAEAAACFAAoAAAADAAEAAACGAAoAAAADAAEAAACHAAoAAAADAAEAAACIAAoAAAADAAEAAACJAAoAAAADAAEAAACKAAoAAAADAAEAAACLAAoAAAADAAEAAACMAAoAAAADAAEAAACNAAoAAAADAAEAAACOAAoAAAADAAEAAACPAAoAAAADAAEAAACQAAoAAAADAAEAAACRAAoAAAADAAEAAACSAAoAAAADAAEAAACTAAoAAAADAAEAAACUAAoAAAADAAEAAACVAAoAAAADAAEAAACWAAoAAAADAAEAAACXAAoAAAADAAEAAACYAAoAAAADAAEAAACZAAoAAAADAAEAAACaAAoAAAADAAEAAACbAAoAAAADAAEAAACcAAoAAAADAAEAAACdAAoAAAADAAEAAACeAAoAAAADAAEAAACfAAoAAAADAAEAAACgAAoAAAADAAEAAAChAAoAAAADAAEAAACiAAoAAAADAAEAAACjAAoAAAADAAEAAACkAAoAAAADAAEAAAClAAoAAAADAAEAAACmAAoAAAADAAEAAACnAAoAAAADAAEAAACoAAoAAAADAAEAAACpAAoAAAADAAEAAACqAAoAAAADAAEAAACrAAoAAAADAAEAAACsAAoAAAADAAEAAACtAAoAAAADAAEAAACuAAoAAAADAAEAAACvAAoAAAADAAEAAACwAAoAAAADAAEAAACxAAoAAAADAAEAAACyAAoAAAADAAEAAACzAAoAAAADAAEAAAC0AAoAAAADAAEAAAC1AAoAAAADAAEAAAC2AAoAAAADAAEAAAC3AAoAAAADAAEAAAC4AAoAAAADAAEAAAC5AAoAAAADAAEAAAC6AAoAAAADAAEAAAC7AAoAAAADAAEAAAC8AAoAAAADAAEAAAC9AAoAAAADAAEAAAC+AAoAAAADAAEAAAC/AAoAAAADAAEAAADAAAoAAAADAAEAAADBAAoAAAADAAEAAADCAAoAAAADAAEAAADDAAoAAAADAAEAAADEAAoAAAADAAEAAADFAAoAAAADAAEAAADGAAoAAAADAAEAAADHAAoAAAADAAEAAADIAAoAAAADAAEAAADJAAoAAAADAAEAAADKAAoAAAADAAEAAADLAAoAAAADAAEAAADMAAoAAAADAAEAAADNAAoAAAADAAEAAADOAAoAAAADAAEAAADPAAoAAAADAAEAAADQAAoAAAADAAEAAADRAAoAAAADAAEAAADSAAoAAAADAAEAAADTAAoAAAADAAEAAADUAAoAAAADAAEAAADVAAoAAAADAAEAAADWAAoAAAADAAEAAADXAAoAAAADAAEAAADYAAoAAAADAAEAAADZAAoAAAADAAEAAADaAAoAAAADAAEAAADbAAoAAAADAAEAAADcAAoAAAADAAEAAADdAAoAAAADAAEAAADeAAoAAAADAAEAAADfAAoAAAADAAEAAADgAAoAAAADAAEAAADhAAoAAAADAAEAAADiAAoAAAADAAEAAADjAAoAAAADAAEAAADkAAoAAAADAAEAAADlAAoAAAADAAEAAAC2AAgAAAADAAEAAAC2AAkAAAADAAEAAAC7AAgAAAADAAEAAAC7AAkAAAADAAEAAAA=")
+
+[node name="Player" parent="." instance=ExtResource("1")]
+position = Vector2(40, 110)
+
+[node name="Visual" type="Node2D" parent="Player"]
+
+[node name="Sprite2D" type="Sprite2D" parent="Player/Visual"]
+texture = ExtResource("5")
+region_enabled = true
+region_rect = Rect2(0, 0, 16, 32)
+
+[node name="Mechanics" type="Node2D" parent="Player"]
+
+[node name="Juice" type="Node2D" parent="Player"]
+
+[node name="Camera2D" type="Camera2D" parent="."]
+position = Vector2(40, 110)
+script = ExtResource("3")
+follow_player = true
+
+[node name="Respawn" type="Node" parent="."]
+script = ExtResource("4")
+
+[node name="Show_Button" parent="." instance=ExtResource("7")]
+position = Vector2(1320, 156)
+
+[node name="Label_Button" type="Label" parent="."]
+offset_left = 1280.0
+offset_top = 120.0
+offset_right = 1360.0
+offset_bottom = 140.0
+theme_override_font_sizes/font_size = 20
+horizontal_alignment = 1
+text = "按鈕"
+
+[node name="Show_KeyTrigger" parent="." instance=ExtResource("8")]
+key_source = 1
+key = 49
+
+[node name="Label_KeyTrigger" type="Label" parent="."]
+offset_left = 1376.0
+offset_top = 120.0
+offset_right = 1456.0
+offset_bottom = 140.0
+theme_override_font_sizes/font_size = 20
+horizontal_alignment = 1
+text = "按鍵觸發器（按1）"
+
+[node name="Show_Portal_A" parent="." instance=ExtResource("9")]
+position = Vector2(1512, 144)
+pair = NodePath("../Show_Portal_B")
+
+[node name="Show_Portal_B" parent="." instance=ExtResource("9")]
+position = Vector2(1552, 144)
+
+[node name="Label_Portal" type="Label" parent="."]
+offset_left = 1472.0
+offset_top = 120.0
+offset_right = 1552.0
+offset_bottom = 140.0
+theme_override_font_sizes/font_size = 20
+horizontal_alignment = 1
+text = "傳送門"
+
+[node name="Show_Checkpoint" parent="." instance=ExtResource("10")]
+position = Vector2(1608, 144)
+
+[node name="Label_Checkpoint" type="Label" parent="."]
+offset_left = 1568.0
+offset_top = 120.0
+offset_right = 1648.0
+offset_bottom = 140.0
+theme_override_font_sizes/font_size = 20
+horizontal_alignment = 1
+text = "重生點"
+
+[node name="Show_Goal" parent="." instance=ExtResource("11")]
+position = Vector2(1704, 144)
+
+[node name="Label_Goal" type="Label" parent="."]
+offset_left = 1664.0
+offset_top = 120.0
+offset_right = 1744.0
+offset_bottom = 140.0
+theme_override_font_sizes/font_size = 20
+horizontal_alignment = 1
+text = "終點"
+
+[node name="Show_Door" parent="." instance=ExtResource("12")]
+position = Vector2(1800, 144)
+
+[node name="Label_Door" type="Label" parent="."]
+offset_left = 1760.0
+offset_top = 120.0
+offset_right = 1840.0
+offset_bottom = 140.0
+theme_override_font_sizes/font_size = 20
+horizontal_alignment = 1
+text = "門"
+
+[node name="Show_MovingPlatform" parent="." instance=ExtResource("13")]
+position = Vector2(1896, 156)
+direction = 1
+distance_tiles = 2
+
+[node name="Label_MovingPlatform" type="Label" parent="."]
+offset_left = 1856.0
+offset_top = 120.0
+offset_right = 1936.0
+offset_bottom = 140.0
+theme_override_font_sizes/font_size = 20
+horizontal_alignment = 1
+text = "移動平台"
+
+[node name="Show_Fan" parent="." instance=ExtResource("14")]
+position = Vector2(1992, 152)
+range_tiles = 2
+
+[node name="Label_Fan" type="Label" parent="."]
+offset_left = 1952.0
+offset_top = 120.0
+offset_right = 2032.0
+offset_bottom = 140.0
+theme_override_font_sizes/font_size = 20
+horizontal_alignment = 1
+text = "風扇"
+
+[node name="Show_CrumbleFloor" parent="." instance=ExtResource("15")]
+position = Vector2(2088, 152)
+
+[node name="Label_CrumbleFloor" type="Label" parent="."]
+offset_left = 2048.0
+offset_top = 120.0
+offset_right = 2128.0
+offset_bottom = 140.0
+theme_override_font_sizes/font_size = 20
+horizontal_alignment = 1
+text = "崩塌地板"
+
+[node name="Show_OneWayPlatform" parent="." instance=ExtResource("16")]
+position = Vector2(2184, 156)
+
+[node name="Label_OneWayPlatform" type="Label" parent="."]
+offset_left = 2144.0
+offset_top = 120.0
+offset_right = 2224.0
+offset_bottom = 140.0
+theme_override_font_sizes/font_size = 20
+horizontal_alignment = 1
+text = "單向平台"
+
+[node name="Show_Lava" parent="." instance=ExtResource("17")]
+position = Vector2(2280, 152)
+
+[node name="Label_Lava" type="Label" parent="."]
+offset_left = 2240.0
+offset_top = 120.0
+offset_right = 2320.0
+offset_bottom = 140.0
+theme_override_font_sizes/font_size = 20
+horizontal_alignment = 1
+text = "岩漿"
+
+[node name="Show_Breakable" parent="." instance=ExtResource("18")]
+position = Vector2(2376, 152)
+
+[node name="Label_Breakable" type="Label" parent="."]
+offset_left = 2336.0
+offset_top = 120.0
+offset_right = 2416.0
+offset_bottom = 140.0
+theme_override_font_sizes/font_size = 20
+horizontal_alignment = 1
+text = "可破壞方塊"
+
+[node name="Show_SwitchBlock" parent="." instance=ExtResource("19")]
+position = Vector2(2472, 152)
+
+[node name="Label_SwitchBlock" type="Label" parent="."]
+offset_left = 2432.0
+offset_top = 120.0
+offset_right = 2512.0
+offset_bottom = 140.0
+theme_override_font_sizes/font_size = 20
+horizontal_alignment = 1
+text = "開關方塊"
+
+[node name="Show_Box" parent="." instance=ExtResource("20")]
+position = Vector2(2568, 152)
+
+[node name="Label_Box" type="Label" parent="."]
+offset_left = 2528.0
+offset_top = 120.0
+offset_right = 2608.0
+offset_bottom = 140.0
+theme_override_font_sizes/font_size = 20
+horizontal_alignment = 1
+text = "箱子"
+
+[node name="Show_Pickup" parent="." instance=ExtResource("21")]
+position = Vector2(2664, 154)
+
+[node name="Label_Pickup" type="Label" parent="."]
+offset_left = 2624.0
+offset_top = 120.0
+offset_right = 2704.0
+offset_bottom = 140.0
+theme_override_font_sizes/font_size = 20
+horizontal_alignment = 1
+text = "道具"
+
+[node name="Show_Launcher" parent="." instance=ExtResource("22")]
+position = Vector2(2760, 152)
+
+[node name="Label_Launcher" type="Label" parent="."]
+offset_left = 2720.0
+offset_top = 120.0
+offset_right = 2800.0
+offset_bottom = 140.0
+theme_override_font_sizes/font_size = 20
+horizontal_alignment = 1
+text = "彈射台"
+
+[node name="Show_Spike" parent="." instance=ExtResource("23")]
+position = Vector2(2856, 152)
+
+[node name="Label_Spike" type="Label" parent="."]
+offset_left = 2816.0
+offset_top = 120.0
+offset_right = 2896.0
+offset_bottom = 140.0
+theme_override_font_sizes/font_size = 20
+horizontal_alignment = 1
+text = "尖刺"
+
+[node name="Show_Enemy" parent="." instance=ExtResource("24")]
+position = Vector2(2952, 152)
+
+[node name="Label_Enemy" type="Label" parent="."]
+offset_left = 2912.0
+offset_top = 120.0
+offset_right = 2992.0
+offset_bottom = 140.0
+theme_override_font_sizes/font_size = 20
+horizontal_alignment = 1
+text = "笨敵人"
+
+[node name="Vg1_Box" parent="." instance=ExtResource("20")]
+position = Vector2(3048, 152)
+
+[node name="Vg1_Button" parent="." instance=ExtResource("7")]
+position = Vector2(3136, 156)
+
+[node name="Vg1_Door" parent="." instance=ExtResource("12")]
+position = Vector2(3192, 144)
+
+[node name="Label_Vg1" type="Label" parent="."]
+offset_left = 3020.0
+offset_top = 120.0
+offset_right = 3220.0
+offset_bottom = 140.0
+theme_override_font_sizes/font_size = 20
+horizontal_alignment = 1
+text = "箱子壓住按鈕 → 門開"
+
+[node name="Vg2_Button" parent="." instance=ExtResource("7")]
+position = Vector2(3272, 156)
+mode = 1
+
+[node name="Vg2_MovingPlatform" parent="." instance=ExtResource("13")]
+position = Vector2(3384, 156)
+distance_tiles = 3
+start_active = false
+
+[node name="Label_Vg2" type="Label" parent="."]
+offset_left = 3228.0
+offset_top = 120.0
+offset_right = 3428.0
+offset_bottom = 140.0
+theme_override_font_sizes/font_size = 20
+horizontal_alignment = 1
+text = "按鈕 → 移動平台"
+
+[node name="Vg3_KeyTrigger" parent="." instance=ExtResource("8")]
+key_source = 1
+
+[node name="Vg3_Fan" parent="." instance=ExtResource("14")]
+position = Vector2(3552, 152)
+range_tiles = 3
+start_on = false
+
+[node name="Vg3_Platform" parent="." instance=ExtResource("16")]
+position = Vector2(3552, 236)
+
+[node name="Label_Vg3" type="Label" parent="."]
+offset_left = 3452.0
+offset_top = 120.0
+offset_right = 3652.0
+offset_bottom = 140.0
+theme_override_font_sizes/font_size = 20
+horizontal_alignment = 1
+text = "按 E → 風扇吹起"
+
+[connection signal="turned_on" from="Vg1_Button" to="Vg1_Door" method="activate"]
+[connection signal="turned_off" from="Vg1_Button" to="Vg1_Door" method="deactivate"]
+[connection signal="turned_on" from="Vg2_Button" to="Vg2_MovingPlatform" method="activate"]
+[connection signal="turned_off" from="Vg2_Button" to="Vg2_MovingPlatform" method="deactivate"]
+[connection signal="pressed" from="Vg3_KeyTrigger" to="Vg3_Fan" method="activate"]
+[connection signal="released" from="Vg3_KeyTrigger" to="Vg3_Fan" method="deactivate"]
