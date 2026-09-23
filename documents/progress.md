@@ -118,9 +118,11 @@
 - [x] U51 `Extra_Dash`
 - [x] U52 `Extra_WallJump`
 - [x] U53 `Extra_StickyFloor`
-- [ ] U54 `Extra_Magnet`
-- [ ] U55 `Extra_TimeSlow`
-- [ ] U56 `Extra_StompOnly`
+- [x] U54 `Extra_Magnet`
+      　　→ 箱子是 RigidBody2D，站在地上摩擦力遠大於合理施力範圍，改成直接拉 global_position.x（不透過施力）
+- [x] U55 `Extra_TimeSlow`
+      　　→ 直接改 Engine.time_scale，沒有整合進 HitStopManager（已跟使用者確認的取捨）
+- [x] U56 `Extra_StompOnly`
 
 ## 階段 11：訊號連接收尾
 
