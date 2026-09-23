@@ -31,11 +31,13 @@ var _was_moving: bool = false
 var _was_on_wall: bool = false
 var _is_dead: bool = false
 var _damage_scale: float = 1.0
+var _base_collision_size: Vector2 = Vector2.ZERO
 
-# 啟動時找視覺節點，並掃描 Mechanics／Juice／Abilities 底下現有的組件逐一註冊
+# 啟動時找視覺節點，記住碰撞形狀原始尺寸，並掃描 Mechanics／Juice／Abilities 底下現有的組件逐一註冊
 func _ready() -> void:
 	add_to_group("player")
 	_find_visual()
+	_remember_base_collision_size()
 	if has_node("Mechanics"):
 		_register_children($Mechanics, true)
 	if has_node("Juice"):
@@ -43,6 +45,15 @@ func _ready() -> void:
 	if has_node("Abilities"):
 		_register_children($Abilities, false)
 	RespawnMemory.apply_position(self)
+
+# 記住 CollisionShape2D 原始尺寸，之後 set_size_factor() 要拿來算縮放後的尺寸；
+# 順手把 shape 資源複製一份自己用，避免改到場景檔裡其他地方共用的同一份資源
+func _remember_base_collision_size() -> void:
+	var col := get_node_or_null("CollisionShape2D") as CollisionShape2D
+	if col == null or not (col.shape is RectangleShape2D):
+		return
+	col.shape = col.shape.duplicate()
+	_base_collision_size = (col.shape as RectangleShape2D).size
 
 # 尋找視覺節點：先找 player_visual 群組，找不到就退而找 Visual 子節點，都沒有就發警告
 func _find_visual() -> void:
@@ -151,10 +162,17 @@ func flip_gravity() -> void:
 func add_impulse(v: Vector2) -> void:
 	velocity += v
 
-# 縮放角色大小，變大變小卡用這個
+# 縮放角色大小，變大變小卡用這個。不縮放整個物理節點（CharacterBody2D 的 scale
+# 對碰撞判定不可靠），只縮放視覺節點，碰撞形狀直接改尺寸
 func set_size_factor(f: float) -> void:
 	size_factor = f
-	scale = Vector2.ONE * f
+	if visual:
+		visual.scale = Vector2.ONE * f
+	if _base_collision_size == Vector2.ZERO:
+		return
+	var col := get_node_or_null("CollisionShape2D") as CollisionShape2D
+	if col and col.shape is RectangleShape2D:
+		(col.shape as RectangleShape2D).size = _base_collision_size * f
 
 # 讓角色受到傷害，內部委派給 Stats 扣血量；血量歸零時 Stats 會自動呼叫 kill()
 func take_damage(amount: float = 1.0) -> void:

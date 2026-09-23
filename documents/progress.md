@@ -88,7 +88,7 @@
       規則，之後幾張卡沿用同一手法）
 - [x] U36 彈性宇宙 `Mechanic_BouncyWorld`（驗證：不會無限抖動）
 - [x] U37 越跑越快 `Mechanic_SpeedRamp`
-- [ ] U38 忽大忽小 `Mechanic_SizeShift`（`MoveContext` 新增 `knockback_scale`/`push_scale`；驗證：
+- [x] U38 忽大忽小 `Mechanic_SizeShift`（`MoveContext` 新增 `knockback_scale`/`push_scale`；驗證：
       不會卡進地形，5 欄位版面正常顯示）
 - [ ] U39 蓄力青蛙跳 `Mechanic_ChargeJump`（用 `InputRouter.bind()` 優先權攔截 `jump`，驗證：攔截
       期間 Player 自己的低優先跳躍不會誤觸發）
