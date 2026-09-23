@@ -32,7 +32,7 @@ var _was_on_wall: bool = false
 var _is_dead: bool = false
 var _damage_scale: float = 1.0
 
-# 啟動時找視覺節點，並掃描 Mechanics／Juice 底下現有的組件逐一註冊
+# 啟動時找視覺節點，並掃描 Mechanics／Juice／Abilities 底下現有的組件逐一註冊
 func _ready() -> void:
 	add_to_group("player")
 	_find_visual()
@@ -40,6 +40,8 @@ func _ready() -> void:
 		_register_children($Mechanics, true)
 	if has_node("Juice"):
 		_register_children($Juice, false)
+	if has_node("Abilities"):
+		_register_children($Abilities, false)
 	RespawnMemory.apply_position(self)
 
 # 尋找視覺節點：先找 player_visual 群組，找不到就退而找 Visual 子節點，都沒有就發警告
