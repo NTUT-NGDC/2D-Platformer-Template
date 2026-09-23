@@ -1,0 +1,73 @@
+[gd_scene load_steps=8 format=3]
+
+[ext_resource type="Script" path="res://tests/Mechanic_HealthDrainTest.gd" id="1"]
+[ext_resource type="PackedScene" path="res://player/Player.tscn" id="2"]
+[ext_resource type="Texture2D" uid="uid://cm8ymciwkvttp" path="res://art/white_block.png" id="3"]
+[ext_resource type="PackedScene" path="res://mechanics/Mechanic_HealthDrain.tscn" id="4"]
+[ext_resource type="PackedScene" path="res://blocks/Pickup.tscn" id="5"]
+[ext_resource type="Script" path="res://levels/_shared/Respawn.gd" id="6"]
+[ext_resource type="PackedScene" path="res://levels/_shared/ValueSettings.tscn" id="7"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_floor"]
+size = Vector2(400, 16)
+
+[node name="Mechanic_HealthDrainTest" type="Node2D"]
+script = ExtResource("1")
+
+[node name="ValueSettings" parent="." instance=ExtResource("7")]
+kind = "血量"
+start_value = 10
+max_value = 10
+
+[node name="Floor" type="StaticBody2D" parent="."]
+position = Vector2(0, 103)
+collision_layer = 2
+collision_mask = 0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Floor"]
+shape = SubResource("RectangleShape2D_floor")
+
+[node name="Visual" type="ColorRect" parent="Floor"]
+offset_left = -200.0
+offset_top = -8.0
+offset_right = 200.0
+offset_bottom = 8.0
+color = Color(0.4, 0.35, 0.3, 1)
+
+[node name="Player" parent="." instance=ExtResource("2")]
+position = Vector2(-150, 75)
+
+[node name="Visual" type="Node2D" parent="Player"]
+
+[node name="Sprite2D" type="Sprite2D" parent="Player/Visual"]
+texture = ExtResource("3")
+region_enabled = true
+region_rect = Rect2(0, 0, 16, 32)
+
+[node name="Mechanics" type="Node2D" parent="Player"]
+
+[node name="Mechanic_HealthDrain" parent="Player/Mechanics" instance=ExtResource("4")]
+
+[node name="Juice" type="Node2D" parent="Player"]
+
+[node name="Camera2D" type="Camera2D" parent="."]
+position = Vector2(0, 50)
+zoom = Vector2(0.55, 0.55)
+
+[node name="Respawn" type="Node" parent="."]
+script = ExtResource("6")
+
+[node name="Coin_1" parent="." instance=ExtResource("5")]
+position = Vector2(0, 90)
+kind = 0
+amount = 1
+
+[node name="Coin_2" parent="." instance=ExtResource("5")]
+position = Vector2(60, 90)
+kind = 0
+amount = 1
+
+[node name="Coin_3" parent="." instance=ExtResource("5")]
+position = Vector2(120, 90)
+kind = 0
+amount = 1

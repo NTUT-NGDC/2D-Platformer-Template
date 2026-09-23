@@ -105,7 +105,8 @@
       　　→ 敵人／箱子不在玩家碰撞遮罩內，改用貼著玩家的 Area2D 偵測；牆用碰撞法線方向判斷
 - [x] U45 存活計時 `Mechanic_SurvivalTimer`
 - [x] U46 停下即死 `Mechanic_StopDeath`（跟 U39 蓄力青蛙跳同時掛上時，蓄力中應暫停計時）
-- [ ] U47 血量流失 `Mechanic_HealthDrain`（驗證：讀寫 `Stats` 血量，沒有自己的「總血量」欄位）
+- [x] U47 血量流失 `Mechanic_HealthDrain`（驗證：讀寫 `Stats` 血量，沒有自己的「總血量」欄位）
+      　　→ 補血改訂閱 `Stats.value_changed`（金幣），因為 `Events.item_collected` 目前沒有任何地方會發出
 - [ ] U48 地板是岩漿 `Mechanic_FloorIsLava`
 - [ ] U49 開關世界 `Mechanic_SwitchWorld`（依賴 U23 `SwitchBlock`）
 
