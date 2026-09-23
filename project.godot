@@ -17,6 +17,7 @@ config/icon="res://icon.svg"
 
 [autoload]
 
+ConnectionValidator="*res://autoload/ConnectionValidator.gd"
 Events="*res://autoload/Events.gd"
 HitStopManager="*res://autoload/HitStopManager.gd"
 InputRouter="*res://autoload/InputRouter.gd"

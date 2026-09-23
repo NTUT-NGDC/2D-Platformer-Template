@@ -1,0 +1,72 @@
+extends Node
+
+# 連線驗證器：遊戲開始時掃描目前場景裡所有 signal_source 零件的訊號連接，
+# 抓出訊號連接對話框本身擋不住的錯誤，用中文警告印在輸出面板。
+# 見 documents/01a_shared_systems.md §6.5：這是零連線鐵律唯一例外
+#（零件之間的訊號連接）的第二道防線。
+
+const _DANGEROUS_METHODS := ["queue_free", "free", "set_script"]
+
+# 等一幀讓所有 signal_source 零件都進場，再開始掃描
+func _ready() -> void:
+	await get_tree().process_frame
+	_check_missing_targets()
+	_check_live_connections()
+
+# 第一關：比對場景檔裡存的連接清單，抓連到的目標節點已經不存在的情況。
+# 這種連接在場景載入時就會失敗、不會真的建立起來，所以要對場景檔本身檢查，
+# 不能只看場景裡目前活著的連接。
+func _check_missing_targets() -> void:
+	var scene := get_tree().current_scene
+	if scene == null or scene.scene_file_path.is_empty():
+		return
+	var packed: PackedScene = load(scene.scene_file_path)
+	if packed == null:
+		return
+	var state := packed.get_state()
+	for i in state.get_connection_count():
+		var target_path: NodePath = state.get_connection_target(i)
+		if scene.get_node_or_null(target_path) != null:
+			continue
+		var source_name: String = String(state.get_connection_source(i)).get_file()
+		var signal_name: String = state.get_connection_signal(i)
+		push_warning("[連線驗證] 「%s」的 %s 訊號連到的目標節點已經不存在了，請重新連一次" % [source_name, signal_name])
+
+# 第二關：掃描所有 signal_source 零件實際生效的訊號連接，檢查方法存不存在、
+# 參數數量對不對、有沒有連到危險的內建方法
+func _check_live_connections() -> void:
+	for node in get_tree().get_nodes_in_group("signal_source"):
+		_scan_node(node)
+
+# 檢查單一節點身上每個訊號的每一條連接
+func _scan_node(node: Node) -> void:
+	for signal_info in node.get_signal_list():
+		var signal_name: String = signal_info["name"]
+		var arg_count: int = signal_info["args"].size()
+		for connection in node.get_signal_connection_list(signal_name):
+			_check_connection(node, signal_name, arg_count, connection["callable"])
+
+# 檢查一條連接：方法存不存在、參數數量對不對、有沒有連到危險的內建方法
+func _check_connection(source: Node, signal_name: String, arg_count: int, callable: Callable) -> void:
+	var target := callable.get_object()
+	if target == null or not is_instance_valid(target):
+		return
+	var method_name := callable.get_method()
+	if method_name in _DANGEROUS_METHODS:
+		push_warning("[連線驗證] 「%s」的 %s 訊號連到「%s」的內建方法 %s()，這個方法會直接刪掉節點，請確認這是故意的" % [source.name, signal_name, target.name, method_name])
+	var arity := _method_arity(target, method_name)
+	if not arity["found"]:
+		push_warning("[連線驗證] 「%s」的 %s 訊號連到「%s」的 %s()，但這個方法不存在，是不是改名或打錯字了？" % [source.name, signal_name, target.name, method_name])
+		return
+	if arg_count < arity["min"] or arg_count > arity["max"]:
+		push_warning("[連線驗證] 「%s」的 %s 訊號帶 %d 個參數，但「%s」的 %s() 需要 %d 個，數量對不上" % [source.name, signal_name, arg_count, target.name, method_name, arity["min"]])
+
+# 查詢某個方法需要幾個參數（含預設值的算進 max，min 是扣掉預設值後最少要給幾個），
+# 找不到這個方法就回傳 found = false
+func _method_arity(target: Object, method_name: String) -> Dictionary:
+	for m in target.get_method_list():
+		if m["name"] == method_name:
+			var total: int = m["args"].size()
+			var optional: int = m["default_args"].size()
+			return {"found": true, "min": total - optional, "max": total}
+	return {"found": false, "min": 0, "max": 0}
