@@ -86,7 +86,7 @@
       驗證擊飛行為）
 - [x] U35 重力翻轉 `Mechanic_GravityFlip`（本卡第一次用到 `key` 欄位 + `_validate_property` 顯示
       規則，之後幾張卡沿用同一手法）
-- [ ] U36 彈性宇宙 `Mechanic_BouncyWorld`（驗證：不會無限抖動）
+- [x] U36 彈性宇宙 `Mechanic_BouncyWorld`（驗證：不會無限抖動）
 - [ ] U37 越跑越快 `Mechanic_SpeedRamp`
 - [ ] U38 忽大忽小 `Mechanic_SizeShift`（`MoveContext` 新增 `knockback_scale`/`push_scale`；驗證：
       不會卡進地形，5 欄位版面正常顯示）
