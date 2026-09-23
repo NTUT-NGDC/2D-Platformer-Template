@@ -15,6 +15,10 @@ extends Node
 ## 是否顯示在畫面左上角的數值列
 @export var show_in_hud: bool = true
 
+## 死亡重生時要不要退回踩重生點當下的數值；關閉的話死亡完全不影響這個數值
+## （例如累計分數、存活時間這種不該被重置的東西）
+@export var reset_on_death: bool = true
+
 # 場景一進樹就套用設定，搶在同一個場景其他節點的 _ready() 用到這個數值之前生效
 func _enter_tree() -> void:
-	Stats.configure(kind, start_value, max_value, show_in_hud)
+	Stats.configure(kind, start_value, max_value, show_in_hud, reset_on_death)

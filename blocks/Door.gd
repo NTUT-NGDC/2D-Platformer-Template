@@ -44,15 +44,19 @@ func deactivate() -> void:
 func toggle() -> void:
 	_set_open(not _is_open)
 
-# 依 open_mode 決定要不要監聽玩家碰門，並套用一開始的開關狀態
+# 依 open_mode 決定要不要監聽玩家碰門，並套用一開始的開關狀態。
+# 鑰匙／金幣模式打開過一次之後，重生記憶會記住，死亡重生後門要維持開著。
 func _ready() -> void:
 	add_to_group("signal_source")
+	var remembered_open := false
 	if open_mode != _MODE_SIGNAL:
+		add_to_group("persistent")
 		_detector.body_entered.connect(_on_detector_entered)
-	_is_open = start_open
+		remembered_open = RespawnMemory.recall(get_path(), false)
+	_is_open = start_open or remembered_open
 	_apply_state()
 
-# 鑰匙／金幣模式下，玩家碰到門時檢查 Stats 夠不夠，夠了就開門
+# 鑰匙／金幣模式下，玩家碰到門時檢查 Stats 夠不夠，夠了就開門並記住這件事
 func _on_detector_entered(body: Node) -> void:
 	if _is_open or not body.is_in_group("player"):
 		return
@@ -61,6 +65,7 @@ func _on_detector_entered(body: Node) -> void:
 		return
 	if consume:
 		Stats.consume(kind, required_amount)
+	RespawnMemory.remember(get_path(), true)
 	activate()
 
 # 真正切換開關狀態，狀態沒變就不重複處理

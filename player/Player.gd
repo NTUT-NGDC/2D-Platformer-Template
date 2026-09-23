@@ -40,6 +40,7 @@ func _ready() -> void:
 		_register_children($Mechanics, true)
 	if has_node("Juice"):
 		_register_children($Juice, false)
+	RespawnMemory.apply_position(self)
 
 # 尋找視覺節點：先找 player_visual 群組，找不到就退而找 Visual 子節點，都沒有就發警告
 func _find_visual() -> void:

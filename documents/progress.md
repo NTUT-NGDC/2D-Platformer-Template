@@ -44,8 +44,9 @@
 
 ## 階段 4：死亡與重生
 
-- [ ] U13 `RespawnMemory` 自動載入 + 死亡重生流程（依賴 U12 的 Checkpoint；驗證：踩重生點後死亡，
+- [x] U13 `RespawnMemory` 自動載入 + 死亡重生流程（依賴 U12 的 Checkpoint；驗證：踩重生點後死亡，
       在重生點復活、血量補滿、`01a` §5.2 表格列的項目正確還原）
+      　　→ `ValueSettings` 加上 `reset_on_death` 欄位，讓每個數值種類可以個別決定死亡要不要退回
 
 ## 階段 5：其餘觸發／接收零件
 
