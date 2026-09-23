@@ -61,7 +61,7 @@
 
 - [x] U19 `Breakable.tscn` + `Hittable` 介面（驗證：`take_hit()` 扣耐久，歸零時 `broken`；
       `Events.hit` 正確 emit）
-- [ ] U20 `CrumbleFloor.tscn`（驗證：踩上去抖動→碎裂→依 `respawn_time` 重生或不重生）
+- [x] U20 `CrumbleFloor.tscn`（驗證：踩上去抖動→碎裂→依 `respawn_time` 重生或不重生）
 - [ ] U21 `OneWayPlatform.tscn`（驗證：下方穿過、上方可站立）
 - [ ] U22 `Lava.tscn`（驗證：站上去依 `instant_kill` 扣血或即死）
 - [ ] U23 `SwitchBlock.tscn`（驗證：手動改 `color` 欄位，`switch_red`/`switch_blue` group 正確加入；
