@@ -37,7 +37,7 @@
 - [x] U09 `Button.tscn`（`01c_blocks_and_abilities.md` §2.1，驗證三種模式 + `turned_on`/`turned_off`）
 - [x] U10 `Door.tscn` + `Receiver` 介面（`activate`/`deactivate`/`toggle`，驗證：手動在編輯器把
       `Button.turned_on` 連到 `Door.activate`，踩按鈕門會開）
-- [ ] U11 連線驗證器：函式不存在／參數數量不對／目標節點已刪除／連到危險內建函式，四種情況各測一次
+- [x] U11 連線驗證器：函式不存在／參數數量不對／目標節點已刪除／連到危險內建函式，四種情況各測一次
       （驗證：故意接錯，看輸出面板中文警告）
 - [ ] U12 `Checkpoint.tscn`（`01c` §2.1，驗證：踩到時 emit `reached`，`Events.checkpoint_reached`
       正確轉發）
