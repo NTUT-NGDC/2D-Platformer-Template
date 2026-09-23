@@ -1,0 +1,48 @@
+[gd_scene format=3 uid="uid://nbctnig4loq3"]
+
+[ext_resource type="Script" uid="uid://cmpdn373xyw53" path="res://tests/Mechanic_SpeedRampTest.gd" id="1"]
+[ext_resource type="PackedScene" path="res://player/Player.tscn" id="2"]
+[ext_resource type="Texture2D" uid="uid://cm8ymciwkvttp" path="res://art/white_block.png" id="3"]
+[ext_resource type="PackedScene" path="res://mechanics/Mechanic_SpeedRamp.tscn" id="4"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_floor"]
+size = Vector2(2400, 16)
+
+[node name="Mechanic_SpeedRampTest" type="Node2D" unique_id=857052351]
+script = ExtResource("1")
+
+[node name="Floor" type="StaticBody2D" parent="." unique_id=1629396235]
+position = Vector2(0, 103)
+collision_layer = 2
+collision_mask = 0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Floor" unique_id=1962004327]
+shape = SubResource("RectangleShape2D_floor")
+
+[node name="Visual" type="ColorRect" parent="Floor"]
+offset_left = -1200.0
+offset_top = -8.0
+offset_right = 1200.0
+offset_bottom = 8.0
+color = Color(0.4, 0.35, 0.3, 1)
+
+[node name="Player" parent="." unique_id=30871059 instance=ExtResource("2")]
+position = Vector2(-1100, 75)
+
+[node name="Visual" type="Node2D" parent="Player" unique_id=1966950881]
+
+[node name="Sprite2D" type="Sprite2D" parent="Player/Visual" unique_id=1031772132]
+texture = ExtResource("3")
+region_enabled = true
+region_rect = Rect2(0, 0, 16, 32)
+
+[node name="Mechanics" type="Node2D" parent="Player" unique_id=143061323]
+
+[node name="Mechanic_SpeedRamp" parent="Player/Mechanics" unique_id=97657262 instance=ExtResource("4")]
+ramp_seconds = 3.0
+
+[node name="Juice" type="Node2D" parent="Player" unique_id=1213255186]
+
+[node name="Camera2D" type="Camera2D" parent="Player" unique_id=2081372485]
+position = Vector2(0, -30)
+zoom = Vector2(0.8, 0.8)
