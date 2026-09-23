@@ -63,7 +63,7 @@
       `Events.hit` 正確 emit）
 - [x] U20 `CrumbleFloor.tscn`（驗證：踩上去抖動→碎裂→依 `respawn_time` 重生或不重生）
 - [x] U21 `OneWayPlatform.tscn`（驗證：下方穿過、上方可站立）
-- [ ] U22 `Lava.tscn`（驗證：站上去依 `instant_kill` 扣血或即死）
+- [x] U22 `Lava.tscn`（驗證：站上去依 `instant_kill` 扣血或即死）
 - [ ] U23 `SwitchBlock.tscn`（驗證：手動改 `color` 欄位，`switch_red`/`switch_blue` group 正確加入；
       玩家重疊時延後實體化）
 - [ ] U24 `Box.tscn`（驗證：可推動、受擊只擊退不受傷）
