@@ -97,7 +97,8 @@
 
 ## 階段 9：機制卡 — 規則卡
 
-- [ ] U42 黏黏身體 `Mechanic_StickyBody`（驗證：黏在移動平台上會跟著移動）
+- [x] U42 黏黏身體 `Mechanic_StickyBody`（驗證：黏在移動平台上會跟著移動）
+      　　→ 新增 `MoveContext.movement_frozen` 通用欄位，讓規則卡能蓋過主限制卡對方向／重力的提案
 - [ ] U43 移動會扣血 `Mechanic_Stamina`
 - [ ] U44 碰觸即死 `Mechanic_TouchDeath`
 - [ ] U45 存活計時 `Mechanic_SurvivalTimer`

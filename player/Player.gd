@@ -130,6 +130,15 @@ func _apply_horizontal(ctx: MoveContext, delta: float) -> void:
 	if _impulse_grace_left > 0.0:
 		_impulse_grace_left -= delta
 
+	# movement_frozen 蓋過 auto_run_dir：規則卡要求「整個人不能動」時，不能被還在場上
+	# 的主限制卡的強制方向蓋回去，所以這裡要比 auto_run_dir 更早判斷、直接短路
+	if ctx.movement_frozen:
+		velocity.x = 0.0
+		if _was_moving:
+			_was_moving = false
+			stopped_moving.emit()
+		return
+
 	var input_dir := 0.0
 	if ctx.auto_run_dir != 0:
 		input_dir = float(ctx.auto_run_dir)
@@ -155,6 +164,9 @@ func _apply_horizontal(ctx: MoveContext, delta: float) -> void:
 
 # 把重力套用到垂直速度上
 func _apply_vertical(ctx: MoveContext, delta: float) -> void:
+	if ctx.movement_frozen:
+		velocity.y = 0.0
+		return
 	velocity += -up_direction * gravity * ctx.gravity_scale * delta
 
 # 偵測角色朝向是否改變，改變就發出訊號
