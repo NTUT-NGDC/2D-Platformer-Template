@@ -59,7 +59,7 @@
 
 ## 階段 6：地形類／物件類零件
 
-- [ ] U19 `Breakable.tscn` + `Hittable` 介面（驗證：`take_hit()` 扣耐久，歸零時 `broken`；
+- [x] U19 `Breakable.tscn` + `Hittable` 介面（驗證：`take_hit()` 扣耐久，歸零時 `broken`；
       `Events.hit` 正確 emit）
 - [ ] U20 `CrumbleFloor.tscn`（驗證：踩上去抖動→碎裂→依 `respawn_time` 重生或不重生）
 - [ ] U21 `OneWayPlatform.tscn`（驗證：下方穿過、上方可站立）
