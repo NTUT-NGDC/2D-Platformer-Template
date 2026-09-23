@@ -1,7 +1,11 @@
-extends Node2D
+extends StaticBody2D
 
 # 可破壞方塊：實心，被打或被高速撞擊會扣耐久，歸零時碎裂。碎裂後依 respawn_time
 # 決定要不要重生（0 表示不重生）。拖進場景就能用，不用連任何線。
+#
+# 根節點直接是碰撞體本身（不像 Door/CrumbleFloor 包一層 Body 子節點）：因為這裡要實作
+# Hittable，近戰／遠程攻擊的判定區用 body_entered 抓到的一定是實際碰撞的那個節點，
+# 如果碰撞形狀包在子節點裡，take_hit() 掛在根節點上會抓不到。
 
 ## 耐久次數，被打幾下才會壞
 @export_range(1, 10) var durability: int = 3
@@ -18,7 +22,7 @@ extends Node2D
 ## 完全碎裂時發出，給學員自己接特效／音效用
 signal broken
 
-@onready var _shape: CollisionShape2D = $Body/CollisionShape2D
+@onready var _shape: CollisionShape2D = $CollisionShape2D
 @onready var _visual: ColorRect = $Visual
 @onready var _detector: Area2D = $Detector
 
@@ -36,6 +40,8 @@ func take_hit(damage: int, _knockback: Vector2, source: Node) -> void:
 func _ready() -> void:
 	add_to_group("signal_source")
 	_durability_left = durability
+	collision_layer = 2  # 圖層 2「地形」
+	collision_mask = 0
 	_detector.collision_layer = 0
 	_detector.collision_mask = (1 << 0) | (1 << 2)  # 圖層 1「玩家」、圖層 3「箱子」
 	_detector.body_entered.connect(_on_detector_entered)
