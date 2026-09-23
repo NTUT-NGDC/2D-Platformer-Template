@@ -1,2 +1,12 @@
 # Normalize EOL for all files that Git considers text files.
 * text=auto eol=lf
+
+# 學員 release 壓縮檔（git archive / GitHub Download ZIP／Release 原始碼壓縮檔）不收這些：
+# 開發用測試場景、講師專用說明、AI 助理設定、內部開發規格文件
+tests/ export-ignore
+_tests/ export-ignore
+_help/ export-ignore
+CLAUDE.md export-ignore
+.claude/ export-ignore
+.vscode/ export-ignore
+documents/ export-ignore
