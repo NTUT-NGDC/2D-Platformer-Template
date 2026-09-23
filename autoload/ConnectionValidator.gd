@@ -30,7 +30,7 @@ func _check_missing_targets() -> void:
 			continue
 		var source_name: String = String(state.get_connection_source(i)).get_file()
 		var signal_name: String = state.get_connection_signal(i)
-		push_warning("[連線驗證] 「%s」的 %s 訊號連到的目標節點已經不存在了，請重新連一次" % [source_name, signal_name])
+		_warn("「%s」的 %s 訊號連到的目標節點已經不存在了，請重新連一次" % [source_name, signal_name])
 
 # 第二關：掃描所有 signal_source 零件實際生效的訊號連接，檢查方法存不存在、
 # 參數數量對不對、有沒有連到危險的內建方法
@@ -53,13 +53,13 @@ func _check_connection(source: Node, signal_name: String, arg_count: int, callab
 		return
 	var method_name := callable.get_method()
 	if method_name in _DANGEROUS_METHODS:
-		push_warning("[連線驗證] 「%s」的 %s 訊號連到「%s」的內建方法 %s()，這個方法會直接刪掉節點，請確認這是故意的" % [source.name, signal_name, target.name, method_name])
+		_warn("「%s」的 %s 訊號連到「%s」的內建方法 %s()，這個方法會直接刪掉節點，請確認這是故意的" % [source.name, signal_name, target.name, method_name])
 	var arity := _method_arity(target, method_name)
 	if not arity["found"]:
-		push_warning("[連線驗證] 「%s」的 %s 訊號連到「%s」的 %s()，但這個方法不存在，是不是改名或打錯字了？" % [source.name, signal_name, target.name, method_name])
+		_warn("「%s」的 %s 訊號連到「%s」的 %s()，但這個方法不存在，是不是改名或打錯字了？" % [source.name, signal_name, target.name, method_name])
 		return
 	if arg_count < arity["min"] or arg_count > arity["max"]:
-		push_warning("[連線驗證] 「%s」的 %s 訊號帶 %d 個參數，但「%s」的 %s() 需要 %d 個，數量對不上" % [source.name, signal_name, arg_count, target.name, method_name, arity["min"]])
+		_warn("「%s」的 %s 訊號帶 %d 個參數，但「%s」的 %s() 需要 %d 個，數量對不上" % [source.name, signal_name, arg_count, target.name, method_name, arity["min"]])
 
 # 查詢某個方法需要幾個參數（含預設值的算進 max，min 是扣掉預設值後最少要給幾個），
 # 找不到這個方法就回傳 found = false
@@ -70,3 +70,9 @@ func _method_arity(target: Object, method_name: String) -> Dictionary:
 			var optional: int = m["default_args"].size()
 			return {"found": true, "min": total - optional, "max": total}
 	return {"found": false, "min": 0, "max": 0}
+
+# 印出一則連線警告：push_warning() 讓偵錯器記錄下來，同時 printerr() 讓輸出面板也看得見
+# （push_warning 本身不會出現在輸出面板，見 CLAUDE.md 鐵律 3）
+func _warn(message: String) -> void:
+	push_warning("[連線驗證] %s" % message)
+	printerr("⚠ [連線驗證] %s" % message)
