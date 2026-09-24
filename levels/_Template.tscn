@@ -7,6 +7,7 @@
 [ext_resource type="Texture2D" uid="uid://cm8ymciwkvttp" path="res://art/white_block.png" id="5"]
 [ext_resource type="PackedScene" path="res://blocks/Room.tscn" id="6"]
 [ext_resource type="PackedScene" path="res://blocks/ValueSettings.tscn" id="7"]
+[ext_resource type="PackedScene" path="res://blocks/KeySettings.tscn" id="8"]
 
 [node name="Template" type="Node2D" unique_id=2133254585]
 
@@ -42,3 +43,5 @@ script = ExtResource("3")
 [node name="ValueSettings_Health" parent="." unique_id=1675547356 instance=ExtResource("7")]
 start_value = 5
 max_value = 5
+
+[node name="KeySettings" parent="." instance=ExtResource("8")]

@@ -8,6 +8,7 @@
 [ext_resource type="Script" uid="uid://bak4gt8ywjd2q" path="res://_my/my_controls.gd" id="6"]
 [ext_resource type="PackedScene" path="res://blocks/KeyTrigger.tscn" id="7"]
 [ext_resource type="PackedScene" path="res://blocks/ValueSettings.tscn" id="8"]
+[ext_resource type="PackedScene" path="res://blocks/KeySettings.tscn" id="9"]
 
 [node name="W1_ToyBox" type="Node2D" unique_id=1601517614]
 
@@ -51,3 +52,5 @@ key = 49
 
 [connection signal="pressed" from="MyControls/KeyTrigger_E" to="MyControls" method="on_e_pressed"]
 [connection signal="pressed" from="MyControls/KeyTrigger_1" to="MyControls" method="on_1_pressed"]
+
+[node name="KeySettings" parent="." instance=ExtResource("9")]

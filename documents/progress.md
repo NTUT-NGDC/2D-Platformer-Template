@@ -255,6 +255,12 @@
       　　　第一次變動才出現
 - [ ] U85 拿掉 `MyControls` 與 `_my/my_controls.gd`：`W1_ToyBox` 的兩個 KeyTrigger 移到關卡底下、`ConnectionValidator`
       與連線虛線不再特別處理 MyControls、01d §3 與 README 改寫
-- [ ] U86 按鍵設定節點 `blocks/KeySettings.tscn`：下拉選單改 move_left／move_right／move_up／move_down／jump 的按鍵，
-      執行時改寫 InputMap（驗證：把 jump 改成 W，按 W 會跳、按空白鍵不會）
+- [x] U86 按鍵設定節點 `blocks/KeySettings.tscn`：下拉選單改 move_left／move_right／move_up／move_down／jump 的按鍵，
+      執行時改寫 InputMap（驗證：`tests/KeySettingsTest.tscn` 往左 J、往右 L、跳躍 Shift，A／D／空白鍵沒反應、
+      方向鍵照樣能走，輸出面板有 Shift 跟重力翻轉卡衝突的警告）
+      　　→ 講師決定：方向鍵永遠保留，只換字母鍵／空白鍵；下拉預設 None = 不改。在 `_enter_tree` 改寫，
+      　　　搶在組件向 InputRouter 註冊之前，衝突警告才會用新按鍵判斷；離開場景只還原自己改過的動作
+      　　　（不動 InputRouter 的臨時動作）；兩個基本動作撞鍵、選到瀏覽器會攔截的鍵、放兩個 KeySettings
+      　　　都印中文警告。`_Template`／`W1_ToyBox` 預放一個，README 補 §5.3。欄位 5 個（超過零件 4 個上限，
+      　　　同 ValueSettings 屬於設定節點）
 
