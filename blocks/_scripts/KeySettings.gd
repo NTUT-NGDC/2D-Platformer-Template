@@ -1,10 +1,11 @@
 extends Node
 
-# 按鍵設定：改玩家基本操作（左右上下、跳躍）要按哪一顆鍵。放在關卡裡，設定跟著關卡存在 _my/，
-# 重灌專案也不會被蓋掉。只換掉字母鍵／空白鍵，方向鍵永遠保留；選 None 的動作維持原本的按鍵。
-# 這個節點被刪掉或換場景時，按鍵自動恢復成專案預設。
+# 按鍵設定：關卡裡所有按鍵的地方。Inspector 的「預設操作」改玩家基本操作（左右上下、跳躍）要按哪一顆鍵；
+# 自訂按鍵是底下的 KeyTrigger 子節點，一個子節點一列（名稱、按鍵、觸發方式，triggered 連到要觸發的函式）。
+# 設定跟著關卡存在 _my/，重灌專案也不會被蓋掉。只換掉字母鍵／空白鍵，方向鍵永遠保留；選 None 的動作
+# 維持原本的按鍵。這個節點被刪掉或換場景時，改過的按鍵自動恢復成專案預設。
 
-@export_group("按鍵設定")
+@export_group("預設操作")
 ## 往左走要按哪一顆鍵（None = 維持預設的 A，方向鍵 ← 一直都能用）
 @export var left_key: Key = KEY_NONE
 ## 往右走要按哪一顆鍵（None = 維持預設的 D，方向鍵 → 一直都能用）
@@ -50,6 +51,13 @@ func _enter_tree() -> void:
 		if settings[action] != KEY_NONE:
 			_replace_key(action, settings[action])
 	_warn_duplicates()
+
+# 檢查底下的子節點是不是都是按鍵觸發器，拖錯東西進來要提醒
+func _ready() -> void:
+	for child in get_children():
+		if not ("trigger" in child and child.has_signal("triggered")):
+			push_warning("[按鍵設定] %s 不是按鍵觸發器，放在 KeySettings 底下不會有作用" % child.name)
+			printerr("⚠ [按鍵設定] %s 不是按鍵觸發器（KeyTrigger），請拖到關卡的其他地方" % child.name)
 
 # 離開場景時把改過的動作恢復成原本的按鍵，不影響之後打開的其他場景
 func _exit_tree() -> void:

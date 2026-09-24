@@ -63,12 +63,12 @@
 │   ├── Mechanics   ← mechanics/ 的機制卡（抽到的那張）
 │   ├── Juice       ← juice/ 的手感組件
 │   └── Abilities   ← abilities/ 的攻擊能力（近戰、遠程）
-├── MyControls      ← blocks/KeyTrigger.tscn（自訂按鍵）
 ├── RespawnHandler  ← 死掉後讓你重生（範本已經放好，刪掉就不會重生）
 ├── Room1、Room2…   ← blocks/Room.tscn（房間，見下面 5.1）
 ├── EventListener   ← blocks/EventListener.tscn（選一個事件，例如「玩家死亡時」，發生時發訊號，連到門、平台…）
 ├── ValueSettings_Health ← blocks/ValueSettings.tscn（血量設定，見下面 5.2）
-├── KeySettings     ← blocks/KeySettings.tscn（改左右上下、跳躍的按鍵，見下面 5.3）
+├── KeySettings     ← 所有按鍵：改左右上下、跳躍，以及自己加的按鍵（見下面 5.3）
+│   └── Key_…       ← blocks/KeyTrigger.tscn（自訂按鍵，一個一列）
 └── （直接放在關卡底下） ← blocks/ 的零件（按鈕、門、風扇、敵人…）
 ```
 
@@ -105,9 +105,11 @@
 | `show_in_hud` | 打勾：一開場就顯示在左上角；不勾：不顯示 |
 | `reset_on_death` | 死掉時要不要退回（累計分數這種就關掉） |
 
-### 5.3 改操作按鍵
+### 5.3 按鍵設定
 
-範本已經放好一個 **KeySettings**，點它在 Inspector 的下拉選單選新的按鍵：
+範本已經放好一個 **KeySettings**。
+
+**改基本操作**：點它，在 Inspector「預設操作」的下拉選單選新的按鍵：
 
 | 欄位 | 預設 |
 |---|---|
@@ -118,6 +120,13 @@
 - **方向鍵永遠都能用**，改的只是字母鍵和空白鍵
 - 設定存在你的關卡裡，重灌也不會不見。**不要**去改「專案設定」裡的 Input Map，那個重灌會被蓋掉
 - 選到跟卡片或其他動作一樣的鍵，輸出面板會提醒
+
+**加自己的按鍵**（例如按 E 開門）：
+
+1. 把 `blocks/KeyTrigger.tscn` 拖到 **KeySettings 底下**，改個好認的名字（例如 `Key_OpenDoor`）
+2. Inspector：`key_source` 選「自訂按鍵」→ `key` 選 E；`trigger` 選什麼時候觸發（按下時／放開時／按住時）
+3. 右邊「**節點**」分頁 → 雙擊 `triggered` → 選門 → 函式選 `toggle` → 連接
+4. 要再加一個 → 選它按 **Ctrl+D** 複製，再改名字、按鍵、連線
 
 ---
 

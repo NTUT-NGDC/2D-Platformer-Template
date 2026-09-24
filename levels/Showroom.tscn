@@ -338,4 +338,4 @@ text = "按 E → 風扇吹起"
 [connection signal="turned_on" from="Vg2_Button" to="Vg2_MovingPlatform" method="activate"]
 [connection signal="turned_off" from="Vg2_Button" to="Vg2_MovingPlatform" method="deactivate"]
 [connection signal="pressed" from="Vg3_KeyTrigger" to="Vg3_Fan" method="activate"]
-[connection signal="released" from="Vg3_KeyTrigger" to="Vg3_Fan" method="deactivate"]
+[connection signal="hold_ended" from="Vg3_KeyTrigger" to="Vg3_Fan" method="deactivate"]

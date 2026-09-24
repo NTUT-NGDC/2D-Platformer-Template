@@ -115,7 +115,7 @@ InputRouter.bind_input(owner: Node, input_type: int, key: Key, phase: int, callb
 
 ### 3.5 學員的按鍵只聽不搶
 
-任何學員自己擺的按鍵觸發器（含 `01d_showroom_and_toybox.md` 的 `MyControls` 底下那些）在路由中
+任何學員自己擺的按鍵觸發器（含 `01d_showroom_and_toybox.md` 的 `KeySettings` 底下那些）在路由中
 **永遠是最低優先、且不能攔截**。學員即使把觸發器綁在 Space 上，跳躍仍然照常運作。
 
 ### 3.6 安全機制
@@ -255,7 +255,7 @@ func take_hit(damage: int, knockback: Vector2, source: Node) -> void
 
 ### 6.5 連線驗證器
 
-遊戲開始時掃描所有 `signal_source` 零件與 `MyControls` 的訊號連接，以中文警告回報：
+遊戲開始時掃描所有 `signal_source` 零件（含按鍵觸發器）的訊號連接，以中文警告回報：
 
 - 連到的函式不存在（改名或打錯）
 - 參數數量對不上
@@ -268,7 +268,6 @@ Godot 的訊號對話框本身只能部分過濾（Method 下拉主要列腳本�
 ### 6.6 連線視覺化
 
 `signal_source` 零件使用 `@tool` 腳本，在編輯畫面中讀取自己的訊號連接清單，畫一條虛線到每個目標節點。
-連接到 `MyControls` 腳本的函式時，虛線畫到 `MyControls`。
 
 ---
 
@@ -294,7 +293,7 @@ Godot 的訊號對話框本身只能部分過濾（Method 下拉主要列腳本�
 
 - [ ] `InputRouter.bind()` / `bind_key()` 的優先權攔截正確運作：高優先綁定回傳 `true` 後，低優先
       綁定收不到同一次輸入
-- [ ] 任何學員自己擺的按鍵觸發器（含 `MyControls` 底下的）即使綁在 `jump` 上，Player 的跳躍仍正常
+- [ ] 任何學員自己擺的按鍵觸發器（含 `KeySettings` 底下的）即使綁在 `jump` 上，Player 的跳躍仍正常
       運作，證明「只聽不搶」生效
 - [ ] `owner` 離開場景樹或 `啟用` 關閉時，它在 `InputRouter` 的綁定會自動解除
 - [ ] 兩個攔截輸入的組件綁到同一個按鍵與時機時，輸出面板出現中文警告

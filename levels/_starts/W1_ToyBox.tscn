@@ -5,8 +5,6 @@
 [ext_resource type="Script" uid="uid://ddmv38ww06tgv" path="res://levels/_shared/CameraRig.gd" id="3"]
 [ext_resource type="PackedScene" path="res://blocks/RespawnHandler.tscn" id="4"]
 [ext_resource type="Texture2D" uid="uid://cm8ymciwkvttp" path="res://art/white_block.png" id="5"]
-[ext_resource type="Script" uid="uid://bak4gt8ywjd2q" path="res://_my/my_controls.gd" id="6"]
-[ext_resource type="PackedScene" path="res://blocks/KeyTrigger.tscn" id="7"]
 [ext_resource type="PackedScene" path="res://blocks/ValueSettings.tscn" id="8"]
 [ext_resource type="PackedScene" path="res://blocks/KeySettings.tscn" id="9"]
 
@@ -39,18 +37,5 @@ script = ExtResource("3")
 [node name="RespawnHandler" parent="." unique_id=1284888066 instance=ExtResource("4")]
 
 [node name="ValueSettings_Health" parent="." instance=ExtResource("8")]
-
-[node name="MyControls" type="Node" parent="." unique_id=1469493202]
-script = ExtResource("6")
-
-[node name="KeyTrigger_E" parent="MyControls" unique_id=846756457 instance=ExtResource("7")]
-key_source = 1
-
-[node name="KeyTrigger_1" parent="MyControls" unique_id=1243177682 instance=ExtResource("7")]
-key_source = 1
-key = 49
-
-[connection signal="pressed" from="MyControls/KeyTrigger_E" to="MyControls" method="on_e_pressed"]
-[connection signal="pressed" from="MyControls/KeyTrigger_1" to="MyControls" method="on_1_pressed"]
 
 [node name="KeySettings" parent="." instance=ExtResource("9")]

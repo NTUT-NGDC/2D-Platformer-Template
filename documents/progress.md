@@ -253,8 +253,15 @@
       　　→ 修正：原本 HUD 要等數值第一次變動才出現，一開場看不到血量。`show_in_hud` 改成「打勾一開場就顯示、
       　　　不勾永遠不顯示」（`Stats` 新增 `configured` 訊號，`StatsHud` 訂閱）；沒有 ValueSettings 的種類維持
       　　　第一次變動才出現
-- [ ] U85 拿掉 `MyControls` 與 `_my/my_controls.gd`：`W1_ToyBox` 的兩個 KeyTrigger 移到關卡底下、`ConnectionValidator`
-      與連線虛線不再特別處理 MyControls、01d §3 與 README 改寫
+- [x] U85 `MyControls` 合併進 `KeySettings`：KeySettings 的 Inspector「預設操作」改基本按鍵，子節點 KeyTrigger 是
+      自訂按鍵清單（一列＝名稱＋按鍵＋觸發方式＋triggered 連到函式）；KeyTrigger 新增 `trigger` 下拉（按下時／
+      放開時／按住時（每一幀））與不帶參數的 `triggered`；拿掉 `_my/my_controls.gd` 與 W1_ToyBox 的 MyControls
+      （驗證：`tests/KeySettingsTest.tscn` 按 E 左門一按就開關、按住 Q 右門放開才開關；KeySettings 底下的
+      非按鍵節點印警告）
+      　　→ 講師決定：自訂按鍵用子節點當清單（Inspector 陣列無法指定場景節點、函式名要打字，違反鐵律一、四）。
+      　　　KeyTrigger 加入 `signal_source`（原本沒加，連線驗證器從沒檢查過它），順便抓到 Showroom 的
+      　　　`released(seconds)` 連到 `Fan.deactivate()` 參數數量不對，改連 `hold_ended`；KeyTrigger 一條訊號都沒連時
+      　　　印中文提醒。KeyTrigger 是 Node 沒有座標，畫不出連線虛線（驗證器仍會檢查）
 - [x] U86 按鍵設定節點 `blocks/KeySettings.tscn`：下拉選單改 move_left／move_right／move_up／move_down／jump 的按鍵，
       執行時改寫 InputMap（驗證：`tests/KeySettingsTest.tscn` 往左 J、往右 L、跳躍 Shift，A／D／空白鍵沒反應、
       方向鍵照樣能走，輸出面板有 Shift 跟重力翻轉卡衝突的警告）

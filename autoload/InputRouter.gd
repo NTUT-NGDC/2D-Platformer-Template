@@ -59,7 +59,7 @@ func bind_input(owner: Node, input_type: int, key: Key, phase: int, callback: Ca
 	else:
 		bind_mouse(owner, MOUSE_BUTTONS[input_type - 1], phase, callback, priority)
 
-# 學員自己擺的按鍵觸發器專用（KeyTrigger、MyControls）：一定收得到輸入，但不會擋住任何其他綁定
+# 學員自己擺的按鍵觸發器專用（KeyTrigger）：一定收得到輸入，但不會擋住任何其他綁定
 @warning_ignore("shadowed_variable_base_class")
 func bind_student_key(owner: Node, key: Key, phase: int, callback: Callable) -> void:
 	var action := _ensure_key_action(key)

@@ -44,30 +44,35 @@
 
 ## 2. 玩具箱起始場景 `levels/_starts/W1_ToyBox.tscn`
 
-- 一個螢幕大、鏡頭鎖死、已有地板、`Player` 與 `MyControls`（見第 3 節）。
+- 一個螢幕大、鏡頭鎖死、已有地板、`Player`、`ValueSettings_Health` 與 `KeySettings`（見第 3 節）。
 - 學員另存到 `_my/` 後才開始擺零件（保留「另存新檔」的教學動作，這是他後面五週都要用的動作）。
 - 規則：一個螢幕、沒有終點、不評難度。
 
 ---
 
-## 3. 我的按鍵 `MyControls`
+## 3. 按鍵設定 `KeySettings`
 
-玩具箱起始場景預先放一個 `MyControls` 節點，學員所有自訂按鍵都放在它底下：
+> 原本的 `MyControls` 節點與 `_my/my_controls.gd` 已拿掉，合併成 `KeySettings`（講師決定，progress.md 階段 17）。
+
+玩具箱與 `_Template` 出廠預放一個 `KeySettings`（`blocks/KeySettings.tscn`），關卡裡所有按鍵都在這裡：
 
 ```
 W1_ToyBox
 ├── ...
 ├── Player
-└── MyControls          [掛著 _my/my_controls.gd]
-    ├── KeyTrigger_E
-    └── KeyTrigger_1
+└── KeySettings              [Inspector「預設操作」：左右上下、跳躍的按鍵]
+    ├── Key_Dash             ← 一列自訂按鍵＝一個 KeyTrigger（節點名稱＝名稱）
+    └── Key_Open
 ```
 
-- 學員可以把按鍵觸發器的訊號直接連到零件（不用寫程式），或連到 `my_controls.gd` 裡的函式（寫一兩行
-  呼叫其他零件）。
-- `my_controls.gd` 放在 `_my/`，出廠附一到兩個範例函式與中文註解，內容待討論（見第 6 節）。
-- 此節點內的按鍵觸發器遵守 `01a_shared_systems.md` §3.5「學員的按鍵只聽不搶」。
-- W2 之後的起始場景也都要包含 `MyControls`。
+- **預設操作**：`left_key`／`right_key`／`up_key`／`down_key`／`jump_key` 五個按鍵下拉，預設 `None`＝不改。
+  只換字母鍵與空白鍵，方向鍵永遠保留。在 `_enter_tree` 改寫 InputMap，搶在組件向 InputRouter 註冊之前。
+- **自訂按鍵**：把 `blocks/KeyTrigger.tscn` 拖到 `KeySettings` 底下，一個子節點一列，要多一列就 Ctrl+D。
+  每列設定按鍵（`key_source`＋`key`）與觸發方式（`trigger`：按下時／放開時／按住時（每一幀）），
+  再把 `triggered` 訊號連到要觸發的零件函式（`01a_shared_systems.md` §6）。
+- 子節點裡的按鍵觸發器遵守 `01a_shared_systems.md` §3.5「學員的按鍵只聽不搶」。
+- 設定存在學員的關卡場景（`_my/`）裡，不改 `project.godot` 的 Input Map，重灌不會被蓋掉。
+- W2 之後的起始場景也都要包含 `KeySettings`。
 
 ---
 
@@ -89,10 +94,10 @@ W1_ToyBox
 - [ ] 展示間內每個 `blocks/` 零件都單獨展示一次，各自運作正常
 - [ ] 展示間的 2-3 個組合小劇場運作正常，訊號連接的虛線正確畫到目標節點
 - [ ] 展示間（地形區 + 零件區）維持在單一螢幕內看完，不需要鏡頭平移
-- [ ] `W1_ToyBox.tscn` 出廠附地板、鏡頭鎖死、`Player`、`MyControls`，開場即可遊玩
+- [ ] `W1_ToyBox.tscn` 出廠附地板、鏡頭鎖死、`Player`、`KeySettings`，開場即可遊玩
 - [ ] 講師示範「按鈕 `turned_on` 連到門 `activate`」不需要寫程式，2 分鐘內可以完成
 - [ ] 玩具箱另存到 `_my/` 後，`git status` 只顯示 `_my/` 底下的檔案有變更
-- [ ] `MyControls` 底下的按鍵觸發器即使綁在系統按鍵上，也不會搶走 Player 的基本操作
+- [ ] `KeySettings` 底下的按鍵觸發器即使綁在系統按鍵上，也不會搶走 Player 的基本操作
 - [ ] 中途加入的學員可以獨立走完「逛展示間 → 組玩具箱」流程，不需要前面幾週的產出
 - [ ] 三段式流程（15+10+40 分鐘）內容量可在時段內走完，不需要老師额外補課
 
@@ -101,4 +106,3 @@ W1_ToyBox
 ## 6. 待討論
 
 - [ ] 展示間地形區與零件區的實際比例配置、小劇場內容
-- [ ] `my_controls.gd` 的範例函式內容
