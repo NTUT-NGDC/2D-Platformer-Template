@@ -194,8 +194,10 @@
       新增 `revive()`；`MechanicBase` 新增 `on_respawn()`（驗證：`tests/ReviveTest.tscn` 按 K 死亡、按 R 復活到起點）
 - [x] U75 `blocks/Room.tscn`：`@tool` 編輯器畫邊框、依格數自動產生碰撞框、玩家進入發 `room_entered`、
       `Marker2D` 子節點當重生點（驗證：拖兩個 Room 並排，編輯器看得到邊框，走過邊界輸出面板印房間名）
-- [ ] U76 `CameraRig` 接 `room_entered` 瞬間切到房間中心，拿掉 `follow_player`，震動疊加在上面
+- [x] U76 `CameraRig` 接 `room_entered` 瞬間切到房間中心，震動疊加在上面
       （驗證：兩個房間並排，走過邊界鏡頭瞬切）
+      　　→ 講師決定保留 `follow_player` 當備用：場景裡沒有任何 Room 時才生效（Showroom 繼續用），
+      　　　一有 Room 進入就關掉跟隨、印中文提示，改成房間瞬切
 - [ ] U77 `blocks/RespawnHandler.tscn` 取代 `levels/_shared/Respawn`，改寫 `RespawnMemory` 配合軟重生，
       替換所有關卡與測試場景；`mode` 下拉選單「回到目前房間／整關重來」，整關重來＝軟重置（玩家回初始位置、
       所有房間零件 `reset()`、數值退回最初值、清空 Checkpoint），不重載場景（驗證：第二個房間死亡重生在
