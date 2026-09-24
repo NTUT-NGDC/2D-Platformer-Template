@@ -43,6 +43,8 @@ use_gravity = true
 
 [node name="Ability_Ranged_Mouse" parent="Player/Abilities" unique_id=1492402338 instance=ExtResource("7")]
 input_type = 1
+aim_at_mouse = true
+max_range_tiles = 5
 
 [node name="Camera2D" type="Camera2D" parent="." unique_id=274551399]
 position = Vector2(-40, 50)

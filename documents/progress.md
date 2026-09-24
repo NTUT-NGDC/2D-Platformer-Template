@@ -172,3 +172,5 @@
       `tests/Mechanic_SlingshotTest.tscn` 把 `input_type` 改成滑鼠右鍵，右鍵拖曳能發射、左鍵沒反應）
 - [x] U69 `Ability_Ranged` 新增 `aim_at_mouse` 勾選框，開啟後子彈朝滑鼠游標方向射（驗證：`tests/Ability_RangedTest.tscn`
       點滑鼠左鍵，子彈跟著游標方向飛）
+- [x] U70 `Ability_Ranged` 新增 `max_range_tiles` 最大飛行格數，0 代表不限制（驗證：`tests/Ability_RangedTest.tscn`
+      點滑鼠左鍵，子彈飛約 5 格就消失；G／H 照舊飛到撞牆或時間到）
