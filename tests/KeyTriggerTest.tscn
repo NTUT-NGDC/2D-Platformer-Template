@@ -32,7 +32,7 @@ position = Vector2(0, 57)
 
 [node name="KeyTrigger_Action" parent="." instance=ExtResource("5")]
 key_source = 4
-action = "jump"
+same_key_as = "jump"
 
 [node name="KeyTrigger_Key" parent="." instance=ExtResource("5")]
 key = 80

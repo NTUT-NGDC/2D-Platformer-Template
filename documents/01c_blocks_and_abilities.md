@@ -35,13 +35,13 @@
 | 零件 | 檔名 | 身體 | 欄位 | 訊號 |
 |---|---|---|---|---|
 | 按鈕 | `Button.tscn` | 感應 | `mode`（踩住才開／踩一下切換／踩一下永久開／被攻擊觸發）、`pressed_by`（玩家與箱子／只有玩家／只有箱子） | `turned_on`、`turned_off` |
-| 按鍵觸發器 | `KeyTrigger.tscn` | 無 | `key_source`（自訂按鍵／滑鼠左鍵／滑鼠右鍵／滑鼠中鍵／跟基本操作同一顆鍵）、`key` 或 `action`（依來源顯示其一，選滑鼠按鍵時都不顯示）、`trigger`（按下時／放開時／按住時（每一幀）） | `triggered`（學員用）；進階：`pressed`、`released`、`hold_started`、`hold_ended`、`held(seconds)` |
+| 按鍵觸發器 | `KeyTrigger.tscn` | 無 | `key_source`（自訂按鍵／滑鼠左鍵／滑鼠右鍵／滑鼠中鍵／跟基本操作同一顆鍵）、`key` 或 `same_key_as`（依來源顯示其一，選滑鼠按鍵時都不顯示）、`trigger`（按下時／放開時／按住時（每一幀）） | `triggered`（學員用）；進階：`pressed`、`released`、`hold_started`、`hold_ended`、`held(seconds)` |
 | 傳送門 | `Portal.tscn` | 感應 | `pair`（另一座傳送門）、`keep_velocity`（保留速度，預設開）、`allow_boxes`（箱子也能傳） | `teleported` |
 | 重生點 | `Checkpoint.tscn` | 感應 | 無 | `reached` |
 | 終點 | `Goal.tscn` | 感應 | 無 | `reached` |
 
 - 按鈕的 `turned_on` / `turned_off` 依模式決定：踩住才開為壓下／離開；切換為每踩一次交替；永久為只發一次 `turned_on`。
-- 按鍵觸發器的 `action` 與 `key` 用 `_validate_property` 依 `key_source` 顯示其中一個；選滑鼠按鍵時兩個都隱藏，改用 `InputRouter.bind_student_mouse()`。
+- 按鍵觸發器的 `same_key_as` 與 `key` 用 `_validate_property` 依 `key_source` 顯示其中一個；選滑鼠按鍵時兩個都隱藏，改用 `InputRouter.bind_student_mouse()`。
 - 傳送門：A 指定 B 後，B 自動連回 A；傳送後 0.3 秒內不會再次觸發，避免來回彈。
 - 終點 emit `Events.level_cleared`。W1 玩具箱不使用。
 

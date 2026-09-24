@@ -14,8 +14,9 @@ extends Node
 ## key_source 選「自訂按鍵」時，要用哪一個按鍵
 @export var key: Key = KEY_E
 
-## key_source 選「跟基本操作同一顆鍵」時，要跟哪一個基本操作共用（會跟著 KeySettings 改過的按鍵走）
-@export_enum("move_left", "move_right", "move_up", "move_down", "jump", "restart") var action: String = "jump"
+## 跟哪一個基本操作用同一顆鍵（會跟著 KeySettings 改過的按鍵走）。這裡只決定聽哪一顆鍵，
+## 按下時基本操作照樣會做，另外再觸發你用 triggered 訊號連的函式
+@export_enum("move_left", "move_right", "move_up", "move_down", "jump", "restart") var same_key_as: String = "jump"
 
 ## 什麼時候發出 triggered：按下的那一刻、放開的那一刻，或按住期間每一幀都發
 @export_enum("按下時", "放開時", "按住時（每一幀）") var trigger: int = 0
@@ -48,7 +49,7 @@ const _DANGEROUS_KEYS := [
 
 # 依 key_source 顯示對應欄位，其他隱藏（選滑鼠按鍵時兩個都隱藏），學員不會被無關的欄位搞混
 func _validate_property(property: Dictionary) -> void:
-	if property.name == "action" and key_source != _SOURCE_ACTION:
+	if property.name == "same_key_as" and key_source != _SOURCE_ACTION:
 		property.usage = PROPERTY_USAGE_NONE
 	elif property.name == "key" and key_source != _SOURCE_KEY:
 		property.usage = PROPERTY_USAGE_NONE
@@ -58,9 +59,9 @@ func _ready() -> void:
 	add_to_group("signal_source")
 	_warn_if_not_connected.call_deferred()  # 等場景裡其他節點的 _ready() 都跑完，用程式連的線也算進去
 	if key_source == _SOURCE_ACTION:
-		InputRouter.bind_student(self, StringName(action), InputRouter.PRESSED, _on_pressed)
-		InputRouter.bind_student(self, StringName(action), InputRouter.HELD, _on_held)
-		InputRouter.bind_student(self, StringName(action), InputRouter.RELEASED, _on_released)
+		InputRouter.bind_student(self, StringName(same_key_as), InputRouter.PRESSED, _on_pressed)
+		InputRouter.bind_student(self, StringName(same_key_as), InputRouter.HELD, _on_held)
+		InputRouter.bind_student(self, StringName(same_key_as), InputRouter.RELEASED, _on_released)
 	elif key_source != _SOURCE_KEY:
 		var button: MouseButton = InputRouter.MOUSE_BUTTONS[key_source - 1]
 		InputRouter.bind_student_mouse(self, button, InputRouter.PRESSED, _on_pressed)

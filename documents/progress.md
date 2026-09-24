@@ -274,3 +274,6 @@
       （原「預設動作」改名移到最後），預設自訂按鍵，拖進來看不到 `action: jump`；順序跟卡片、能力的 `input_type`
       一致。Showroom、KeyTriggerTest、KeySettingsTest、KeyKillDemo 裡的數字跟著重排（驗證：headless 模擬按空白鍵、
       P、滑鼠右鍵、1、E，5 個 KeyTrigger 都還綁在原本的按鍵上）
+- [x] U88 KeyTrigger 的 `action` 改名 `same_key_as`：這個欄位只決定「聽哪一顆鍵」（Input Map 的動作），叫 action 會被
+      誤會成「要觸發的函式」；要觸發什麼只由 `triggered` 訊號決定。tooltip 註明基本操作照樣會做（只聽不搶）
+      （驗證：KeyTrigger 的 `key_source` 切到「跟基本操作同一顆鍵」，欄位名稱顯示 Same Key As）
