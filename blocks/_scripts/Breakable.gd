@@ -31,6 +31,7 @@ const _SIGNAL_LINE_COLOR := Color(1.0, 0.85, 0.2, 0.85)
 
 var _durability_left: int = 0
 var _is_broken: bool = false
+var _generation: int = 0  # 每次 reset() 加一，讓 reset 之前排好的重生計時器失效
 
 # 被攻擊打到，扣耐久，歸零時碎裂
 func take_hit(damage: int, _knockback: Vector2, source: Node) -> void:
@@ -77,13 +78,22 @@ func _break() -> void:
 	_visual.visible = false
 	broken.emit()
 	if respawn_time > 0.0:
-		get_tree().create_timer(respawn_time).timeout.connect(_respawn)
+		var generation := _generation
+		get_tree().create_timer(respawn_time).timeout.connect(func():
+			if generation == _generation:
+				_respawn()
+		)
+
+# 把自己恢復到關卡開始時的狀態：耐久補滿、碎掉的長回來（重生處理者呼叫）
+func reset() -> void:
+	_generation += 1
+	_respawn()
 
 # 重生：恢復耐久、碰撞與外觀
 func _respawn() -> void:
 	_is_broken = false
 	_durability_left = durability
-	_shape.disabled = false
+	_shape.set_deferred("disabled", false)
 	_visual.visible = true
 	_update_visual()
 

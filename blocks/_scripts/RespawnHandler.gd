@@ -104,7 +104,8 @@ func _get_room_spawn_position() -> Vector2:
 		return checkpoint_position
 	return _start_position
 
-# 對範圍內所有有 reset() 的零件逐一呼叫；room 是 null 代表整個關卡。玩家身上的組件不算
+# 對範圍內所有有 reset() 的零件逐一呼叫；room 是 null 代表整個關卡。玩家身上的組件不算。
+# 會移動的零件（箱子、敵人）用它一開始的位置判斷屬於哪個房間，被推到別的房間也會回到自己的房間
 func _reset_objects(player: Node, room: Node2D) -> void:
 	var scene := get_tree().current_scene
 	if scene == null:
@@ -119,7 +120,8 @@ func _collect_resettable(node: Node, player: Node, room: Node2D, out: Array[Node
 	if node == player:
 		return
 	if node is Node2D and node.has_method("reset"):
-		if room == null or room.has_point((node as Node2D).global_position):
+		var home: Vector2 = node.get_reset_position() if node.has_method("get_reset_position") else (node as Node2D).global_position
+		if room == null or room.has_point(home):
 			out.append(node)
 	for child in node.get_children():
 		_collect_resettable(child, player, room, out)

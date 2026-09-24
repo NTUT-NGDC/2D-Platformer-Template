@@ -47,31 +47,41 @@ func deactivate() -> void:
 func toggle() -> void:
 	_set_open(not _is_open)
 
-# 依 open_mode 決定要不要監聽玩家碰門，並套用一開始的開關狀態。
-# 鑰匙／金幣模式打開過一次之後，重生記憶會記住，死亡重生後門要維持開著。
+# 依 open_mode 決定要不要監聽玩家碰門，並套用一開始的開關狀態
 func _ready() -> void:
 	if Engine.is_editor_hint():
 		return
 	add_to_group("signal_source")
-	var remembered_open := false
 	if open_mode != _MODE_SIGNAL:
-		add_to_group("persistent")
 		_detector.body_entered.connect(_on_detector_entered)
-		remembered_open = RespawnMemory.recall(get_path(), false)
-	_is_open = start_open or remembered_open
+	_is_open = start_open
 	_apply_state()
 
-# 鑰匙／金幣模式下，玩家碰到門時檢查 Stats 夠不夠，夠了就開門並記住這件事
+# 鑰匙／金幣門恢復到關卡開始時的狀態（用掉的鑰匙金幣由重生記憶退回，重生處理者呼叫）。
+# 由訊號控制的門不重置：它的開關是別的零件決定的，重置了會跟控制它的按鈕對不上，可能卡關。
+# 鑰匙／金幣設成「死亡不退回」時也不重置：付掉的拿不回來，門再關上就過不去了
+func reset() -> void:
+	if open_mode == _MODE_SIGNAL:
+		return
+	if consume and not Stats.is_reset_on_death(_get_kind()):
+		return
+	_is_open = start_open
+	_apply_state()
+
+# 鑰匙／金幣模式下，玩家碰到門時檢查 Stats 夠不夠，夠了就開門
 func _on_detector_entered(body: Node) -> void:
 	if _is_open or not body.is_in_group("player"):
 		return
-	var kind := "鑰匙" if open_mode == _MODE_KEY else "金幣"
+	var kind := _get_kind()
 	if not Stats.has_at_least(kind, required_amount):
 		return
 	if consume:
 		Stats.consume(kind, required_amount)
-	RespawnMemory.remember(get_path(), true)
 	activate()
+
+# 這扇門要檢查的數值種類
+func _get_kind() -> String:
+	return "鑰匙" if open_mode == _MODE_KEY else "金幣"
 
 # 真正切換開關狀態，狀態沒變就不重複處理
 func _set_open(is_open: bool) -> void:
@@ -86,7 +96,7 @@ func _set_open(is_open: bool) -> void:
 
 # 把目前的開關狀態套用到碰撞與外觀上
 func _apply_state() -> void:
-	_shape.disabled = _is_open
+	_shape.set_deferred("disabled", _is_open)
 	_visual.modulate.a = 0.35 if _is_open else 1.0
 
 # 編輯畫面持續請求重畫，讓虛線跟著訊號連接的變化即時更新

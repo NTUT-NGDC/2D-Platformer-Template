@@ -10,7 +10,6 @@ var _checkpoint_position: Vector2 = Vector2.ZERO
 var _has_save_point: bool = false
 var _save_snapshot: Dictionary = {}         # kind(String) -> int，存檔點當下的數值
 var _initial_snapshot: Dictionary = {}      # kind(String) -> int，這個種類第一次被動到之前的值
-var _persistent_states: Dictionary = {}     # 節點路徑(NodePath) -> 任意狀態，學員不用設定
 var _has_room: bool = false
 
 # 接上存檔點、死亡、過關與數值變化的訊號
@@ -66,7 +65,7 @@ func restore_values() -> void:
 	for kind in snapshot:
 		Stats.set_value(kind, snapshot[kind])
 
-# 整關重來時呼叫：數值退回最一開始，清空踩過的重生點與所有零件記錄
+# 整關重來時呼叫：數值退回最一開始，清空踩過的重生點
 func restart_level() -> void:
 	for kind in _initial_snapshot:
 		Stats.set_value(kind, _initial_snapshot[kind])
@@ -79,7 +78,6 @@ func clear() -> void:
 	_has_save_point = false
 	_save_snapshot.clear()
 	_initial_snapshot.clear()
-	_persistent_states.clear()
 
 # 查詢有沒有踩過重生點
 func has_checkpoint() -> bool:
@@ -88,11 +86,3 @@ func has_checkpoint() -> bool:
 # 查詢最後踩到的重生點位置，沒踩過就回傳 (0, 0)
 func get_checkpoint_position() -> Vector2:
 	return _checkpoint_position
-
-# 記錄某個零件的狀態，key 用節點自己的路徑，學員不用設定
-func remember(path: NodePath, value) -> void:
-	_persistent_states[path] = value
-
-# 查詢先前記錄的狀態，沒記過就回傳 default
-func recall(path: NodePath, default = null):
-	return _persistent_states.get(path, default)

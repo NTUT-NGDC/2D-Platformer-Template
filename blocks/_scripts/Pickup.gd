@@ -36,14 +36,22 @@ func _resolve_stats_kind() -> String:
 	var labels := ["金幣", "鑰匙", "", "分數"]
 	return labels[kind]
 
-# 玩家碰到時加值、發出訊號，然後把自己收掉
+# 玩家碰到時加值、發出訊號，然後把自己藏起來（不刪除，重生時才能放回來）
 func _on_body_entered(body: Node) -> void:
 	if _collected or not body.is_in_group("player"):
 		return
 	_collected = true
 	Stats.add(_stats_kind, amount)
 	collected.emit()
-	queue_free()
+	visible = false
+
+# 把自己恢復到關卡開始時的狀態：被撿走的放回來（數值由重生記憶退回，重生處理者呼叫）。
+# 數值設成「死亡不退回」的道具不放回來，不然同一個可以一直重複撿
+func reset() -> void:
+	if _stats_kind != Stats.HEALTH_KIND and not Stats.is_reset_on_death(_stats_kind):
+		return
+	_collected = false
+	visible = true
 
 # 編輯畫面持續請求重畫，讓虛線跟著訊號連接的變化即時更新
 func _process(_delta: float) -> void:

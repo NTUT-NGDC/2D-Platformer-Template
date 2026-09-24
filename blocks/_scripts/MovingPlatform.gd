@@ -45,6 +45,12 @@ func _ready() -> void:
 	_end_position = _start_position + axis * offset
 	_active = start_active
 
+# 回到起點、重新往終點方向走（重生處理者呼叫）。
+# 動不動（activate／deactivate）是別的零件用訊號控制的，不在這裡重置，不然會跟控制它的按鈕對不上
+func reset() -> void:
+	global_position = _start_position
+	_moving_to_end = true
+
 # 在起點終點之間來回移動
 func _physics_process(delta: float) -> void:
 	if not _active:

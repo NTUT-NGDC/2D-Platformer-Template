@@ -212,7 +212,14 @@
       　　→ 18 張裡有 16 張補了（TouchDeath、NoFriction 沒有要歸零的狀態）；`_extra/` 補了 Dash／DoubleJump／WallJump
       　　　（Magnet、StickyFloor、StompOnly 沒狀態，TimeSlow 自己會在時間到時恢復）。忽大忽小重生回到卡片
       　　　一開始的小體型（`small_scale`），不是 1；開關世界的紅藍方塊回到一開始的顏色
-- [ ] U79 有狀態的零件都實作 `reset()`（驗證：推走箱子後死亡，箱子回原位；別的房間的箱子不動）
+- [x] U79 有狀態的零件都實作 `reset()`（驗證：推走箱子後死亡，箱子回原位；別的房間的箱子不動）
+      　　→ 原則：實體狀態重置（位置、生命、被撿走、被打破），訊號控制的開關狀態不重置（按鈕、訊號門、
+      　　　風扇／平台的啟動開關），不然會跟控制它的零件對不上而卡關。有 `reset()` 的：Box、Enemy、
+      　　　MovingPlatform（只回起點）、Pickup、Breakable、CrumbleFloor、Door（只有鑰匙／金幣門）。
+      　　　Enemy 被打倒、Pickup 被撿走改成藏起來不刪除；會移動的零件用 `get_reset_position()` 回報
+      　　　原本位置，被推到別的房間也算原本的房間。數值設成「死亡不退回」時，付掉的鑰匙門不重置、
+      　　　撿走的道具不放回。`RespawnMemory` 的 `remember()`／`recall()` 與 `persistent` group 拿掉
+      　　　（不重載場景就不需要）
 - [ ] U80 煙霧測試新增連續 kill／revive 10 次檢查狀態歸零，跑完整份煙霧測試
 - [ ] U81 文件：`CLAUDE.md` 禁止事項、`01b` 卡片規格補 `on_respawn()`、`_help/` 補「怎麼拖一個房間」、
       `00_foundation.md` 與 `01a` §5 改寫成軟重生（原本寫死亡＝重新載入場景）

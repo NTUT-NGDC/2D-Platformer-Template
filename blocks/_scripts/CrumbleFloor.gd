@@ -28,6 +28,7 @@ var _visual_origin: Vector2
 var _is_triggered: bool = false
 var _is_broken: bool = false
 var _shake_time_left: float = 0.0
+var _generation: int = 0  # 每次 reset() 加一，讓 reset 之前排好的碎裂／重生計時器失效
 
 # 設定碰撞層／遮罩，記住外觀原始位置
 func _ready() -> void:
@@ -51,7 +52,21 @@ func _on_detector_entered(body: Node) -> void:
 		return
 	_is_triggered = true
 	_shake_time_left = break_delay
-	get_tree().create_timer(break_delay).timeout.connect(_break)
+	_after(break_delay, _break)
+
+# 過 seconds 秒後呼叫 callback；中間如果被 reset() 過就取消
+func _after(seconds: float, callback: Callable) -> void:
+	var generation := _generation
+	get_tree().create_timer(seconds).timeout.connect(func():
+		if generation == _generation:
+			callback.call()
+	)
+
+# 把自己恢復到關卡開始時的狀態：取消抖動與碎裂倒數、碎掉的長回來（重生處理者呼叫）
+func reset() -> void:
+	_generation += 1
+	_shake_time_left = 0.0
+	_respawn()
 
 # 倒數期間讓外觀小幅度隨機抖動，給玩家看得到的碎裂提示；編輯畫面則持續請求重畫，
 # 讓訊號連接的虛線跟著變化即時更新
@@ -79,13 +94,13 @@ func _break() -> void:
 	_visual.visible = false
 	crumbled.emit()
 	if respawn_time > 0.0:
-		get_tree().create_timer(respawn_time).timeout.connect(_respawn)
+		_after(respawn_time, _respawn)
 
 # 重生：恢復碰撞、外觀與觸發狀態
 func _respawn() -> void:
 	_is_broken = false
 	_is_triggered = false
-	_shape.disabled = false
+	_shape.set_deferred("disabled", false)
 	_visual.visible = true
 	_visual.position = _visual_origin
 

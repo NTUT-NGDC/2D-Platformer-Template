@@ -9,6 +9,8 @@ extends RigidBody2D
 const _LIGHT_MASS := 1.0
 const _HEAVY_MASS := 4.0
 
+var _start_position: Vector2 = Vector2.ZERO
+
 # 依重量套用質量，鎖住旋轉讓箱子不會被撞得團團轉，加入 box group 讓其他系統辨識
 func _ready() -> void:
 	add_to_group("box")
@@ -16,6 +18,18 @@ func _ready() -> void:
 	lock_rotation = true
 	collision_layer = 1 << 2  # 圖層 3「箱子」
 	collision_mask = (1 << 0) | (1 << 1) | (1 << 2)  # 圖層 1「玩家」、圖層 2「地形」、圖層 3「箱子」
+	_start_position = global_position
+
+# 把自己恢復到關卡開始時的狀態：回到原位、停止移動（重生處理者呼叫）
+func reset() -> void:
+	linear_velocity = Vector2.ZERO
+	angular_velocity = 0.0
+	PhysicsServer2D.body_set_state(get_rid(), PhysicsServer2D.BODY_STATE_TRANSFORM, Transform2D(0.0, _start_position))
+	global_position = _start_position
+
+# 回傳一開始的位置，重生處理者用它判斷這個箱子屬於哪個房間（箱子被推到別的房間也一樣）
+func get_reset_position() -> Vector2:
+	return _start_position
 
 # 被攻擊打到：只受擊退，不扣血、沒有耐久
 func take_hit(_damage: int, knockback: Vector2, source: Node) -> void:

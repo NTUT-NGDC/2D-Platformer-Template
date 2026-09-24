@@ -33,8 +33,7 @@ var _is_on: bool = false
 var _permanently_triggered: bool = false
 
 # 設定碰撞層／遮罩，並依模式決定要不要監聽踩踏。
-# 永久開模式被踩過一次之後，重生記憶會記住，死亡重生後要重新發出 turned_on，
-# 讓連接的目標（例如門）也一起恢復狀態。
+# 按鈕沒有 reset()：它的開關狀態連著別的零件，重生時維持原狀才不會跟門、平台對不上。
 func _ready() -> void:
 	if Engine.is_editor_hint():
 		return
@@ -44,11 +43,6 @@ func _ready() -> void:
 	if mode != _MODE_HIT:
 		body_entered.connect(_on_body_entered)
 		body_exited.connect(_on_body_exited)
-	if mode == _MODE_PERMANENT:
-		add_to_group("persistent")
-		if RespawnMemory.recall(get_path(), false):
-			_permanently_triggered = true
-			turned_on.emit()
 	_update_visual()
 
 # 判斷這個 body 算不算「踩得動」，依 pressed_by 欄位過濾
@@ -76,7 +70,6 @@ func _on_body_entered(body: Node) -> void:
 		_MODE_PERMANENT:
 			if not _permanently_triggered:
 				_permanently_triggered = true
-				RespawnMemory.remember(get_path(), true)
 				turned_on.emit()
 	_update_visual()
 

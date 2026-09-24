@@ -29,6 +29,8 @@ const _STUN_DURATION := 0.25
 var _direction: int = 1
 var _health_left: int = 0
 var _stun_time_left: float = 0.0
+var _start_position: Vector2 = Vector2.ZERO
+var _defeated: bool = false
 
 # 被攻擊打到：扣血並被擊退一下，歸零時消失
 func take_hit(hit_damage: int, knockback: Vector2, source: Node) -> void:
@@ -37,13 +39,45 @@ func take_hit(hit_damage: int, knockback: Vector2, source: Node) -> void:
 	velocity += knockback
 	_stun_time_left = _STUN_DURATION
 	if _health_left <= 0:
-		defeated.emit()
-		queue_free()
+		_defeat()
+
+# 被打倒：藏起來、關掉碰撞與傷害判定、停止巡邏（不刪除節點，重生時才能復活）
+func _defeat() -> void:
+	if _defeated:
+		return
+	_defeated = true
+	defeated.emit()
+	remove_from_group("enemy")
+	_set_alive(false)
+
+# 把自己恢復到關卡開始時的狀態：回到原位、血量補滿、被打倒的話復活（重生處理者呼叫）
+func reset() -> void:
+	global_position = _start_position
+	velocity = Vector2.ZERO
+	_direction = 1
+	_health_left = health
+	_stun_time_left = 0.0
+	if _defeated:
+		_defeated = false
+		add_to_group("enemy")
+		_set_alive(true)
+
+# 回傳一開始的位置，重生處理者用它判斷這個敵人屬於哪個房間（巡邏走到別的房間也一樣）
+func get_reset_position() -> Vector2:
+	return _start_position
+
+# 切換「活著」的狀態：看不看得見、有沒有碰撞、會不會傷害玩家、會不會動
+func _set_alive(alive: bool) -> void:
+	visible = alive
+	$CollisionShape2D.set_deferred("disabled", not alive)
+	_hurtbox.set_deferred("monitoring", alive)
+	set_physics_process(alive)
 
 # 加入 enemy group，設定碰撞層／遮罩、Hurtbox，套用一開始的血量
 func _ready() -> void:
 	add_to_group("enemy")
 	_health_left = health
+	_start_position = global_position
 	collision_layer = 1 << 3  # 圖層 4「敵人」
 	collision_mask = (1 << 0) | (1 << 1) | (1 << 2)  # 圖層 1「玩家」、圖層 2「地形」、圖層 3「箱子」
 	_hurtbox.collision_layer = 0
