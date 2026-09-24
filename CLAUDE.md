@@ -86,6 +86,7 @@ Claude Code 在這個專案裡的所有對話回覆、進度回報、驗收結�
 | 對象 | 規範 | 範例 |
 |---|---|---|
 | 檔案／節點名 | 英文 PascalCase | `Mechanic_GravityFlip.tscn` |
+| 組件檔案位置 | `.tscn` 放外層給學員拖，`.gd` 放同層 `_scripts/`（`mechanics/`、`juice/`、`blocks/`、`abilities/`，含 `_extra/`；見 `documents/00_foundation.md` §1） | `mechanics/Mechanic_GravityFlip.tscn`<br>`mechanics/_scripts/Mechanic_GravityFlip.gd` |
 | 腳本內部變數、函式 | 英文 snake_case | `_on_landed`, `impact_force` |
 | `@export` 欄位 | 英文 snake_case + 上方 `##` 中文 doc comment | `## 影響跳躍高度，數值越大跳越高`<br>`@export_range(0.0, 2.0) var strength` |
 | `@export_enum` 選項字串 | **繁體中文** | `@export_enum("跳躍時", "落地時")` |
