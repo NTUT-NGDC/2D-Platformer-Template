@@ -192,14 +192,19 @@
 
 - [x] U74 `Events` 新增 `room_entered`／`respawn_requested`／`player_respawned`；`Player.kill()` 只宣告死亡、
       新增 `revive()`；`MechanicBase` 新增 `on_respawn()`（驗證：`tests/ReviveTest.tscn` 按 K 死亡、按 R 復活到起點）
-- [ ] U75 `blocks/Room.tscn`：`@tool` 編輯器畫邊框、依格數自動產生碰撞框、玩家進入發 `room_entered`、
+- [x] U75 `blocks/Room.tscn`：`@tool` 編輯器畫邊框、依格數自動產生碰撞框、玩家進入發 `room_entered`、
       `Marker2D` 子節點當重生點（驗證：拖兩個 Room 並排，編輯器看得到邊框，走過邊界輸出面板印房間名）
 - [ ] U76 `CameraRig` 接 `room_entered` 瞬間切到房間中心，拿掉 `follow_player`，震動疊加在上面
       （驗證：兩個房間並排，走過邊界鏡頭瞬切）
 - [ ] U77 `blocks/RespawnHandler.tscn` 取代 `levels/_shared/Respawn`，改寫 `RespawnMemory` 配合軟重生，
-      替換所有關卡與測試場景（驗證：第二個房間死亡重生在第二個房間；刪掉 RespawnHandler 死亡不重生也不報錯；
-      沒有 Room 時重生在初始位置並印中文提示）
+      替換所有關卡與測試場景；`mode` 下拉選單「回到目前房間／整關重來」，整關重來＝軟重置（玩家回初始位置、
+      所有房間零件 `reset()`、數值退回最初值、清空 Checkpoint），不重載場景（驗證：第二個房間死亡重生在
+      第二個房間；切到整關重來則回第一個房間；刪掉 RespawnHandler 死亡不重生也不報錯；沒有 Room 時重生在
+      初始位置並印中文提示）
 - [ ] U78 18 張機制卡＋`_extra/` 有狀態的都實作 `on_respawn()`（驗證：重力翻轉、忽大忽小狀態下死亡，重生後復位）
 - [ ] U79 有狀態的零件都實作 `reset()`（驗證：推走箱子後死亡，箱子回原位；別的房間的箱子不動）
 - [ ] U80 煙霧測試新增連續 kill／revive 10 次檢查狀態歸零，跑完整份煙霧測試
 - [ ] U81 文件：`CLAUDE.md` 禁止事項、`01b` 卡片規格補 `on_respawn()`、`_help/` 補「怎麼拖一個房間」
+- [ ] U82 `blocks/EventListener.tscn` 事件轉接器：下拉選單選要聽的 `Events` 事件（玩家死亡／重生／受傷／跳躍、
+      進入房間、過關、撿到道具、敵人死亡），發出不帶參數的 `triggered` 給學員用訊號連接，加入 `signal_source`
+      （驗證：放一個「玩家死亡時」轉接器連到門的 `activate`，死亡時門打開；連錯函式時連線驗證器印中文警告）
