@@ -36,7 +36,7 @@ res://
 │   ├── _shared/
 │   │   └── CameraRig.gd      # 重生改由 blocks/RespawnHandler.tscn 負責（見 00b）
 │   ├── Gym.tscn              # W1 通用測試場，含地板，供學員參考佈置
-│   ├── _Template.tscn        # W2 已框好的關卡起點，同樣附上基本地板（避免重生掉出畫面）
+│   ├── _Template.tscn        # W2 已框好的關卡起點，同樣附上基本地板（避免重生掉出畫面）與一個對齊畫面的 Room1
 │   ├── _starts/              # 中途加入者的起始場景
 │   │   └── .gdkeep
 │   └── examples/             # W2 臨摹範例
