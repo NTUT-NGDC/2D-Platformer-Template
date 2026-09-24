@@ -37,3 +37,6 @@ action = "jump"
 [node name="KeyTrigger_Key" parent="." instance=ExtResource("5")]
 key_source = 1
 key = 80
+
+[node name="KeyTrigger_Mouse" parent="." instance=ExtResource("5")]
+key_source = 3

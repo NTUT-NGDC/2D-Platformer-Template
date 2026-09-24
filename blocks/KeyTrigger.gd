@@ -1,14 +1,14 @@
 extends Node
 
 # 按鍵觸發器：不用連任何線，拖進場景就能用。依 key_source 決定要用預先定義的動作
-# （跟移動/跳躍共用同一顆鍵）還是自己選一個按鍵。一律用學員按鍵優先權註冊，
+# （跟移動/跳躍共用同一顆鍵）、自己選一個按鍵，還是滑鼠左鍵／右鍵／中鍵。一律用學員按鍵優先權註冊，
 # 不會搶走 Player 或機制卡的輸入（見 documents/01a_shared_systems.md §3.5）。
 
 ## 關閉時這個觸發器不會生效
 @export var enabled: bool = true
 
-## 按鍵來源：預先定義的動作（跟移動/跳躍共用同一顆鍵）、或自己選一個按鍵
-@export_enum("預設動作", "自訂按鍵") var key_source: int = 0
+## 按鍵來源：預先定義的動作（跟移動/跳躍共用同一顆鍵）、自己選一個按鍵，或滑鼠按鍵
+@export_enum("預設動作", "自訂按鍵", "滑鼠左鍵", "滑鼠右鍵", "滑鼠中鍵") var key_source: int = 0
 
 ## key_source 選「預設動作」時，要用哪一個
 @export_enum("move_left", "move_right", "move_up", "move_down", "jump", "restart") var action: String = "jump"
@@ -29,6 +29,8 @@ signal held(seconds: float)
 
 const _SOURCE_ACTION := 0
 const _SOURCE_KEY := 1
+# key_source 從這個值開始都是滑鼠按鍵，順序對應 InputRouter.MOUSE_BUTTONS
+const _SOURCE_MOUSE_FIRST := 2
 
 const _DANGEROUS_KEYS := [
 	KEY_CTRL, KEY_TAB, KEY_ESCAPE,
@@ -36,7 +38,7 @@ const _DANGEROUS_KEYS := [
 	KEY_F7, KEY_F8, KEY_F9, KEY_F10, KEY_F11, KEY_F12,
 ]
 
-# 依 key_source 顯示對應欄位，另一個隱藏，學員不會被無關的欄位搞混
+# 依 key_source 顯示對應欄位，其他隱藏（選滑鼠按鍵時兩個都隱藏），學員不會被無關的欄位搞混
 func _validate_property(property: Dictionary) -> void:
 	if property.name == "action" and key_source != _SOURCE_ACTION:
 		property.usage = PROPERTY_USAGE_NONE
@@ -49,6 +51,11 @@ func _ready() -> void:
 		InputRouter.bind_student(self, StringName(action), InputRouter.PRESSED, _on_pressed)
 		InputRouter.bind_student(self, StringName(action), InputRouter.HELD, _on_held)
 		InputRouter.bind_student(self, StringName(action), InputRouter.RELEASED, _on_released)
+	elif key_source >= _SOURCE_MOUSE_FIRST:
+		var button: MouseButton = InputRouter.MOUSE_BUTTONS[key_source - _SOURCE_MOUSE_FIRST]
+		InputRouter.bind_student_mouse(self, button, InputRouter.PRESSED, _on_pressed)
+		InputRouter.bind_student_mouse(self, button, InputRouter.HELD, _on_held)
+		InputRouter.bind_student_mouse(self, button, InputRouter.RELEASED, _on_released)
 	else:
 		_warn_if_dangerous_key(key)
 		InputRouter.bind_student_key(self, key, InputRouter.PRESSED, _on_pressed)

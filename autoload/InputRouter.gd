@@ -12,6 +12,9 @@ const HELD := 1
 # 放開的那一幀觸發一次，callback 帶「總共按住的秒數」(float)
 const RELEASED := 2
 
+# 組件下拉選單「滑鼠左鍵／滑鼠右鍵／滑鼠中鍵」依序對應的滑鼠按鍵
+const MOUSE_BUTTONS: Array[MouseButton] = [MOUSE_BUTTON_LEFT, MOUSE_BUTTON_RIGHT, MOUSE_BUTTON_MIDDLE]
+
 # 學員按鍵觸發器專用的優先權：故意設到不可能有人蓋過去的低點
 const STUDENT_PRIORITY := -2147483648
 
