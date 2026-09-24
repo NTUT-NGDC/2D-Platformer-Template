@@ -18,12 +18,16 @@ extends AbilityBase
 ## 子彈存在幾秒後自動消失
 @export_range(0.2, 5.0) var lifetime: float = 2.0
 
+## 子彈最多飛幾格就消失，0 代表不限制（1 格 = 16 像素）
+@export_range(0, 30) var max_range_tiles: int = 0
+
 ## 子彈要不要受重力影響（像拋物線一樣往下墜）
 @export var use_gravity: bool = false
 
 ## 開啟後子彈朝滑鼠游標的方向射，關閉時朝角色面向的方向射
 @export var aim_at_mouse: bool = false
 
+const _TILE_SIZE := 16.0
 const _BULLET_SCENE := preload("res://abilities/Bullet.tscn")
 const _DANGEROUS_KEYS := [
 	KEY_CTRL, KEY_TAB, KEY_ESCAPE,
@@ -57,6 +61,7 @@ func _on_shoot_pressed() -> void:
 	bullet.velocity = _shoot_direction() * bullet_speed
 	bullet.gravity_enabled = use_gravity
 	bullet.lifetime_left = lifetime
+	bullet.max_distance = max_range_tiles * _TILE_SIZE
 	bullet.shooter = player
 	get_tree().current_scene.add_child(bullet)
 

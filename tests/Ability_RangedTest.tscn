@@ -1,9 +1,9 @@
-[gd_scene load_steps=8 format=3]
+[gd_scene format=4 uid="uid://dc8f3xh1xb13w"]
 
-[ext_resource type="Script" path="res://tests/Ability_RangedTest.gd" id="1"]
+[ext_resource type="Script" uid="uid://cos267ru41e30" path="res://tests/Ability_RangedTest.gd" id="1"]
 [ext_resource type="PackedScene" path="res://player/Player.tscn" id="2"]
 [ext_resource type="TileSet" uid="uid://6xyxoqkb30in" path="res://art/default_tile.tres" id="3"]
-[ext_resource type="Texture2D" path="res://art/white_block.png" id="4"]
+[ext_resource type="Texture2D" uid="uid://cm8ymciwkvttp" path="res://art/white_block.png" id="4"]
 [ext_resource type="PackedScene" path="res://blocks/Breakable.tscn" id="5"]
 [ext_resource type="PackedScene" path="res://blocks/Enemy.tscn" id="6"]
 [ext_resource type="PackedScene" path="res://abilities/Ability_Ranged.tscn" id="7"]
@@ -11,67 +11,57 @@
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_wall"]
 size = Vector2(8, 40)
 
-[node name="Ability_RangedTest" type="Node2D"]
+[node name="Ability_RangedTest" type="Node2D" unique_id=1861581338]
 script = ExtResource("1")
 
-[node name="TileMapLayer" type="TileMapLayer" parent="."]
-tile_set = ExtResource("3")
+[node name="TileMapLayer" type="TileMapLayer" parent="." unique_id=2049008243]
 tile_map_data = PackedByteArray("AADx/wsAAAADAAEAAADy/wsAAAADAAEAAADz/wsAAAADAAEAAAD0/wsAAAADAAEAAAD1/wsAAAADAAEAAAD2/wsAAAADAAEAAAD3/wsAAAADAAEAAAD4/wsAAAADAAEAAAD5/wsAAAADAAEAAAD6/wsAAAADAAEAAAD7/wsAAAADAAEAAAD8/wsAAAADAAEAAAD9/wsAAAADAAEAAAD+/wsAAAADAAEAAAD//wsAAAADAAEAAAAAAAsAAAADAAEAAAABAAsAAAADAAEAAAACAAsAAAADAAEAAAADAAsAAAADAAEAAAAEAAsAAAADAAEAAAAFAAsAAAADAAEAAAAGAAsAAAADAAEAAAAHAAsAAAADAAEAAAAIAAsAAAADAAEAAAAJAAsAAAADAAEAAAAKAAsAAAADAAEAAAALAAsAAAADAAEAAAAMAAsAAAADAAEAAAANAAsAAAADAAEAAAAOAAsAAAADAAEAAAA=")
+tile_set = ExtResource("3")
 
-[node name="Player" parent="." instance=ExtResource("2")]
+[node name="Player" parent="." unique_id=1035323423 instance=ExtResource("2")]
 position = Vector2(-180, 95)
 
-[node name="Visual" type="Node2D" parent="Player"]
+[node name="Visual" type="Node2D" parent="Player" unique_id=1687792783]
 
-[node name="Sprite2D" type="Sprite2D" parent="Player/Visual"]
+[node name="Sprite2D" type="Sprite2D" parent="Player/Visual" unique_id=708400976]
 texture = ExtResource("4")
 region_enabled = true
 region_rect = Rect2(0, 0, 16, 32)
 
-[node name="Mechanics" type="Node2D" parent="Player"]
+[node name="Mechanics" type="Node2D" parent="Player" unique_id=2023712758]
 
-[node name="Juice" type="Node2D" parent="Player"]
+[node name="Juice" type="Node2D" parent="Player" unique_id=1378666878]
 
-[node name="Abilities" type="Node2D" parent="Player"]
+[node name="Abilities" type="Node2D" parent="Player" unique_id=1091356291]
 
-[node name="Ability_Ranged_Flat" parent="Player/Abilities" instance=ExtResource("7")]
-key = 71
-bullet_speed = 400.0
-cooldown = 0.4
-lifetime = 2.0
-use_gravity = false
+[node name="Ability_Ranged_Flat" parent="Player/Abilities" unique_id=1199205771 instance=ExtResource("7")]
 
-[node name="Ability_Ranged_Arc" parent="Player/Abilities" instance=ExtResource("7")]
+[node name="Ability_Ranged_Arc" parent="Player/Abilities" unique_id=1763893809 instance=ExtResource("7")]
 key = 72
 bullet_speed = 250.0
-cooldown = 0.4
-lifetime = 2.0
 use_gravity = true
 
-[node name="Ability_Ranged_Mouse" parent="Player/Abilities" instance=ExtResource("7")]
+[node name="Ability_Ranged_Mouse" parent="Player/Abilities" unique_id=1492402338 instance=ExtResource("7")]
 input_type = 1
-aim_at_mouse = true
 
-[node name="Camera2D" type="Camera2D" parent="."]
+[node name="Camera2D" type="Camera2D" parent="." unique_id=274551399]
 position = Vector2(-40, 50)
 zoom = Vector2(0.5, 0.5)
 
-[node name="Breakable_Target" parent="." instance=ExtResource("5")]
+[node name="Breakable_Target" parent="." unique_id=1882128180 instance=ExtResource("5")]
 position = Vector2(-100, 87)
 durability = 1
-respawn_time = 3.0
 break_by_impact = false
 
-[node name="Enemy_Target" parent="." instance=ExtResource("6")]
+[node name="Enemy_Target" parent="." unique_id=1964024518 instance=ExtResource("6")]
 position = Vector2(-20, 87)
 speed = 40.0
 health = 5
-damage = 1
 
-[node name="Wall_Block" type="StaticBody2D" parent="."]
+[node name="Wall_Block" type="StaticBody2D" parent="." unique_id=1150939224]
 position = Vector2(80, 85)
 collision_layer = 2
 collision_mask = 0
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Wall_Block"]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Wall_Block" unique_id=384524218]
 shape = SubResource("RectangleShape2D_wall")
