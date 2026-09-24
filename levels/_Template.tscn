@@ -6,6 +6,7 @@
 [ext_resource type="PackedScene" path="res://blocks/RespawnHandler.tscn" id="4"]
 [ext_resource type="Texture2D" path="res://art/white_block.png" id="5"]
 [ext_resource type="PackedScene" path="res://blocks/Room.tscn" id="6"]
+[ext_resource type="PackedScene" path="res://blocks/ValueSettings.tscn" id="7"]
 
 [node name="Template" type="Node2D"]
 
@@ -37,3 +38,5 @@ position = Vector2(0, 56)
 script = ExtResource("3")
 
 [node name="RespawnHandler" parent="." instance=ExtResource("4")]
+
+[node name="ValueSettings_Health" parent="." instance=ExtResource("7")]

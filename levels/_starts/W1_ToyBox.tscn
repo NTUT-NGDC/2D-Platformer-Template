@@ -7,6 +7,7 @@
 [ext_resource type="Texture2D" uid="uid://cm8ymciwkvttp" path="res://art/white_block.png" id="5"]
 [ext_resource type="Script" uid="uid://bak4gt8ywjd2q" path="res://_my/my_controls.gd" id="6"]
 [ext_resource type="PackedScene" path="res://blocks/KeyTrigger.tscn" id="7"]
+[ext_resource type="PackedScene" path="res://blocks/ValueSettings.tscn" id="8"]
 
 [node name="W1_ToyBox" type="Node2D" unique_id=1601517614]
 
@@ -35,6 +36,8 @@ position = Vector2(0, 57)
 script = ExtResource("3")
 
 [node name="RespawnHandler" parent="." unique_id=1284888066 instance=ExtResource("4")]
+
+[node name="ValueSettings_Health" parent="." instance=ExtResource("8")]
 
 [node name="MyControls" type="Node" parent="." unique_id=1469493202]
 script = ExtResource("6")

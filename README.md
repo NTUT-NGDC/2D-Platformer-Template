@@ -67,6 +67,7 @@
 ├── RespawnHandler  ← 死掉後讓你重生（範本已經放好，刪掉就不會重生）
 ├── Room1、Room2…   ← blocks/Room.tscn（房間，見下面 5.1）
 ├── EventListener   ← blocks/EventListener.tscn（選一個事件，例如「玩家死亡時」，發生時發訊號，連到門、平台…）
+├── ValueSettings_Health ← blocks/ValueSettings.tscn（血量設定，見下面 5.2）
 └── （直接放在關卡底下） ← blocks/ 的零件（按鈕、門、風扇、敵人…）
 ```
 
@@ -89,6 +90,19 @@
 
 > 有放重生點（Checkpoint）的關卡，**一定要拖 Room**。沒有 Room 的話，重生點之前撿過的道具
 > 死掉後會再出現，可以重複撿。
+
+### 5.2 調血量、金幣等數值
+
+範本已經放好一個 **ValueSettings_Health**，點它在 Inspector 拉 `start_value`（一開始幾滴血）、`max_value`（最多幾滴）。
+
+其他數值（金幣、鑰匙、分數…）也一樣：從 `blocks/` 拖一個 `ValueSettings.tscn` 進關卡，`kind` 打上數值的名字
+（例如「金幣」，這是全專案**唯一要打字**的地方，打錯字輸出面板會提醒），再調下面的欄位：
+
+| 欄位 | 用途 |
+|---|---|
+| `start_value` / `max_value` | 一開始多少、最多多少（0 代表不限） |
+| `show_in_hud` | 要不要顯示在左上角 |
+| `reset_on_death` | 死掉時要不要退回（累計分數這種就關掉） |
 
 ---
 

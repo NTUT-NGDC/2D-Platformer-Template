@@ -156,7 +156,8 @@ signal value_changed(kind: String, old_value: int, new_value: int)
 
 ### 4.3 場景設定節點 `ValueSettings`
 
-每個場景可以放一個或多個，沒放就用預設值。每一筆設定對應一個數值種類，欄位：
+`blocks/ValueSettings.tscn`，每個場景可以放一個或多個，沒放就用預設值。`_Template`／`W1_ToyBox` 出廠預放一個
+`ValueSettings_Health`（血量）。每一筆設定對應一個數值種類，欄位：
 
 | 欄位 | 說明 |
 |---|---|
@@ -164,6 +165,7 @@ signal value_changed(kind: String, old_value: int, new_value: int)
 | `start_value` | 初始值 |
 | `max_value` | 上限（0 為不限） |
 | `show_in_hud` | 是否顯示在 HUD |
+| `reset_on_death` | 死亡重生時要不要退回（見 §5.2） |
 
 預設（沒有任何 `ValueSettings` 時）：`血量` 初始 3、上限 3；其他種類第一次用到時初始 0、不限。
 

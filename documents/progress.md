@@ -241,3 +241,17 @@
       淺藍框剛好框住畫面、黃點在地板正上方；F6 執行鏡頭不會跳動、輸出面板印「玩家進入 Room1」）
       　　→ 講師決定：Room 不做自動吸附（靠 Godot 的 Grid Snap）；Room 大小範圍維持開放，比畫面大時學員
       　　　自己調鏡頭縮放；重疊警告不做
+
+## 階段 17：場景設定節點整理
+
+> 講師決定：ValueSettings 搬到 `blocks/` 並預先放在範本裡；拿掉 `MyControls` 與 `_my/my_controls.gd`
+>（KeyTrigger 直接放在關卡底下就能用）；新增按鍵設定節點，讓學員改基本操作按鍵，設定存在 `_my/` 的關卡裡。
+
+- [x] U84 `ValueSettings` 從 `levels/_shared/` 搬到 `blocks/`（`.gd` 放 `blocks/_scripts/`），`_Template`／`W1_ToyBox`
+      預先放一個 `ValueSettings_Health`，README 補 §5.2（驗證：打開 `_Template.tscn`，點 `ValueSettings_Health` 把
+      `max_value`、`start_value` 拉到 5，F6 執行左上角血量是 5）
+- [ ] U85 拿掉 `MyControls` 與 `_my/my_controls.gd`：`W1_ToyBox` 的兩個 KeyTrigger 移到關卡底下、`ConnectionValidator`
+      與連線虛線不再特別處理 MyControls、01d §3 與 README 改寫
+- [ ] U86 按鍵設定節點 `blocks/KeySettings.tscn`：下拉選單改 move_left／move_right／move_up／move_down／jump 的按鍵，
+      執行時改寫 InputMap（驗證：把 jump 改成 W，按 W 會跳、按空白鍵不會）
+

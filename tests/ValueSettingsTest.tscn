@@ -1,7 +1,7 @@
 [gd_scene load_steps=3 format=3]
 
 [ext_resource type="Script" path="res://tests/ValueSettingsTest.gd" id="1"]
-[ext_resource type="PackedScene" path="res://levels/_shared/ValueSettings.tscn" id="2"]
+[ext_resource type="PackedScene" path="res://blocks/ValueSettings.tscn" id="2"]
 
 [node name="ValueSettingsTest" type="Node"]
 script = ExtResource("1")

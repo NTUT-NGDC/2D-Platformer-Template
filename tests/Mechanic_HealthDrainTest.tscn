@@ -6,7 +6,7 @@
 [ext_resource type="PackedScene" path="res://mechanics/Mechanic_HealthDrain.tscn" id="4"]
 [ext_resource type="PackedScene" path="res://blocks/Pickup.tscn" id="5"]
 [ext_resource type="PackedScene" path="res://blocks/RespawnHandler.tscn" id="6"]
-[ext_resource type="PackedScene" path="res://levels/_shared/ValueSettings.tscn" id="7"]
+[ext_resource type="PackedScene" path="res://blocks/ValueSettings.tscn" id="7"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_floor"]
 size = Vector2(400, 16)
