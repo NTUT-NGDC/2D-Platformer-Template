@@ -1,16 +1,28 @@
 extends Node
 
 # Stats 的畫面呈現：訂閱 Stats.value_changed 自動同步，Stats 本身不知道這裡的存在。
-# 學員不用擺任何 UI 節點，數值第一次被實際加減到時，這裡才會生出對應的那一列。
+# 學員不用擺任何 UI 節點。ValueSettings 把 show_in_hud 打開的種類一開場就顯示；
+# 沒有 ValueSettings 的種類，第一次被實際加減到時才生出對應的那一列。
 
 var _hud: CanvasLayer = null
 var _hud_container: VBoxContainer = null
 var _bars: Dictionary = {}    # kind(String) -> ProgressBar，血量這種特殊種類用這個
 var _labels: Dictionary = {}  # kind(String) -> Label，其他種類用這個顯示「名稱：數字」
 
-# 開始監聽 Stats 的數值變動
+# 開始監聽 Stats 的數值變動與設定
 func _ready() -> void:
 	Stats.value_changed.connect(_on_value_changed)
+	Stats.configured.connect(_on_configured)
+
+# ValueSettings 套用設定：show_in_hud 打開就立刻顯示這一列，關掉就把已經顯示的那一列藏起來
+func _on_configured(kind: String) -> void:
+	if Stats.is_hud_visible(kind):
+		if not _bars.has(kind) and not _labels.has(kind):
+			_add_row(kind)
+		_set_row_visible(kind, true)
+		_refresh_row(kind)
+	else:
+		_set_row_visible(kind, false)
 
 # 數值變動時：第一次看到這個種類就先生一列出來，然後把畫面同步成最新的值。
 # ValueSettings 把 show_in_hud 關掉的種類永遠不出現在畫面上。
@@ -20,6 +32,12 @@ func _on_value_changed(kind: String, _old_value: int, _new_value: int) -> void:
 	if not _bars.has(kind) and not _labels.has(kind):
 		_add_row(kind)
 	_refresh_row(kind)
+
+# 顯示或藏起某個種類那一列，還沒生出來就不處理
+func _set_row_visible(kind: String, row_visible: bool) -> void:
+	var control: Control = _bars.get(kind, _labels.get(kind, null))
+	if control != null:
+		control.get_parent().visible = row_visible
 
 # 建立 HUD 用的 CanvasLayer，只在第一次真的需要顯示東西時才做
 func _ensure_hud() -> void:

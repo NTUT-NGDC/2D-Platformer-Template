@@ -12,7 +12,7 @@ extends Node
 ## 上限，0 代表不限
 @export_range(0, 999) var max_value: int = 3
 
-## 是否顯示在畫面左上角的數值列
+## 打勾：一開場就顯示在畫面左上角；不勾：永遠不顯示
 @export var show_in_hud: bool = true
 
 ## 死亡重生時要不要退回踩重生點當下的數值；關閉的話死亡完全不影響這個數值

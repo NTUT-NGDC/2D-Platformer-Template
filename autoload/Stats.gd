@@ -11,6 +11,8 @@ const HEALTH_KIND := "血量"
 const _TYPO_MAX_DISTANCE := 1
 
 signal value_changed(kind: String, old_value: int, new_value: int)
+# ValueSettings 套用設定之後發出，HUD 用它決定要不要一開場就顯示這個數值
+signal configured(kind: String)
 
 var _values: Dictionary = {}       # kind(String) -> int
 var _max_values: Dictionary = {}   # kind(String) -> int，0 代表不限
@@ -58,6 +60,7 @@ func configure(kind: String, start_value: int, max_value: int, show_in_hud: bool
 	_values[kind] = clamped
 	_hud_visible[kind] = show_in_hud
 	_reset_on_death[kind] = reset_on_death
+	configured.emit(kind)
 
 # 查詢目前數值
 func get_value(kind: String) -> int:

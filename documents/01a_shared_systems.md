@@ -164,7 +164,7 @@ signal value_changed(kind: String, old_value: int, new_value: int)
 | `kind` | 種類名稱（字串，學員自己打；打字防呆見 4.1） |
 | `start_value` | 初始值 |
 | `max_value` | 上限（0 為不限） |
-| `show_in_hud` | 是否顯示在 HUD |
+| `show_in_hud` | 打勾一開場就顯示在 HUD；不勾永遠不顯示 |
 | `reset_on_death` | 死亡重生時要不要退回（見 §5.2） |
 
 預設（沒有任何 `ValueSettings` 時）：`血量` 初始 3、上限 3；其他種類第一次用到時初始 0、不限。
@@ -173,7 +173,8 @@ signal value_changed(kind: String, old_value: int, new_value: int)
 
 - 由另一個自動載入 `StatsHud` 訂閱 `Stats.value_changed` 自動生成 `CanvasLayer`，學員不用擺 UI；
   `Stats` 本身只管數值，不知道也不在意畫面有沒有人在監聽，兩者分開避免混在一起。
-- 某個數值第一次在場景中被用到時才出現。
+- 有 `ValueSettings` 且 `show_in_hud` 打勾的種類一開場就出現；沒有 `ValueSettings` 的種類，第一次在場景中
+  被用到時才出現。
 - 血量顯示為血條，其他顯示為圖示加數字。
 
 ### 4.5 血量與傷害

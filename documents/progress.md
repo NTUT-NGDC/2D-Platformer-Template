@@ -250,6 +250,9 @@
 - [x] U84 `ValueSettings` 從 `levels/_shared/` 搬到 `blocks/`（`.gd` 放 `blocks/_scripts/`），`_Template`／`W1_ToyBox`
       預先放一個 `ValueSettings_Health`，README 補 §5.2（驗證：打開 `_Template.tscn`，點 `ValueSettings_Health` 把
       `max_value`、`start_value` 拉到 5，F6 執行左上角血量是 5）
+      　　→ 修正：原本 HUD 要等數值第一次變動才出現，一開場看不到血量。`show_in_hud` 改成「打勾一開場就顯示、
+      　　　不勾永遠不顯示」（`Stats` 新增 `configured` 訊號，`StatsHud` 訂閱）；沒有 ValueSettings 的種類維持
+      　　　第一次變動才出現
 - [ ] U85 拿掉 `MyControls` 與 `_my/my_controls.gd`：`W1_ToyBox` 的兩個 KeyTrigger 移到關卡底下、`ConnectionValidator`
       與連線虛線不再特別處理 MyControls、01d §3 與 README 改寫
 - [ ] U86 按鍵設定節點 `blocks/KeySettings.tscn`：下拉選單改 move_left／move_right／move_up／move_down／jump 的按鍵，
