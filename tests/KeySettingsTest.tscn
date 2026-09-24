@@ -43,10 +43,8 @@ right_key = 76
 jump_key = 4194325
 
 [node name="Key_E_OpenDoor" parent="KeySettings" instance=ExtResource("7")]
-key_source = 1
 
 [node name="Key_Q_OnRelease" parent="KeySettings" instance=ExtResource("7")]
-key_source = 1
 key = 81
 trigger = 1
 

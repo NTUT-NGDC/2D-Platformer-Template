@@ -31,12 +31,11 @@ region_rect = Rect2(0, 0, 16, 32)
 position = Vector2(0, 57)
 
 [node name="KeyTrigger_Action" parent="." instance=ExtResource("5")]
-key_source = 0
+key_source = 4
 action = "jump"
 
 [node name="KeyTrigger_Key" parent="." instance=ExtResource("5")]
-key_source = 1
 key = 80
 
 [node name="KeyTrigger_Mouse" parent="." instance=ExtResource("5")]
-key_source = 3
+key_source = 2

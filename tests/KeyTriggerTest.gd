@@ -2,7 +2,7 @@ extends Node2D
 
 # 手動驗證用：KeyTrigger 的按鍵來源（預設動作、自訂按鍵、滑鼠按鍵）。
 # 「_validate_property 正確顯示對應欄位」這件事要在編輯器的 Inspector 裡肉眼確認：
-# 選 KeyTrigger_Action 節點，切換 key_source 下拉選單，應該只看到 action 或 key 其中一個欄位，
+# 選 KeyTrigger_Action 節點，切換 key_source 下拉選單，應該只看到 key 或 action 其中一個欄位，
 # 切到滑鼠左鍵／右鍵／中鍵時兩個都不顯示。
 #
 # 執行期行為：KeyTrigger_Action 用預設動作 jump（跟角色跳躍共用 Space 鍵，驗證「只聽不搶」，

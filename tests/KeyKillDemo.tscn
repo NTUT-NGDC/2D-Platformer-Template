@@ -46,7 +46,6 @@ script = ExtResource("3")
 [node name="KeySettings" parent="." instance=ExtResource("8")]
 
 [node name="Key_F_Die" parent="KeySettings" instance=ExtResource("9")]
-key_source = 1
 key = 70
 
 [connection signal="triggered" from="KeySettings/Key_F_Die" to="Player" method="kill"]

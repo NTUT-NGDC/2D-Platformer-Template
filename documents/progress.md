@@ -270,4 +270,7 @@
       　　　（不動 InputRouter 的臨時動作）；兩個基本動作撞鍵、選到瀏覽器會攔截的鍵、放兩個 KeySettings
       　　　都印中文警告。`_Template`／`W1_ToyBox` 預放一個，README 補 §5.3。欄位 5 個（超過零件 4 個上限，
       　　　同 ValueSettings 屬於設定節點）
-
+- [x] U87 KeyTrigger 的 `key_source` 改成「自訂按鍵」優先：順序改為自訂按鍵／滑鼠左鍵／右鍵／中鍵／跟基本操作同一顆鍵
+      （原「預設動作」改名移到最後），預設自訂按鍵，拖進來看不到 `action: jump`；順序跟卡片、能力的 `input_type`
+      一致。Showroom、KeyTriggerTest、KeySettingsTest、KeyKillDemo 裡的數字跟著重排（驗證：headless 模擬按空白鍵、
+      P、滑鼠右鍵、1、E，5 個 KeyTrigger 都還綁在原本的按鍵上）

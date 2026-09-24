@@ -66,7 +66,6 @@ horizontal_alignment = 1
 text = "按鈕"
 
 [node name="Show_KeyTrigger" parent="." instance=ExtResource("8")]
-key_source = 1
 key = 49
 
 [node name="Label_KeyTrigger" type="Label" parent="."]
@@ -314,7 +313,6 @@ horizontal_alignment = 1
 text = "按鈕 → 移動平台"
 
 [node name="Vg3_KeyTrigger" parent="." instance=ExtResource("8")]
-key_source = 1
 
 [node name="Vg3_Fan" parent="." instance=ExtResource("14")]
 position = Vector2(3552, 152)

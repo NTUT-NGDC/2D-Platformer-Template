@@ -124,7 +124,7 @@
 **加自己的按鍵**（例如按 E 開門）：
 
 1. 把 `blocks/KeyTrigger.tscn` 拖到 **KeySettings 底下**，改個好認的名字（例如 `Key_OpenDoor`）
-2. Inspector：`key_source` 選「自訂按鍵」→ `key` 選 E；`trigger` 選什麼時候觸發（按下時／放開時／按住時）
+2. Inspector：`key_source` 預設就是「自訂按鍵」，`key` 選 E；`trigger` 選什麼時候觸發（按下時／放開時／按住時）
 3. 右邊「**節點**」分頁 → 雙擊 `triggered` → 選門 → 函式選 `toggle` → 連接
 4. 要再加一個 → 選它按 **Ctrl+D** 複製，再改名字、按鍵、連線
 

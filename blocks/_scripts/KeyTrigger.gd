@@ -1,21 +1,21 @@
 extends Node
 
-# 按鍵觸發器：KeySettings 底下的一列自訂按鍵（節點名稱＝這一列的名稱）。依 key_source 決定要用預先
-# 定義的動作（跟移動/跳躍共用同一顆鍵）、自己選一個按鍵，還是滑鼠左鍵／右鍵／中鍵；依 trigger 決定什麼
+# 按鍵觸發器：KeySettings 底下的一列自訂按鍵（節點名稱＝這一列的名稱）。依 key_source 決定要自己選一個
+# 按鍵、用滑鼠左鍵／右鍵／中鍵，還是跟基本操作（移動/跳躍）共用同一顆鍵；依 trigger 決定什麼
 # 時候發出 triggered，學員把 triggered 連到零件的函式。一律用學員按鍵優先權註冊，
 # 不會搶走 Player 或機制卡的輸入（見 documents/01a_shared_systems.md §3.5）。
 
 ## 關閉時這個觸發器不會生效
 @export var enabled: bool = true
 
-## 按鍵來源：預先定義的動作（跟移動/跳躍共用同一顆鍵）、自己選一個按鍵，或滑鼠按鍵
-@export_enum("預設動作", "自訂按鍵", "滑鼠左鍵", "滑鼠右鍵", "滑鼠中鍵") var key_source: int = 0
-
-## key_source 選「預設動作」時，要用哪一個
-@export_enum("move_left", "move_right", "move_up", "move_down", "jump", "restart") var action: String = "jump"
+## 按鍵來源：自己選一個按鍵、滑鼠按鍵，或跟基本操作（移動/跳躍）共用同一顆鍵
+@export_enum("自訂按鍵", "滑鼠左鍵", "滑鼠右鍵", "滑鼠中鍵", "跟基本操作同一顆鍵") var key_source: int = 0
 
 ## key_source 選「自訂按鍵」時，要用哪一個按鍵
 @export var key: Key = KEY_E
+
+## key_source 選「跟基本操作同一顆鍵」時，要跟哪一個基本操作共用（會跟著 KeySettings 改過的按鍵走）
+@export_enum("move_left", "move_right", "move_up", "move_down", "jump", "restart") var action: String = "jump"
 
 ## 什麼時候發出 triggered：按下的那一刻、放開的那一刻，或按住期間每一幀都發
 @export_enum("按下時", "放開時", "按住時（每一幀）") var trigger: int = 0
@@ -36,10 +36,9 @@ signal held(seconds: float)
 const _TRIGGER_PRESSED := 0
 const _TRIGGER_RELEASED := 1
 const _TRIGGER_HELD := 2
-const _SOURCE_ACTION := 0
-const _SOURCE_KEY := 1
-# key_source 從這個值開始都是滑鼠按鍵，順序對應 InputRouter.MOUSE_BUTTONS
-const _SOURCE_MOUSE_FIRST := 2
+# key_source 0～3 的順序跟卡片、能力的 input_type 相同（鍵盤按鍵、滑鼠左鍵、右鍵、中鍵），直接交給 InputRouter.bind_input 的學員版
+const _SOURCE_KEY := 0
+const _SOURCE_ACTION := 4
 
 const _DANGEROUS_KEYS := [
 	KEY_CTRL, KEY_TAB, KEY_ESCAPE,
@@ -62,8 +61,8 @@ func _ready() -> void:
 		InputRouter.bind_student(self, StringName(action), InputRouter.PRESSED, _on_pressed)
 		InputRouter.bind_student(self, StringName(action), InputRouter.HELD, _on_held)
 		InputRouter.bind_student(self, StringName(action), InputRouter.RELEASED, _on_released)
-	elif key_source >= _SOURCE_MOUSE_FIRST:
-		var button: MouseButton = InputRouter.MOUSE_BUTTONS[key_source - _SOURCE_MOUSE_FIRST]
+	elif key_source != _SOURCE_KEY:
+		var button: MouseButton = InputRouter.MOUSE_BUTTONS[key_source - 1]
 		InputRouter.bind_student_mouse(self, button, InputRouter.PRESSED, _on_pressed)
 		InputRouter.bind_student_mouse(self, button, InputRouter.HELD, _on_held)
 		InputRouter.bind_student_mouse(self, button, InputRouter.RELEASED, _on_released)
