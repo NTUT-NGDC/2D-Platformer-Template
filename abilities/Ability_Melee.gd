@@ -1,9 +1,12 @@
 extends AbilityBase
 
-# 近戰：按下 key 時，在玩家面向方向短暫生成一塊攻擊判定區，打到有 take_hit() 的
+# 近戰：按下攻擊鍵（鍵盤或滑鼠）時，在玩家面向方向短暫生成一塊攻擊判定區，打到有 take_hit() 的
 # 東西就呼叫，造成傷害跟擊退。拖進 Player → Abilities 底下就能用，不用連任何線。
 
-## 攻擊鍵
+## 用鍵盤按鍵還是滑鼠按鍵攻擊
+@export_enum("鍵盤按鍵", "滑鼠左鍵", "滑鼠右鍵", "滑鼠中鍵") var input_type: int = 0
+
+## 攻擊鍵（「按鍵種類」選鍵盤按鍵時才會顯示這一欄）
 @export var key: Key = KEY_F
 
 ## 攻擊範圍，單位是格（1 格 = 16 像素）
@@ -36,13 +39,19 @@ var _hitbox_shape: CollisionShape2D
 var _hitbox_size: Vector2
 var _visual: ColorRect
 
+# 選滑鼠按鍵時隱藏 key 欄位
+func _validate_property(property: Dictionary) -> void:
+	if property.name == "key" and input_type != 0:
+		property.usage = PROPERTY_USAGE_NONE
+
 # 建立攻擊判定區、接玩家面向訊號、向 InputRouter 註冊攻擊鍵
 func _on_setup() -> void:
-	_warn_if_dangerous_key(key)
+	if input_type == 0:
+		_warn_if_dangerous_key(key)
 	if player.has_signal("direction_changed"):
 		player.direction_changed.connect(func(dir): _facing = dir)
 	_build_hitbox()
-	InputRouter.bind_key(self, key, InputRouter.PRESSED, _on_attack_pressed)
+	InputRouter.bind_input(self, input_type, key, InputRouter.PRESSED, _on_attack_pressed)
 
 # 建立一個平常關閉的 Area2D 當攻擊判定區，命中時呼叫對方的 take_hit()，
 # 另外建一塊黃色閃光跟判定區同步開關，讓學員看得到攻擊有沒有揮出去

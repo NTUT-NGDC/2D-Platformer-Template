@@ -50,6 +50,15 @@ func bind_mouse(owner: Node, button: MouseButton, phase: int, callback: Callable
 	var action := _ensure_mouse_action(button)
 	_add_binding(owner, action, phase, callback, priority, action, false)
 
+# 依組件的「按鍵種類」下拉選單綁定：0 是鍵盤按鍵（用 key），1~3 是滑鼠左鍵／右鍵／中鍵，
+# 能力跟機制卡的按鍵欄位用這個
+@warning_ignore("shadowed_variable_base_class")
+func bind_input(owner: Node, input_type: int, key: Key, phase: int, callback: Callable, priority: int = 0) -> void:
+	if input_type == 0:
+		bind_key(owner, key, phase, callback, priority)
+	else:
+		bind_mouse(owner, MOUSE_BUTTONS[input_type - 1], phase, callback, priority)
+
 # 學員自己擺的按鍵觸發器專用（KeyTrigger、MyControls）：一定收得到輸入，但不會擋住任何其他綁定
 @warning_ignore("shadowed_variable_base_class")
 func bind_student_key(owner: Node, key: Key, phase: int, callback: Callable) -> void:

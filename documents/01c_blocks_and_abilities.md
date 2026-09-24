@@ -94,11 +94,11 @@
 
 | 能力 | 檔名 | 欄位 |
 |---|---|---|
-| 近戰 | `Ability_Melee.tscn` | `key`（攻擊鍵）、`range_tiles`（攻擊範圍）、`cooldown`（冷卻秒數）、`knockback`（擊退力道）、`damage`（傷害） |
-| 遠程 | `Ability_Ranged.tscn` | `key`（攻擊鍵）、`bullet_speed`（子彈速度）、`cooldown`（冷卻秒數）、`lifetime`（存在秒數）、`use_gravity`（受重力影響） |
+| 近戰 | `Ability_Melee.tscn` | `input_type`（鍵盤／滑鼠按鍵）、`key`（攻擊鍵，選鍵盤時才顯示）、`range_tiles`（攻擊範圍）、`cooldown`（冷卻秒數）、`knockback`（擊退力道）、`damage`（傷害） |
+| 遠程 | `Ability_Ranged.tscn` | `input_type`（鍵盤／滑鼠按鍵）、`key`（攻擊鍵，選鍵盤時才顯示）、`bullet_speed`（子彈速度）、`cooldown`（冷卻秒數）、`lifetime`（存在秒數）、`use_gravity`（受重力影響） |
 
 不預先註冊共用的攻擊動作，`key: Key` 由學員在能力自己的 Inspector 選，透過
-`InputRouter.bind_key(self, key, ...)` 綁定（見 `01a_shared_systems.md` §3）。能力不算第 1 節「零件」，
+`InputRouter.bind_input(self, input_type, key, ...)` 綁定，`input_type` 可改選滑鼠左鍵／右鍵／中鍵（見 `01a_shared_systems.md` §3）。能力不算第 1 節「零件」，
 不受「每個零件最多 4 個欄位」限制，5 個欄位是可接受的。
 
 - 近戰：按下 `key` 時在面向方向短暫生成判定區。

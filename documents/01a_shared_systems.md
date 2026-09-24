@@ -69,6 +69,10 @@
 自己的 Inspector 裡挑鍵，不再透過共用的 Input Map 動作名稱。具體規格見 `01b_mechanic_cards.md`、
 `01c_blocks_and_abilities.md` 對應卡片／能力。
 
+這些卡片／能力的 `key` 欄位上方另外有一個「按鍵種類」下拉選單
+`@export_enum("鍵盤按鍵", "滑鼠左鍵", "滑鼠右鍵", "滑鼠中鍵") var input_type`，選滑鼠按鍵時 `key` 隱藏；
+綁定一律呼叫 `InputRouter.bind_input(self, input_type, key, ...)`，由 Router 決定走 `bind_key()` 或 `bind_mouse()`。
+
 ### 3.2 自訂按鍵
 
 按鍵觸發器可以不用預設動作，改由學員自己選按鍵：
@@ -99,6 +103,8 @@ InputRouter.bind(owner: Node, action: StringName, phase: int, callback: Callable
 InputRouter.bind_key(owner: Node, key: Key, phase: int, callback: Callable, priority: int = 0)
 ## 直接用滑鼠按鍵綁定（MOUSE_BUTTON_LEFT / RIGHT / MIDDLE）
 InputRouter.bind_mouse(owner: Node, button: MouseButton, phase: int, callback: Callable, priority: int = 0)
+## 依「按鍵種類」下拉選單綁定：input_type 0 用 key，1~3 是滑鼠左鍵／右鍵／中鍵
+InputRouter.bind_input(owner: Node, input_type: int, key: Key, phase: int, callback: Callable, priority: int = 0)
 ```
 
 學員按鍵觸發器對應的只聽不搶版本是 `bind_student()`／`bind_student_key()`／`bind_student_mouse()`（見 §3.5）。

@@ -7,7 +7,10 @@ extends MechanicBase
 ## 什麼時候切換大小
 @export_enum("按下按鍵", "隨時間") var trigger_timing: int = 0
 
-## 按下按鍵時要按哪一鍵切換（只有「觸發時機」選按下按鍵時才會顯示這一欄）
+## 按下按鍵時用鍵盤按鍵還是滑鼠按鍵（只有「觸發時機」選按下按鍵時才會顯示這一欄）
+@export_enum("鍵盤按鍵", "滑鼠左鍵", "滑鼠右鍵", "滑鼠中鍵") var input_type: int = 0
+
+## 按下按鍵時要按哪一鍵切換（「觸發時機」選按下按鍵、「按鍵種類」選鍵盤按鍵時才會顯示這一欄）
 @export var key: Key = KEY_SHIFT
 
 ## 變小時的體型倍率
@@ -32,17 +35,20 @@ var _is_big: bool = false
 var _pending_factor: float = 0.0
 var _auto_time_left: float = _AUTO_INTERVAL
 
-# 依 trigger_timing 決定要不要顯示 key 欄位
+# 依 trigger_timing 決定要不要顯示按鍵欄位；選滑鼠按鍵時也隱藏 key 欄位
 func _validate_property(property: Dictionary) -> void:
-	if property.name == "key" and trigger_timing != _TRIGGER_KEY:
+	if property.name == "input_type" and trigger_timing != _TRIGGER_KEY:
+		property.usage = PROPERTY_USAGE_NONE
+	elif property.name == "key" and (trigger_timing != _TRIGGER_KEY or input_type != 0):
 		property.usage = PROPERTY_USAGE_NONE
 
 # 套用一開始的體型（小），依觸發時機接對應的按鍵
 func _on_setup() -> void:
 	player.set_size_factor(small_scale)
 	if trigger_timing == _TRIGGER_KEY:
-		_warn_if_dangerous_key(key)
-		InputRouter.bind_key(self, key, InputRouter.PRESSED, _toggle)
+		if input_type == 0:
+			_warn_if_dangerous_key(key)
+		InputRouter.bind_input(self, input_type, key, InputRouter.PRESSED, _toggle)
 
 # 隨時間模式的倒數；有待處理的變大請求時，每幀重新檢查空間夠不夠
 func apply(ctx: MoveContext) -> void:

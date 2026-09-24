@@ -1,10 +1,13 @@
 extends MechanicBase
 
-# 衝刺：按鍵往目前輸入方向（沒按方向鍵就往面向方向）瞬間衝出去，衝刺中重力歸零、
+# 衝刺：按下衝刺鍵（鍵盤或滑鼠）往目前輸入方向（沒按方向鍵就往面向方向）瞬間衝出去，衝刺中重力歸零、
 # 速度固定不受摩擦力影響。備品庫卡，不在抽卡池裡，學員許願才拖給他。
 # 拖進 Player → Mechanics 底下就能用，不用連任何線。
 
-## 按哪一鍵衝刺
+## 用鍵盤按鍵還是滑鼠按鍵衝刺
+@export_enum("鍵盤按鍵", "滑鼠左鍵", "滑鼠右鍵", "滑鼠中鍵") var input_type: int = 0
+
+## 按哪一鍵衝刺（「按鍵種類」選鍵盤按鍵時才會顯示這一欄）
 @export var key: Key = KEY_SHIFT
 
 ## 衝刺的速度
@@ -27,10 +30,16 @@ var _cooldown_left: float = 0.0
 var _facing: int = 1
 var _dash_dir: int = 1
 
+# 選滑鼠按鍵時隱藏 key 欄位
+func _validate_property(property: Dictionary) -> void:
+	if property.name == "key" and input_type != 0:
+		property.usage = PROPERTY_USAGE_NONE
+
 # 綁衝刺鍵、記住角色面向方向（沒按方向鍵時要往這個方向衝）
 func _on_setup() -> void:
-	_warn_if_dangerous_key(key)
-	InputRouter.bind_key(self, key, InputRouter.PRESSED, _on_key_pressed)
+	if input_type == 0:
+		_warn_if_dangerous_key(key)
+	InputRouter.bind_input(self, input_type, key, InputRouter.PRESSED, _on_key_pressed)
 	player.direction_changed.connect(func(dir: int): _facing = dir)
 
 # 衝刺中：固定速度往 _dash_dir 方向移動、重力歸零，不受摩擦力影響

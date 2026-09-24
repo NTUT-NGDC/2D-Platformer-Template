@@ -177,7 +177,7 @@ group 定義）。
 ## 翻轉之後多久內不能再翻轉
 @export_range(0.1, 1.0) var cooldown: float = 0.3
 ```
-`trigger_timing` 為「按下按鍵」時，用 `InputRouter.bind_key(self, key, ...)` 綁定學員自選的按鍵；
+`trigger_timing` 為「按下按鍵」時，用 `InputRouter.bind_input(self, input_type, key, ...)` 綁定學員自選的按鍵（`input_type` 可選滑鼠按鍵，見 `01a_shared_systems.md` §3.1）；
 `key` 欄位用 `_validate_property` 依 `trigger_timing` 決定要不要顯示，同 `01c_blocks_and_abilities.md`
 的 `KeyTrigger` 手法。呼叫 `player.flip_gravity()`。翻轉時 `visual` 要同步上下翻（`scale.y *= -1`）。
 事件：`flipped`
@@ -222,7 +222,7 @@ group 定義）。
 ## 體型是否連動推力、擊退、跳躍力
 @export var size_affects_stats: bool = true
 ```
-`trigger_timing` 為「按下按鍵」時用 `InputRouter.bind_key(self, key, ...)` 綁定學員自選的按鍵，
+`trigger_timing` 為「按下按鍵」時用 `InputRouter.bind_input(self, input_type, key, ...)` 綁定學員自選的按鍵，
 `key` 欄位同重力翻轉卡用 `_validate_property` 依 `trigger_timing` 決定要不要顯示；「隨時間」則每 3 秒
 自動切換，不顯示 `key`。**這張卡「按下按鍵」模式下同時顯示 5 個欄位（超出其餘卡片的 4 欄慣例）**，
 是本規格唯一的例外，因為要同時保留既有的雙觸發模式與可自訂按鍵，兩者都不宜拿掉。

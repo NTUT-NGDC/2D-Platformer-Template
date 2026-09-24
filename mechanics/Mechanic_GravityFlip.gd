@@ -6,7 +6,10 @@ extends MechanicBase
 ## 什麼時候會翻轉重力
 @export_enum("按下按鍵", "落地時", "撞牆時") var trigger_timing: int = 0
 
-## 按下按鍵時要按哪一鍵翻轉（只有「觸發時機」選按下按鍵時才會顯示這一欄）
+## 按下按鍵時用鍵盤按鍵還是滑鼠按鍵（只有「觸發時機」選按下按鍵時才會顯示這一欄）
+@export_enum("鍵盤按鍵", "滑鼠左鍵", "滑鼠右鍵", "滑鼠中鍵") var input_type: int = 0
+
+## 按下按鍵時要按哪一鍵翻轉（「觸發時機」選按下按鍵、「按鍵種類」選鍵盤按鍵時才會顯示這一欄）
 @export var key: Key = KEY_SHIFT
 
 ## 翻轉之後多久內不能再翻轉
@@ -24,17 +27,20 @@ const _DANGEROUS_KEYS := [
 
 var _cooldown_left: float = 0.0
 
-# 依 trigger_timing 決定要不要顯示 key 欄位
+# 依 trigger_timing 決定要不要顯示按鍵欄位；選滑鼠按鍵時也隱藏 key 欄位
 func _validate_property(property: Dictionary) -> void:
-	if property.name == "key" and trigger_timing != _TRIGGER_KEY:
+	if property.name == "input_type" and trigger_timing != _TRIGGER_KEY:
+		property.usage = PROPERTY_USAGE_NONE
+	elif property.name == "key" and (trigger_timing != _TRIGGER_KEY or input_type != 0):
 		property.usage = PROPERTY_USAGE_NONE
 
 # 依觸發時機接對應的按鍵或 Player 訊號
 func _on_setup() -> void:
 	match trigger_timing:
 		_TRIGGER_KEY:
-			_warn_if_dangerous_key(key)
-			InputRouter.bind_key(self, key, InputRouter.PRESSED, _try_flip)
+			if input_type == 0:
+				_warn_if_dangerous_key(key)
+			InputRouter.bind_input(self, input_type, key, InputRouter.PRESSED, _try_flip)
 		_TRIGGER_LAND:
 			player.landed.connect(func(_impact_force): _try_flip())
 		_TRIGGER_WALL:

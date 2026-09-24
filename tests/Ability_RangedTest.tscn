@@ -48,6 +48,9 @@ cooldown = 0.4
 lifetime = 2.0
 use_gravity = true
 
+[node name="Ability_Ranged_Mouse" parent="Player/Abilities" instance=ExtResource("7")]
+input_type = 1
+
 [node name="Camera2D" type="Camera2D" parent="."]
 position = Vector2(-40, 50)
 zoom = Vector2(0.5, 0.5)

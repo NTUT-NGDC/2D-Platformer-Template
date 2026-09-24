@@ -1,9 +1,12 @@
 extends AbilityBase
 
-# 遠程：按下 key 時朝面向方向發射子彈，撞到地形或受擊物件即消失。
+# 遠程：按下攻擊鍵（鍵盤或滑鼠）時朝面向方向發射子彈，撞到地形或受擊物件即消失。
 # 拖進 Player → Abilities 底下就能用，不用連任何線。
 
-## 攻擊鍵
+## 用鍵盤按鍵還是滑鼠按鍵攻擊
+@export_enum("鍵盤按鍵", "滑鼠左鍵", "滑鼠右鍵", "滑鼠中鍵") var input_type: int = 0
+
+## 攻擊鍵（「按鍵種類」選鍵盤按鍵時才會顯示這一欄）
 @export var key: Key = KEY_G
 
 ## 子彈速度
@@ -28,12 +31,18 @@ const _DANGEROUS_KEYS := [
 var _facing: int = 1
 var _cooldown_left: float = 0.0
 
+# 選滑鼠按鍵時隱藏 key 欄位
+func _validate_property(property: Dictionary) -> void:
+	if property.name == "key" and input_type != 0:
+		property.usage = PROPERTY_USAGE_NONE
+
 # 接玩家面向訊號，向 InputRouter 註冊攻擊鍵
 func _on_setup() -> void:
-	_warn_if_dangerous_key(key)
+	if input_type == 0:
+		_warn_if_dangerous_key(key)
 	if player.has_signal("direction_changed"):
 		player.direction_changed.connect(func(dir): _facing = dir)
-	InputRouter.bind_key(self, key, InputRouter.PRESSED, _on_shoot_pressed)
+	InputRouter.bind_input(self, input_type, key, InputRouter.PRESSED, _on_shoot_pressed)
 
 # 按下攻擊鍵：冷卻中不生效，否則從玩家位置朝面向方向發射一顆子彈
 func _on_shoot_pressed() -> void:
