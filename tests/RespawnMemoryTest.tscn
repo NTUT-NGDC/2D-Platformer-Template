@@ -7,7 +7,7 @@
 [ext_resource type="PackedScene" path="res://blocks/Checkpoint.tscn" id="5"]
 [ext_resource type="PackedScene" path="res://blocks/Door.tscn" id="6"]
 [ext_resource type="PackedScene" path="res://blocks/Button.tscn" id="7"]
-[ext_resource type="Script" path="res://levels/_shared/Respawn.gd" id="8"]
+[ext_resource type="PackedScene" path="res://blocks/RespawnHandler.tscn" id="8"]
 [ext_resource type="PackedScene" path="res://levels/_shared/ValueSettings.tscn" id="9"]
 
 [node name="RespawnMemoryTest" type="Node2D"]
@@ -46,8 +46,7 @@ region_rect = Rect2(0, 0, 16, 32)
 [node name="Camera2D" type="Camera2D" parent="."]
 position = Vector2(-20, 57)
 
-[node name="Respawn" type="Node" parent="."]
-script = ExtResource("8")
+[node name="RespawnHandler" parent="." instance=ExtResource("8")]
 
 [node name="Checkpoint" parent="." instance=ExtResource("5")]
 position = Vector2(-80, 95)

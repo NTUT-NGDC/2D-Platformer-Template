@@ -55,7 +55,6 @@ func _ready() -> void:
 		_register_children($Juice, false)
 	if has_node("Abilities"):
 		_register_children($Abilities, false)
-	RespawnMemory.apply_position(self)
 
 # 預設跳躍：地面上按下跳躍鍵就跳，除非被更高優先權的機制卡攔截掉（例如蓄力青蛙跳）
 func _on_jump_pressed() -> bool:
@@ -244,6 +243,10 @@ func revive(at_position: Vector2) -> void:
 		if is_instance_valid(m) and m.has_method("on_respawn"):
 			m.on_respawn()
 	Events.player_respawned.emit(self)
+
+# 回傳玩家現在是不是死亡狀態（死掉之後、還沒被復活之前）
+func is_dead() -> bool:
+	return _is_dead
 
 # 強制角色跳一次，倍率可以調跳多高，跳躍相關卡用這個
 func force_jump(power_scale: float = 1.0) -> void:

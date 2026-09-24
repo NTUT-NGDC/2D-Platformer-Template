@@ -5,7 +5,7 @@
 [ext_resource type="Texture2D" uid="uid://cm8ymciwkvttp" path="res://art/white_block.png" id="3"]
 [ext_resource type="PackedScene" path="res://mechanics/Mechanic_HealthDrain.tscn" id="4"]
 [ext_resource type="PackedScene" path="res://blocks/Pickup.tscn" id="5"]
-[ext_resource type="Script" path="res://levels/_shared/Respawn.gd" id="6"]
+[ext_resource type="PackedScene" path="res://blocks/RespawnHandler.tscn" id="6"]
 [ext_resource type="PackedScene" path="res://levels/_shared/ValueSettings.tscn" id="7"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_floor"]
@@ -54,8 +54,7 @@ region_rect = Rect2(0, 0, 16, 32)
 position = Vector2(0, 50)
 zoom = Vector2(0.55, 0.55)
 
-[node name="Respawn" type="Node" parent="."]
-script = ExtResource("6")
+[node name="RespawnHandler" parent="." instance=ExtResource("6")]
 
 [node name="Coin_1" parent="." instance=ExtResource("5")]
 position = Vector2(0, 90)

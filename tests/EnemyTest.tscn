@@ -6,7 +6,7 @@
 [ext_resource type="Texture2D" path="res://art/white_block.png" id="4"]
 [ext_resource type="PackedScene" path="res://blocks/Enemy.tscn" id="5"]
 [ext_resource type="PackedScene" path="res://blocks/Spike.tscn" id="6"]
-[ext_resource type="Script" path="res://levels/_shared/Respawn.gd" id="7"]
+[ext_resource type="PackedScene" path="res://blocks/RespawnHandler.tscn" id="7"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_wall"]
 size = Vector2(8, 32)
@@ -36,8 +36,7 @@ region_rect = Rect2(0, 0, 16, 32)
 position = Vector2(-60, 50)
 zoom = Vector2(0.5, 0.5)
 
-[node name="Respawn" type="Node" parent="."]
-script = ExtResource("7")
+[node name="RespawnHandler" parent="." instance=ExtResource("7")]
 
 [node name="Spike_Instant" parent="." instance=ExtResource("6")]
 position = Vector2(-160, 90)

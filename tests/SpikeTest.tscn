@@ -5,7 +5,7 @@
 [ext_resource type="TileSet" uid="uid://6xyxoqkb30in" path="res://art/default_tile.tres" id="3"]
 [ext_resource type="Texture2D" path="res://art/white_block.png" id="4"]
 [ext_resource type="PackedScene" path="res://blocks/Spike.tscn" id="5"]
-[ext_resource type="Script" path="res://levels/_shared/Respawn.gd" id="6"]
+[ext_resource type="PackedScene" path="res://blocks/RespawnHandler.tscn" id="6"]
 
 [node name="SpikeTest" type="Node2D"]
 script = ExtResource("1")
@@ -32,8 +32,7 @@ region_rect = Rect2(0, 0, 16, 32)
 position = Vector2(-15, 50)
 zoom = Vector2(0.75, 0.75)
 
-[node name="Respawn" type="Node" parent="."]
-script = ExtResource("6")
+[node name="RespawnHandler" parent="." instance=ExtResource("6")]
 
 [node name="Spike_Damage" parent="." instance=ExtResource("5")]
 position = Vector2(-60, 90)

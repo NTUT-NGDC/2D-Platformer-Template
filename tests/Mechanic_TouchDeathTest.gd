@@ -1,6 +1,6 @@
 extends Node2D
 
-# 手動驗證用：Mechanic_TouchDeath 碰到敵人／箱子／牆各自依開關致死，死亡會重新載入場景。
+# 手動驗證用：Mechanic_TouchDeath 碰到敵人／箱子／牆各自依開關致死，死亡後由 RespawnHandler 軟重生。
 
 func _ready() -> void:
 	Events.mechanic_event.connect(_on_mechanic_event)

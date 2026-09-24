@@ -22,7 +22,7 @@ func _ready() -> void:
 	print("[測試]   金幣：退回踩重生點當下的數字（reset_on_death 預設開）")
 	print("[測試]   鑰匙：維持死亡當下用掉之後的數量，不會退回（ValueSettings_Key 把 reset_on_death 關了）")
 	print("[測試]   分數：完全不受影響（ValueSettings_Score 也把 reset_on_death 關了）")
-	print("[測試]   鑰匙門保持開著、訊號門也會自動重新打開（永久按鈕重生後會重新觸發 turned_on）")
+	print("[測試]   鑰匙門、訊號門都保持開著（不會重新載入場景，零件維持原狀）")
 
 func _unhandled_input(event: InputEvent) -> void:
 	if not (event is InputEventKey and event.pressed and not event.echo):

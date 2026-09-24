@@ -5,7 +5,7 @@
 [ext_resource type="TileSet" uid="uid://6xyxoqkb30in" path="res://art/default_tile.tres" id="3"]
 [ext_resource type="Texture2D" uid="uid://cm8ymciwkvttp" path="res://art/white_block.png" id="4"]
 [ext_resource type="PackedScene" path="res://blocks/Lava.tscn" id="5"]
-[ext_resource type="Script" uid="uid://c4810j2rrbvpo" path="res://levels/_shared/Respawn.gd" id="6"]
+[ext_resource type="PackedScene" path="res://blocks/RespawnHandler.tscn" id="6"]
 
 [node name="LavaTest" type="Node2D" unique_id=1864860944]
 script = ExtResource("1")
@@ -33,8 +33,7 @@ region_rect = Rect2(0, 0, 16, 32)
 position = Vector2(-15, 50)
 zoom = Vector2(0.75, 0.75)
 
-[node name="Respawn" type="Node" parent="." unique_id=1505282606]
-script = ExtResource("6")
+[node name="RespawnHandler" parent="." unique_id=1505282606 instance=ExtResource("6")]
 
 [node name="Lava_Damage" parent="." unique_id=1874747256 instance=ExtResource("5")]
 position = Vector2(-60, 87)

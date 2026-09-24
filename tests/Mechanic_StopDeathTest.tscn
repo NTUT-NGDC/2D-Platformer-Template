@@ -5,7 +5,7 @@
 [ext_resource type="Texture2D" uid="uid://cm8ymciwkvttp" path="res://art/white_block.png" id="3"]
 [ext_resource type="PackedScene" path="res://mechanics/Mechanic_StopDeath.tscn" id="4"]
 [ext_resource type="PackedScene" path="res://mechanics/Mechanic_ChargeJump.tscn" id="5"]
-[ext_resource type="Script" path="res://levels/_shared/Respawn.gd" id="6"]
+[ext_resource type="PackedScene" path="res://blocks/RespawnHandler.tscn" id="6"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_floor"]
 size = Vector2(300, 16)
@@ -51,5 +51,4 @@ max_idle_seconds = 2.0
 position = Vector2(0, -30)
 zoom = Vector2(0.8, 0.8)
 
-[node name="Respawn" type="Node" parent="."]
-script = ExtResource("6")
+[node name="RespawnHandler" parent="." instance=ExtResource("6")]

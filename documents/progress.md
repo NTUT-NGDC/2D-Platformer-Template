@@ -198,15 +198,21 @@
       （驗證：兩個房間並排，走過邊界鏡頭瞬切）
       　　→ 講師決定保留 `follow_player` 當備用：場景裡沒有任何 Room 時才生效（Showroom 繼續用），
       　　　一有 Room 進入就關掉跟隨、印中文提示，改成房間瞬切
-- [ ] U77 `blocks/RespawnHandler.tscn` 取代 `levels/_shared/Respawn`，改寫 `RespawnMemory` 配合軟重生，
+- [x] U77 `blocks/RespawnHandler.tscn` 取代 `levels/_shared/Respawn`，改寫 `RespawnMemory` 配合軟重生，
       替換所有關卡與測試場景；`mode` 下拉選單「回到目前房間／整關重來」，整關重來＝軟重置（玩家回初始位置、
       所有房間零件 `reset()`、數值退回最初值、清空 Checkpoint），不重載場景（驗證：第二個房間死亡重生在
       第二個房間；切到整關重來則回第一個房間；刪掉 RespawnHandler 死亡不重生也不報錯；沒有 Room 時重生在
       初始位置並印中文提示）
+      　　→ 數值存檔點改成「進入房間的那一刻」（沒有房間的場景才用踩重生點那一刻），跟「只復位目前房間」
+      　　　對齊，避免金幣被扣但道具沒回來、或同一枚金幣撿兩次；`Player.gd` 拿掉 `RespawnMemory.apply_position`、
+      　　　新增 `is_dead()`；場景裡沒有 RespawnHandler 時，死亡由 `RespawnMemory` 印中文提示；
+      　　　放兩個 RespawnHandler 只有第一個生效並警告。零件的 `reset()` 要到 U79 才有，這之前死亡後
+      　　　敵人、可破壞方塊等不會復原
 - [ ] U78 18 張機制卡＋`_extra/` 有狀態的都實作 `on_respawn()`（驗證：重力翻轉、忽大忽小狀態下死亡，重生後復位）
 - [ ] U79 有狀態的零件都實作 `reset()`（驗證：推走箱子後死亡，箱子回原位；別的房間的箱子不動）
 - [ ] U80 煙霧測試新增連續 kill／revive 10 次檢查狀態歸零，跑完整份煙霧測試
-- [ ] U81 文件：`CLAUDE.md` 禁止事項、`01b` 卡片規格補 `on_respawn()`、`_help/` 補「怎麼拖一個房間」
+- [ ] U81 文件：`CLAUDE.md` 禁止事項、`01b` 卡片規格補 `on_respawn()`、`_help/` 補「怎麼拖一個房間」、
+      `00_foundation.md` 與 `01a` §5 改寫成軟重生（原本寫死亡＝重新載入場景）
 - [ ] U82 `blocks/EventListener.tscn` 事件轉接器：下拉選單選要聽的 `Events` 事件（玩家死亡／重生／受傷／跳躍、
       進入房間、過關、撿到道具、敵人死亡），發出不帶參數的 `triggered` 給學員用訊號連接，加入 `signal_source`
       （驗證：放一個「玩家死亡時」轉接器連到門的 `activate`，死亡時門打開；連錯函式時連線驗證器印中文警告）

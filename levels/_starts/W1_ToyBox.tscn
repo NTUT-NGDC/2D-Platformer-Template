@@ -3,7 +3,7 @@
 [ext_resource type="PackedScene" path="res://player/Player.tscn" id="1"]
 [ext_resource type="TileSet" uid="uid://6xyxoqkb30in" path="res://art/default_tile.tres" id="2"]
 [ext_resource type="Script" uid="uid://ddmv38ww06tgv" path="res://levels/_shared/CameraRig.gd" id="3"]
-[ext_resource type="Script" uid="uid://c4810j2rrbvpo" path="res://levels/_shared/Respawn.gd" id="4"]
+[ext_resource type="PackedScene" path="res://blocks/RespawnHandler.tscn" id="4"]
 [ext_resource type="Texture2D" uid="uid://cm8ymciwkvttp" path="res://art/white_block.png" id="5"]
 [ext_resource type="Script" uid="uid://bak4gt8ywjd2q" path="res://_my/my_controls.gd" id="6"]
 [ext_resource type="PackedScene" path="res://blocks/KeyTrigger.tscn" id="7"]
@@ -34,8 +34,7 @@ region_rect = Rect2(0, 0, 16, 32)
 position = Vector2(0, 57)
 script = ExtResource("3")
 
-[node name="Respawn" type="Node" parent="." unique_id=1284888066]
-script = ExtResource("4")
+[node name="RespawnHandler" parent="." unique_id=1284888066 instance=ExtResource("4")]
 
 [node name="MyControls" type="Node" parent="." unique_id=1469493202]
 script = ExtResource("6")
