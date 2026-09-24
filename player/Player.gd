@@ -219,13 +219,31 @@ func take_damage(amount: float = 1.0) -> void:
 	hurt.emit()
 	Events.player_hurt.emit()
 
-# 立刻讓角色死亡
+# 宣告玩家死亡，實際要發生什麼事（重生、結算畫面…）由聽到 player_died 訊號的人決定
 func kill() -> void:
 	if _is_dead:
 		return
 	_is_dead = true
+	velocity = Vector2.ZERO
 	died.emit()
 	Events.player_died.emit()
+
+# 把玩家復活到指定位置，並重置所有狀態（由重生處理者呼叫）
+func revive(at_position: Vector2) -> void:
+	global_position = at_position
+	velocity = Vector2.ZERO
+	up_direction = Vector2.UP
+	set_size_factor(1.0)
+	Stats.refill(Stats.HEALTH_KIND)
+	_is_dead = false
+	_was_moving = false
+	_was_on_wall = false
+	_last_direction = 0
+	_impulse_grace_left = 0.0
+	for m in _mechanics:
+		if is_instance_valid(m) and m.has_method("on_respawn"):
+			m.on_respawn()
+	Events.player_respawned.emit(self)
 
 # 強制角色跳一次，倍率可以調跳多高，跳躍相關卡用這個
 func force_jump(power_scale: float = 1.0) -> void:

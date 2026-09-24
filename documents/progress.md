@@ -181,3 +181,25 @@
       之前漏做；驗證：打開四個場景，Player 底下都有 Mechanics／Juice／Abilities 三個節點）
 - [x] U73 `mechanics/`（含 `_extra/`）、`blocks/`、`abilities/` 的 `.gd` 收進各自的 `_scripts/`，外層只留學員要拖的 `.tscn`
       （驗證：煙霧測試通過；109 個 `.tscn` 全部能載入並實例化）
+
+## 階段 16：房間制與軟重生（00b 地基增補）
+
+> 講師決定（與 00b 原稿不同處）：視窗維持 480x270，房間預設 30x17 格，多出來的半格被切掉沒關係；
+> 房間重生點改成拖 `Marker2D` 子節點（取代打字的 `spawn_offset`），沒放就用底部中央往上兩格；
+> 血量仍由 `Stats` 管，Player 不另存 `max_health`；同房間內踩過的 Checkpoint 優先於房間重生點；
+> `level_restarted` 要不要發由 `RespawnHandler` 的勾選框決定；18 張卡＋`_extra/` 全部檢查 `on_respawn()`；
+> 所有有狀態的零件都各自實作 `reset()`，`RespawnHandler` 只負責呼叫。
+
+- [x] U74 `Events` 新增 `room_entered`／`respawn_requested`／`player_respawned`；`Player.kill()` 只宣告死亡、
+      新增 `revive()`；`MechanicBase` 新增 `on_respawn()`（驗證：`tests/ReviveTest.tscn` 按 K 死亡、按 R 復活到起點）
+- [ ] U75 `blocks/Room.tscn`：`@tool` 編輯器畫邊框、依格數自動產生碰撞框、玩家進入發 `room_entered`、
+      `Marker2D` 子節點當重生點（驗證：拖兩個 Room 並排，編輯器看得到邊框，走過邊界輸出面板印房間名）
+- [ ] U76 `CameraRig` 接 `room_entered` 瞬間切到房間中心，拿掉 `follow_player`，震動疊加在上面
+      （驗證：兩個房間並排，走過邊界鏡頭瞬切）
+- [ ] U77 `blocks/RespawnHandler.tscn` 取代 `levels/_shared/Respawn`，改寫 `RespawnMemory` 配合軟重生，
+      替換所有關卡與測試場景（驗證：第二個房間死亡重生在第二個房間；刪掉 RespawnHandler 死亡不重生也不報錯；
+      沒有 Room 時重生在初始位置並印中文提示）
+- [ ] U78 18 張機制卡＋`_extra/` 有狀態的都實作 `on_respawn()`（驗證：重力翻轉、忽大忽小狀態下死亡，重生後復位）
+- [ ] U79 有狀態的零件都實作 `reset()`（驗證：推走箱子後死亡，箱子回原位；別的房間的箱子不動）
+- [ ] U80 煙霧測試新增連續 kill／revive 10 次檢查狀態歸零，跑完整份煙霧測試
+- [ ] U81 文件：`CLAUDE.md` 禁止事項、`01b` 卡片規格補 `on_respawn()`、`_help/` 補「怎麼拖一個房間」

@@ -20,6 +20,10 @@ func _on_setup() -> void:
 func apply(_ctx: MoveContext) -> void:
 	pass
 
+# 玩家重生時 Player 會呼叫，機制卡在這裡把自己的狀態歸零（例如翻轉狀態、計時、倍率）
+func on_respawn() -> void:
+	pass
+
 # 檢查有沒有被正確掛在 Mechanics 底下，沒有就發警告
 func _ready() -> void:
 	# 沒有被 setup 就是掛錯位置了，要看得見
