@@ -22,14 +22,16 @@ res://
 │   ├── Player.tscn
 │   ├── Player.gd             # 唯一的物理腳本，學員禁區
 │   └── MoveContext.gd
-├── mechanics/                # W1：一張卡 = 一個 .tscn
+├── mechanics/                # W1：一張卡 = 一個 .tscn（這層只放學員要拖的 .tscn）
 │   ├── _base/
 │   │   └── MechanicBase.gd
-│   └── _extra/               # 備品庫，平常不介紹
-├── juice/                    # W3
+│   ├── _scripts/             # 每張卡的 .gd，學員不用打開
+│   └── _extra/               # 備品庫，平常不介紹（一樣把 .gd 放在 _extra/_scripts/）
+├── juice/                    # W3（.gd 放 juice/_scripts/）
 │   └── _base/
 │       └── JuiceBase.gd
-├── blocks/                   # W2：平台、機關、敵人
+├── blocks/                   # W2：平台、機關、敵人（.gd 放 blocks/_scripts/）
+├── abilities/                # 攻擊能力（.gd 放 abilities/_scripts/）
 ├── levels/
 │   ├── _shared/
 │   │   ├── CameraRig.gd
@@ -42,6 +44,10 @@ res://
 ├── art/                      # 講師提供的素材自助餐
 └── sfx/
 ```
+
+**`.gd` 一律放在同層的 `_scripts/` 資料夾**：`mechanics/`、`juice/`、`blocks/`、`abilities/`（含 `_extra/`）
+這一層只放學員要拖的 `.tscn`。把 `.gd` 拖到場景樹的節點上會直接替換那個節點的腳本（例如把 `Mechanics`
+容器變成一張卡），分開放可以避免學員拉錯。新增組件時 `.tscn` 放外層、`.gd` 放 `_scripts/`。
 
 `.gdkeep` 是空檔案，用來讓 Godot 保留空資料夾。
 

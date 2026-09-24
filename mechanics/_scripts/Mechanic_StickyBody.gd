@@ -19,8 +19,8 @@ const _UP_BIAS := 0.3
 
 # 跟哪些卡同時掛上會互相抵銷，key 是對方腳本路徑，value 是要印的中文說明
 const _CONFLICT_SCRIPTS := {
-	"res://mechanics/Mechanic_AutoRun.gd": "「只能往前」還在，黏住期間會暫停自動奔跑",
-	"res://mechanics/Mechanic_BouncyWorld.gd": "「彈性宇宙」還在，黏黏身體優先，黏住期間不會反彈",
+	"res://mechanics/_scripts/Mechanic_AutoRun.gd": "「只能往前」還在，黏住期間會暫停自動奔跑",
+	"res://mechanics/_scripts/Mechanic_BouncyWorld.gd": "「彈性宇宙」還在，黏黏身體優先，黏住期間不會反彈",
 }
 
 ## 是不是正在黏著，外部可以讀這個決定要不要暫停自己的邏輯

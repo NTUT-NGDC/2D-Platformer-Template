@@ -179,3 +179,5 @@
       改 `MeleeHitbox.tscn` 的形狀大小後再跑，判定區跟著變）
 - [x] U72 `W1_ToyBox`／`Gym`／`_Template`／`Showroom` 的 Player 底下補上 `Abilities` 空節點（01c §3 要求，
       之前漏做；驗證：打開四個場景，Player 底下都有 Mechanics／Juice／Abilities 三個節點）
+- [x] U73 `mechanics/`（含 `_extra/`）、`blocks/`、`abilities/` 的 `.gd` 收進各自的 `_scripts/`，外層只留學員要拖的 `.tscn`
+      （驗證：煙霧測試通過；109 個 `.tscn` 全部能載入並實例化）

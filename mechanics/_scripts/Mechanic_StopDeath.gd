@@ -19,7 +19,7 @@ const _WARNING_RATIO := 0.7  # 逾時前這個比例的時間開始閃紅
 const _FLASH_INTERVAL := 0.15
 # 持續扣血模式逾時後每秒扣血量，規格沒給精確數字，抓一個會痛但不會秒死的量
 const _DRAIN_DAMAGE_PER_SECOND := 2.0
-const _CHARGE_JUMP_SCRIPT := "res://mechanics/Mechanic_ChargeJump.gd"
+const _CHARGE_JUMP_SCRIPT := "res://mechanics/_scripts/Mechanic_ChargeJump.gd"
 
 var _idle_seconds: float = 0.0
 var _flash_timer: float = 0.0

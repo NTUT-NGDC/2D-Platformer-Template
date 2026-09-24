@@ -22,7 +22,7 @@ const _SLOW_SCALE := 0.3
 # 只能往前搭配時，角色永遠在動、沒有「停下來」可言，改成每次跳躍固定扣這個比例的體力，
 # 並且不管有沒有在動都持續回復，不然體力扣光後會卡死在懲罰狀態永遠回不來
 const _JUMP_DRAIN_RATIO := 1.0 / 3.0
-const _AUTO_RUN_SCRIPT := "res://mechanics/Mechanic_AutoRun.gd"
+const _AUTO_RUN_SCRIPT := "res://mechanics/_scripts/Mechanic_AutoRun.gd"
 
 var _stamina: float = 0.0
 var _exhausted: bool = false
