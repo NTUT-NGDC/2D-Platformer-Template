@@ -23,31 +23,31 @@ W1 的課堂活動是：學員線上抽一張**主限制卡** → 把對應的 `
 
 ### 主限制卡
 
-| # | 檔名 | 中文卡名 | 類別 | 實作方式 |
-|---|---|---|---|---|
-| 1 | `Mechanic_NoFriction` | 煞車失靈 | 操作 | `ctx.friction_scale` |
-| 2 | `Mechanic_AutoRun` | 只能往前 | 操作 | `ctx.auto_run_dir`，撞牆反轉 |
-| 3 | `Mechanic_ChargeJump` | 蓄力青蛙跳 | 操作 | `InputRouter` 高優先攔截跳躍鍵，`force_jump()` |
-| 4 | `Mechanic_Slingshot` | 只能用滑鼠控制 | 操作 | `ctx.input_locked` + 拖曳放開 `add_impulse()` |
-| 5 | `Mechanic_RecoilMove` | 只用後座力移動 | 操作 | `ctx.input_locked` + 方向鍵反向 `add_impulse()` |
-| 6 | `Mechanic_PinballBody` | 彈珠台體質 | 物理 | `ctx.damage_scale = 0` + 碰撞擊飛 |
-| 7 | `Mechanic_GravityFlip` | 重力翻轉 | 物理 | `flip_gravity()` |
-| 8 | `Mechanic_BouncyWorld` | 彈性宇宙 | 物理 | 撞擊時反向 `add_impulse()` |
-| 9 | `Mechanic_SpeedRamp` | 越跑越快 | 物理 | `ctx.speed_scale` + `ctx.jump_scale` 隨移動累加 |
-| 10 | `Mechanic_SizeShift` | 忽大忽小 | 物理 | `set_size_factor()` |
+| # | 檔名 | 中文卡名 | 類別 | 實作方式 | 重生時（`on_respawn()`） |
+|---|---|---|---|---|---|
+| 1 | `Mechanic_NoFriction` | 煞車失靈 | 操作 | `ctx.friction_scale` | — |
+| 2 | `Mechanic_AutoRun` | 只能往前 | 操作 | `ctx.auto_run_dir`，撞牆反轉 | 方向回到一開始設定的方向 |
+| 3 | `Mechanic_ChargeJump` | 蓄力青蛙跳 | 操作 | `InputRouter` 高優先攔截跳躍鍵，`force_jump()` | 取消蓄力中的狀態 |
+| 4 | `Mechanic_Slingshot` | 只能用滑鼠控制 | 操作 | `ctx.input_locked` + 拖曳放開 `add_impulse()` | 取消拖曳、藏起瞄準線 |
+| 5 | `Mechanic_RecoilMove` | 只用後座力移動 | 操作 | `ctx.input_locked` + 方向鍵反向 `add_impulse()` | 噴射次數補滿、冷卻歸零、顏色還原 |
+| 6 | `Mechanic_PinballBody` | 彈珠台體質 | 物理 | `ctx.damage_scale = 0` + 碰撞擊飛 | 無敵時間歸零 |
+| 7 | `Mechanic_GravityFlip` | 重力翻轉 | 物理 | `flip_gravity()` | 角色圖轉回正的、冷卻歸零（重力由 `revive()` 復位） |
+| 8 | `Mechanic_BouncyWorld` | 彈性宇宙 | 物理 | 撞擊時反向 `add_impulse()` | 清掉速度記錄與輸入鎖 |
+| 9 | `Mechanic_SpeedRamp` | 越跑越快 | 物理 | `ctx.speed_scale` + `ctx.jump_scale` 隨移動累加 | 速度倍率歸 1、顏色還原 |
+| 10 | `Mechanic_SizeShift` | 忽大忽小 | 物理 | `set_size_factor()` | 回到一開始的小體型（`small_scale`）、取消待套用的變大 |
 
 ### 規則卡
 
-| # | 檔名 | 中文卡名 | 實作方式 |
-|---|---|---|---|
-| 11 | `Mechanic_StickyBody` | 黏黏身體 | 碰撞時 `ctx.gravity_scale = 0` + 鎖住速度 |
-| 12 | `Mechanic_Stamina` | 移動會扣血 | 體力條，耗盡時 `ctx.speed_scale` 降低 |
-| 13 | `Mechanic_TouchDeath` | 碰觸即死 | 任何碰撞 → `kill()` |
-| 14 | `Mechanic_SurvivalTimer` | 存活計時 | 計時 → `Events.level_cleared` |
-| 15 | `Mechanic_StopDeath` | 停下即死 | 靜止逾時 → `kill()` |
-| 16 | `Mechanic_HealthDrain` | 血量流失 | `Stats` 血量持續下降，吃金幣回復 |
-| 17 | `Mechanic_FloorIsLava` | 地板是岩漿 | 特定地板接觸 → `take_damage()` |
-| 18 | `Mechanic_SwitchWorld` | 開關世界 | 計時切換 group `switch_red` / `switch_blue` 方塊 |
+| # | 檔名 | 中文卡名 | 實作方式 | 重生時（`on_respawn()`） |
+|---|---|---|---|---|
+| 11 | `Mechanic_StickyBody` | 黏黏身體 | 碰撞時 `ctx.gravity_scale = 0` + 鎖住速度 | 從黏住的表面脫落（不噴出去） |
+| 12 | `Mechanic_Stamina` | 移動會扣血 | 體力條，耗盡時 `ctx.speed_scale` 降低 | 體力補滿、解除耗盡懲罰 |
+| 13 | `Mechanic_TouchDeath` | 碰觸即死 | 任何碰撞 → `kill()` | — |
+| 14 | `Mechanic_SurvivalTimer` | 存活計時 | 計時 → `Events.level_cleared` | 計時歸零重新開始 |
+| 15 | `Mechanic_StopDeath` | 停下即死 | 靜止逾時 → `kill()` | 靜止計時歸零、顏色還原 |
+| 16 | `Mechanic_HealthDrain` | 血量流失 | `Stats` 血量持續下降，吃金幣回復 | 扣血計時歸零（血量由 `revive()` 補滿） |
+| 17 | `Mechanic_FloorIsLava` | 地板是岩漿 | 特定地板接觸 → `take_damage()` | 扣血計時歸零（血量由 `revive()` 補滿） |
+| 18 | `Mechanic_SwitchWorld` | 開關世界 | 計時切換 group `switch_red` / `switch_blue` 方塊 | 紅藍方塊回到一開始的顏色、切換倒數重新開始 |
 
 ---
 
@@ -77,6 +77,10 @@ W1 的課堂活動是：學員線上抽一張**主限制卡** → 把對應的 `
 觸發區在第三螢幕才打開規則卡。
 
 每張主限制卡附一行「事件」，在該瞬間 emit `Events.mechanic_event`。W1 不需要有任何東西訂閱它。
+
+**有狀態的卡必須覆寫 `on_respawn()`**：玩家重生時 `Player.revive()` 會逐一呼叫，卡片在這裡把自己的狀態
+（翻轉、計時、倍率、蓄力中…）歸零，回到剛掛上去時的樣子。各卡要重置什麼見第 1 節總表的「重生時」欄，
+`—` 表示沒有要歸零的狀態、不用覆寫。規格見 `00b_rooms_and_soft_respawn.md` §7。
 
 ### 主限制卡
 

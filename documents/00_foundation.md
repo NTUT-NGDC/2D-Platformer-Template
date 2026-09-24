@@ -34,8 +34,7 @@ res://
 ├── abilities/                # 攻擊能力（.gd 放 abilities/_scripts/）
 ├── levels/
 │   ├── _shared/
-│   │   ├── CameraRig.gd
-│   │   └── Respawn.gd
+│   │   └── CameraRig.gd      # 重生改由 blocks/RespawnHandler.tscn 負責（見 00b）
 │   ├── Gym.tscn              # W1 通用測試場，含地板，供學員參考佈置
 │   ├── _Template.tscn        # W2 已框好的關卡起點，同樣附上基本地板（避免重生掉出畫面）
 │   ├── _starts/              # 中途加入者的起始場景
@@ -298,14 +297,15 @@ func _connect_trigger(callback: Callable) -> void:
   本身互不影響。
 - `Player`（`player/Player.tscn` 的實例），底下附好 `Visual/Sprite2D`、`Mechanics`、`Juice`
   三個容器節點（見 3.1 節）。
-- `Camera2D`，掛 `CameraRig.gd`：接 `Events.shake_requested`，執行螢幕震動。
-  - **固定視角，不跟隨玩家。** `Camera2D` 是關卡場景根節點底下的獨立節點，**不掛在
+- `Camera2D`，掛 `CameraRig.gd`：接 `Events.shake_requested`，執行螢幕震動；接 `Events.room_entered`，
+  瞬間切到房間中心（見 `00b_rooms_and_soft_respawn.md` §3）。
+  - **不做平滑跟隨。** `Camera2D` 是關卡場景根節點底下的獨立節點，**不掛在
     Player 實例底下**，跟 Player 之間沒有父子關係。
-  - 每個關卡場景自行決定 `Camera2D` 要放在哪個座標（通常對準該關卡的可視範圍中心），
-    之後所有週次的新關卡都比照辦理，不會因為切場景而改成跟隨。
-  - 螢幕震動照樣透過 `Events.shake_requested` 接收，跟掛在哪裡無關，所以這個規則不影響零連線設計。
-- `Respawn.gd`：玩家死亡後 1 秒自動重生，emit `Events.level_restarted`。**兩個場景都要有
-  地板**，否則學員重生後會直接掉出畫面外。
+  - 場景裡有 `Room` 時，鏡頭一律以房間為準；沒有 `Room` 時維持節點擺放的位置，或在 `follow_player`
+    打開時跟著玩家（只當沒有房間時的備用，例如 Showroom）。
+  - 螢幕震動照樣透過 `Events.shake_requested` 接收，是疊加在鏡頭位置上的偏移，不影響零連線設計。
+- `RespawnHandler`（`blocks/RespawnHandler.tscn` 的實例）：玩家死亡後等 `delay` 秒軟重生，不重新載入
+  場景（見 `00b_rooms_and_soft_respawn.md` §4）。**兩個場景都要有地板**，否則學員重生後會直接掉出畫面外。
 
 `HitStopManager`（Autoload，見第 2 節）：接 `Events.hitstop_requested`
   - **`Engine.time_scale` 是全域的，必須有單例保護**
@@ -371,9 +371,11 @@ build/
 3. 逐一實例化 `juice/` 底下每一個組件，跑 60 幀
 4. 同時掛 6 個 Juice 組件，跑 60 幀
 5. 觸發 `Events.hitstop_requested` 10 次，確認結束後 `Engine.time_scale == 1.0`
-6. 每個階段結束後拔掉所有組件，確認 Player 仍能正常移動
-7. 任何一項失敗：`printerr` 說明 + `get_tree().quit(1)`
-8. 全部通過：`print("SMOKE TEST PASSED")` + `quit(0)`
+6. 掛重力翻轉、忽大忽小、越跑越快，連續 `kill()` / `revive()` 10 次，每次重生後位置、重力、角色圖方向、
+   體型、血量、`is_dead()` 都要正確歸零（見 `00b_rooms_and_soft_respawn.md` §8）
+7. 每個階段結束後拔掉所有組件，確認 Player 仍能正常移動
+8. 任何一項失敗：`printerr` 說明 + `get_tree().quit(1)`
+9. 全部通過：`print("SMOKE TEST PASSED")` + `quit(0)`
 
 **新增任何機制卡或 Juice 組件時，測試會自動掃資料夾，不需要手動維護清單。**
 

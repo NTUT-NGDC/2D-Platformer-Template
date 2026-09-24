@@ -223,10 +223,14 @@
 - [x] U80 煙霧測試新增連續 kill／revive 10 次檢查狀態歸零，跑完整份煙霧測試
       　　→ 掛重力翻轉／忽大忽小／越跑越快，每輪先翻轉、變大、扣血再 kill／revive，檢查位置、重力、角色圖方向、
       　　　體型、血量、is_dead、player_respawned 次數；`SMOKE TEST PASSED`，`--import` 無錯誤
-- [ ] U81 文件：`CLAUDE.md` 禁止事項、`01b` 卡片規格補 `on_respawn()`、`_help/` 補「怎麼拖一個房間」、
+- [x] U81 文件：`CLAUDE.md` 禁止事項、`01b` 卡片規格補 `on_respawn()`、`_help/` 補「怎麼拖一個房間」、
       `00_foundation.md` 與 `01a` §5 改寫成軟重生（原本寫死亡＝重新載入場景）；`00_foundation.md` §7 煙霧測試補第 6 步；
       速查表註明「有 Checkpoint 的關卡請拖 Room」（沒有 Room 時，Checkpoint 前撿的道具重生後會再出現，
       可以重複撿；講師決定先不處理，列為已知限制）
+      　　→ 新增 `documents/00b_rooms_and_soft_respawn.md`（照實作後的版本寫，CLAUDE.md 開發順序也列進去）；
+      　　　學員操作速查表實際上是 `README.md`，「怎麼拖一個房間」寫在 README §5.1，「沒反應怎麼辦」補兩列；
+      　　　`_help/講師流程.md` 補「這次更新刪了 Respawn.gd，要發第一次安裝包，學員要換節點」；
+      　　　01c §1 補零件 `reset()` 原則
 - [ ] U82 `blocks/EventListener.tscn` 事件轉接器：下拉選單選要聽的 `Events` 事件（玩家死亡／重生／受傷／跳躍、
       進入房間、過關、撿到道具、敵人死亡），發出不帶參數的 `triggered` 給學員用訊號連接，加入 `signal_source`
       （驗證：放一個「玩家死亡時」轉接器連到門的 `activate`，死亡時門打開；連錯函式時連線驗證器印中文警告）

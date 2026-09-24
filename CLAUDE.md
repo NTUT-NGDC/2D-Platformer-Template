@@ -114,6 +114,8 @@ Claude Code 在這個專案裡的所有對話回覆、進度回報、驗收結�
 - ❌ 不要使用 `@onready var x = $"../../Something"` 這類相對路徑
 - ❌ 不要讓組件直接寫入 `Player.velocity`，一律透過 Player 提供的公開 API
 - ❌ 不要在 `player/Player.gd` 裡寫任何跟特定機制卡有關的邏輯
+- ❌ 不得在 `Player.gd` 裡處理死亡後的流程，死亡一律透過 `Events` 廣播（`kill()` 只宣告死亡，重生由 `RespawnHandler` 這類處理者呼叫 `revive()`）
+- ❌ 不要用 `reload_current_scene()` 或切換場景做重生／換關，一律在同一個場景內用 `Room` 與軟重生（見 `documents/00b_rooms_and_soft_respawn.md`）
 - ❌ 不要新增需要學員安裝的外掛或 addon
 - ❌ 不要用 Godot 3.x 的 API（`KinematicBody2D`、`move_and_slide(velocity, UP)` 舊簽章等）
 
@@ -144,6 +146,7 @@ godot --headless --path . res://_tests/SmokeTest.tscn
 一次只做一週。不要提前實作未指定的週次。
 
 1. `documents/00_foundation.md` — 地基（所有週次的前提）
+   - `documents/00b_rooms_and_soft_respawn.md` — 地基增補：房間制、鏡頭瞬切、軟重生
 2. W1（依序）：
    - `documents/01a_shared_systems.md` — 共用系統（輸入路由／數值／死亡重生／訊號連接）
    - `documents/01b_mechanic_cards.md` — 18 張機制卡（10 張主限制卡 + 8 張規則卡）+ 備品庫
