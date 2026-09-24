@@ -174,3 +174,6 @@
       點滑鼠左鍵，子彈跟著游標方向飛）
 - [x] U70 `Ability_Ranged` 新增 `max_range_tiles` 最大飛行格數，0 代表不限制（驗證：`tests/Ability_RangedTest.tscn`
       點滑鼠左鍵，子彈飛約 5 格就消失；G／H 照舊飛到撞牆或時間到）
+- [x] U71 近戰判定區改成預製場景 `abilities/MeleeHitbox.tscn`，拿掉 `range_tiles` 拉桿，範圍與外觀改預製場景
+      （驗證：`tests/Ability_MeleeTest.tscn` 按 F，左右兩邊都看得到黃色判定區，打中會扣血／擊退；
+      改 `MeleeHitbox.tscn` 的形狀大小後再跑，判定區跟著變）

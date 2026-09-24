@@ -1,6 +1,6 @@
 extends Node2D
 
-# 手動驗證用：Ability_Melee 按 F 在面向方向短暫生成攻擊判定區，打中 Hittable 會扣血／擊退，
+# 手動驗證用：Ability_Melee 按 F 在面向方向短暫生成攻擊判定區（預製場景 MeleeHitbox.tscn），打中 Hittable 會扣血／擊退，
 # 冷卻中再按不會生效。
 
 @onready var _breakable: StaticBody2D = $Breakable_Target

@@ -36,7 +36,6 @@ region_rect = Rect2(0, 0, 16, 32)
 
 [node name="Ability_Melee" parent="Player/Abilities" instance=ExtResource("7")]
 key = 70
-range_tiles = 2
 cooldown = 0.5
 knockback = 250.0
 damage = 1
