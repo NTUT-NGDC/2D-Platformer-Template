@@ -33,6 +33,12 @@ func apply(ctx: MoveContext) -> void:
 		Events.level_cleared.emit()
 		Events.mechanic_event.emit("Mechanic_SurvivalTimer", "cleared")
 
+# 重生時計時歸零重新開始
+func on_respawn() -> void:
+	_elapsed = 0.0
+	_cleared = false
+	_refresh_label()
+
 # 建立倒數計時用的 CanvasLayer，畫面右上角，避免跟 Stats HUD（左上角）疊在一起
 func _ensure_hud() -> void:
 	_hud = CanvasLayer.new()

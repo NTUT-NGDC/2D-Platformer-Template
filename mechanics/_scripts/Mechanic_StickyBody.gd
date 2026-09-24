@@ -49,6 +49,13 @@ func apply(ctx: MoveContext) -> void:
 	if _release_cooldown_left <= 0.0:
 		_check_stick()
 
+# 重生時從黏住的表面脫落（不噴出去）
+func on_respawn() -> void:
+	is_stuck = false
+	_stuck_collider = null
+	_stick_seconds = 0.0
+	_release_cooldown_left = 0.0
+
 # 黏著中：凍結重力與輸入、跟著黏住的物體移動、逾時自動脫落
 func _apply_stuck(ctx: MoveContext) -> void:
 	ctx.gravity_scale = 0.0

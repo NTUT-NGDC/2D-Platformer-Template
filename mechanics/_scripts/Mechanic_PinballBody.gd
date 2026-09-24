@@ -40,6 +40,10 @@ func apply(ctx: MoveContext) -> void:
 	if _invincible_left > 0.0:
 		_invincible_left -= ctx.delta
 
+# 重生時無敵時間歸零
+func on_respawn() -> void:
+	_invincible_left = 0.0
+
 # 碰到敵人或尖刺／岩漿：依開關決定要不要彈開
 func _on_sensor_entered(other: Node) -> void:
 	if _invincible_left > 0.0:

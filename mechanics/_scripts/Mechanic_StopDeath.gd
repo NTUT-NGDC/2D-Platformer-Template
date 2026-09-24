@@ -54,6 +54,11 @@ func apply(ctx: MoveContext) -> void:
 		player.take_damage(_DRAIN_DAMAGE_PER_SECOND * ctx.delta)
 		Events.mechanic_event.emit("Mechanic_StopDeath", "draining")
 
+# 重生時靜止計時歸零、顏色還原
+func on_respawn() -> void:
+	_idle_seconds = 0.0
+	_update_flash(false, 0.0)
+
 # 閃紅警告：關閉就把顏色還原、計時器歸零；開啟就每 _FLASH_INTERVAL 秒切換白／紅
 func _update_flash(active: bool, delta: float) -> void:
 	if not active:

@@ -208,7 +208,10 @@
       　　　新增 `is_dead()`；場景裡沒有 RespawnHandler 時，死亡由 `RespawnMemory` 印中文提示；
       　　　放兩個 RespawnHandler 只有第一個生效並警告。零件的 `reset()` 要到 U79 才有，這之前死亡後
       　　　敵人、可破壞方塊等不會復原
-- [ ] U78 18 張機制卡＋`_extra/` 有狀態的都實作 `on_respawn()`（驗證：重力翻轉、忽大忽小狀態下死亡，重生後復位）
+- [x] U78 18 張機制卡＋`_extra/` 有狀態的都實作 `on_respawn()`（驗證：重力翻轉、忽大忽小狀態下死亡，重生後復位）
+      　　→ 18 張裡有 16 張補了（TouchDeath、NoFriction 沒有要歸零的狀態）；`_extra/` 補了 Dash／DoubleJump／WallJump
+      　　　（Magnet、StickyFloor、StompOnly 沒狀態，TimeSlow 自己會在時間到時恢復）。忽大忽小重生回到卡片
+      　　　一開始的小體型（`small_scale`），不是 1；開關世界的紅藍方塊回到一開始的顏色
 - [ ] U79 有狀態的零件都實作 `reset()`（驗證：推走箱子後死亡，箱子回原位；別的房間的箱子不動）
 - [ ] U80 煙霧測試新增連續 kill／revive 10 次檢查狀態歸零，跑完整份煙霧測試
 - [ ] U81 文件：`CLAUDE.md` 禁止事項、`01b` 卡片規格補 `on_respawn()`、`_help/` 補「怎麼拖一個房間」、

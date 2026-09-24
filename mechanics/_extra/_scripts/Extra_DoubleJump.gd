@@ -22,6 +22,10 @@ func apply(_ctx: MoveContext) -> void:
 	if player.is_on_ground():
 		_jumps_left = extra_jumps
 
+# 重生時空中跳的次數補滿
+func on_respawn() -> void:
+	_jumps_left = extra_jumps
+
 # 地面上不攔截，讓 Player 自己的跳躍照常運作；空中還有次數就跳一次並扣一次
 func _on_jump_pressed() -> bool:
 	if player.is_on_ground() or _jumps_left <= 0:

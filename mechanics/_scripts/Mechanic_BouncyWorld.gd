@@ -53,6 +53,13 @@ func apply(ctx: MoveContext) -> void:
 		_input_lock_left -= ctx.delta
 		ctx.input_locked = true
 
+# 重生時清掉上一條命留下的速度記錄與輸入鎖，避免一復活就被舊速度彈飛
+func on_respawn() -> void:
+	_last_velocity = Vector2.ZERO
+	_was_touching_floor = false
+	_was_touching_other = false
+	_input_lock_left = 0.0
+
 # 用撞上前量到的速度沿法線反彈，太慢就不彈；回傳有沒有真的彈成功
 func _try_bounce(normal: Vector2) -> bool:
 	if _last_velocity.length() < _MIN_BOUNCE_SPEED:

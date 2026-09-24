@@ -41,6 +41,12 @@ func apply(ctx: MoveContext) -> void:
 	ctx.jump_scale = 1.0 + (_multiplier - 1.0) * speed_affects_jump
 	_sync_visual()
 
+# 重生時速度倍率歸 1、顏色還原
+func on_respawn() -> void:
+	_multiplier = 1.0
+	_reached_max = false
+	_sync_visual()
+
 # 角色貼圖顏色依目前倍率從正常色漸變成偏紅，越快越紅，不用看數字也感覺得出差異
 func _sync_visual() -> void:
 	if not player.visual:

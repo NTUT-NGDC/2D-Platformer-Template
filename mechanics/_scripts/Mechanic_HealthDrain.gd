@@ -39,6 +39,10 @@ func apply(ctx: MoveContext) -> void:
 	_elapsed -= _TICK_INTERVAL
 	player.take_damage(damage_per_second)
 
+# 重生時扣血計時歸零
+func on_respawn() -> void:
+	_elapsed = 0.0
+
 # 金幣數值變多（撿到金幣）就幫玩家補血
 func _on_stats_value_changed(kind: String, old_value: int, new_value: int) -> void:
 	if kind == _COIN_KIND and new_value > old_value:

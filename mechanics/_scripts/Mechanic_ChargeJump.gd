@@ -31,6 +31,11 @@ func apply(ctx: MoveContext) -> void:
 	if is_charging and lock_move_while_charging:
 		ctx.input_locked = true
 
+# 重生時取消蓄力中的狀態
+func on_respawn() -> void:
+	is_charging = false
+	_charge_seconds = 0.0
+
 # 按下跳躍鍵：站在地面上才開始蓄力，回傳 true 讓 Player 自己的跳躍不會再收到這次按鍵
 func _on_pressed() -> bool:
 	if not player.is_on_ground():

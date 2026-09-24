@@ -51,6 +51,12 @@ func apply(ctx: MoveContext) -> void:
 	if _cooldown_left > 0.0:
 		_cooldown_left -= ctx.delta
 
+# 重生時角色視覺轉回正的、冷卻歸零（重力方向由 Player.revive() 復位）
+func on_respawn() -> void:
+	_cooldown_left = 0.0
+	if player.visual:
+		player.visual.scale.y = absf(player.visual.scale.y)
+
 # 冷卻中不生效，否則翻轉重力、同步視覺上下翻轉、進入冷卻、發出 flipped 事件
 func _try_flip() -> void:
 	if _cooldown_left > 0.0:

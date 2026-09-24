@@ -77,6 +77,12 @@ func apply(ctx: MoveContext) -> void:
 		_aim_line.visible = true
 		_aim_line.points = PackedVector2Array([Vector2.ZERO, -drag])
 
+# 重生時取消拖曳中的狀態、藏起瞄準線
+func on_respawn() -> void:
+	_dragging = false
+	if _aim_line:
+		_aim_line.visible = false
+
 # 放開拖曳鍵：往拖曳的反方向發射，力道依拖曳距離比例縮放
 func _release() -> void:
 	_dragging = false

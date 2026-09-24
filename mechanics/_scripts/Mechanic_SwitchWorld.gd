@@ -50,6 +50,15 @@ func apply(ctx: MoveContext) -> void:
 	_reset_blink()
 	Events.mechanic_event.emit("Mechanic_SwitchWorld", "switched")
 
+# 重生時紅藍方塊回到一開始的狀態，切換倒數重新開始
+func on_respawn() -> void:
+	_red_active = (start_color == _START_RED)
+	_elapsed = 0.0
+	if not _has_any_switch_block():
+		return
+	_apply_state()
+	_reset_blink()
+
 # 依目前的 _red_active 呼叫每個 SwitchBlock 的 set_active()
 func _apply_state() -> void:
 	for block in get_tree().get_nodes_in_group(_RED_GROUP):

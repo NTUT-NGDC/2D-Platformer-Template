@@ -34,6 +34,12 @@ func apply(ctx: MoveContext) -> void:
 	if normal.dot(Vector2(_dir, 0.0)) < 0.0:
 		_turn_around()
 
+# 重生時方向回到一開始設定的方向
+func on_respawn() -> void:
+	_dir = 1 if start_direction == _DIR_RIGHT else -1
+	_turn_cooldown_left = 0.0
+	_sync_visual()
+
 # 反轉方向、進入轉向冷卻、同步角色朝向，發出 wall_turned 事件
 func _turn_around() -> void:
 	_dir *= -1

@@ -38,6 +38,10 @@ func apply(ctx: MoveContext) -> void:
 	_elapsed -= _TICK_INTERVAL
 	player.take_damage(damage_per_second)
 
+# 重生時扣血計時歸零（血量由 Player.revive() 補滿，血條跟著 Stats 自動更新）
+func on_respawn() -> void:
+	_elapsed = 0.0
+
 # 掃這一幀的地板碰撞（法線接近 up_direction），依 scope 判斷腳下算不算扣血地板
 func _standing_on_damaging_floor() -> bool:
 	for i in player.get_slide_collision_count():

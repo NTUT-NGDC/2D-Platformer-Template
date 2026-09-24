@@ -65,6 +65,12 @@ func apply(ctx: MoveContext) -> void:
 
 	_refresh_bar()
 
+# 重生時體力補滿、解除耗盡懲罰
+func on_respawn() -> void:
+	_stamina = stamina_seconds
+	_exhausted = false
+	_refresh_bar()
+
 # 跳躍扣體力模式下，Player 每跳一次就扣一次固定體力
 func _on_player_jumped() -> void:
 	_stamina = maxf(0.0, _stamina - stamina_seconds * _JUMP_DRAIN_RATIO)

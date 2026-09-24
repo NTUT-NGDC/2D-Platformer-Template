@@ -53,6 +53,11 @@ func apply(ctx: MoveContext) -> void:
 	ctx.speed_scale = dash_speed / player.move_speed
 	ctx.gravity_scale = 0.0
 
+# 重生時取消衝刺中的狀態、冷卻歸零
+func on_respawn() -> void:
+	_dash_time_left = 0.0
+	_cooldown_left = 0.0
+
 # 冷卻中或正在衝刺就不處理；否則往目前輸入方向（沒按方向鍵就往面向方向）衝出去
 func _on_key_pressed() -> bool:
 	if _cooldown_left > 0.0 or _dash_time_left > 0.0:

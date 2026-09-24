@@ -54,6 +54,14 @@ func apply(ctx: MoveContext) -> void:
 	if combined != Vector2.ZERO:
 		_try_fire(combined.normalized())
 
+# 重生時噴射次數補滿、冷卻歸零、顏色還原
+func on_respawn() -> void:
+	_charges_left = air_charges
+	_cooldown_left = 0.0
+	_was_on_floor = true
+	if player.visual:
+		player.visual.modulate = Color.WHITE
+
 # 冷卻中不生效；在空中沒有次數了就發出 recoil_empty 並閃灰提示；否則往反方向噴出去
 func _try_fire(direction: Vector2) -> void:
 	if _cooldown_left > 0.0:

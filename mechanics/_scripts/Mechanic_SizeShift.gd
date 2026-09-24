@@ -64,6 +64,13 @@ func apply(ctx: MoveContext) -> void:
 	if size_affects_stats:
 		_apply_stat_scales(ctx)
 
+# 重生時回到一開始的體型（小），取消還沒套用的變大請求，自動切換的倒數重新開始
+func on_respawn() -> void:
+	_is_big = false
+	_pending_factor = 0.0
+	_auto_time_left = _AUTO_INTERVAL
+	player.set_size_factor(small_scale)
+
 # 在小、大兩種體型之間切換；新的請求會蓋掉還沒套用的舊請求
 func _toggle() -> void:
 	var target := small_scale if _is_big else big_scale

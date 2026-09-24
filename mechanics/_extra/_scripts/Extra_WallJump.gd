@@ -25,6 +25,10 @@ func apply(ctx: MoveContext) -> void:
 	if _cooldown_left > 0.0:
 		_cooldown_left -= ctx.delta
 
+# 重生時冷卻歸零
+func on_respawn() -> void:
+	_cooldown_left = 0.0
+
 # 站在地面上、沒貼牆、或還在冷卻就不攔截，讓 Player 自己的跳躍照常運作；
 # 否則往牆壁反方向蹬出去，同時往上跳
 func _on_jump_pressed() -> bool:
