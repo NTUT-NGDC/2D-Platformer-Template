@@ -79,6 +79,10 @@ func _run_all_steps() -> void:
 	await _test_hitstop()
 	await _assert_can_move("頓幀測試")
 
+	# 6. 連續 kill / revive 10 次，每次重生後狀態都要歸零
+	await _test_kill_revive()
+	await _assert_can_move("死亡重生測試")
+
 	if _failed:
 		print("SMOKE TEST FAILED")
 		get_tree().quit(1)
@@ -146,6 +150,50 @@ func _test_hitstop() -> void:
 	if not is_equal_approx(Engine.time_scale, 1.0):
 		_fail("頓幀結束後 Engine.time_scale 應為 1.0，實際為 %s" % Engine.time_scale)
 		Engine.time_scale = 1.0
+
+# 掛上重力翻轉、忽大忽小、越跑越快，每一輪先把狀態弄亂（翻轉、變大、扣血）再死亡、復活，
+# 檢查重生後重力、角色圖方向、體型、血量、死亡狀態都回到正確的值
+func _test_kill_revive() -> void:
+	var flip: Node = load("res://mechanics/Mechanic_GravityFlip.tscn").instantiate()
+	var size: Node = load("res://mechanics/Mechanic_SizeShift.tscn").instantiate()
+	var ramp: Node = load("res://mechanics/Mechanic_SpeedRamp.tscn").instantiate()
+	for card in [flip, size, ramp]:
+		_mechanics_container.add_child(card)
+	await _wait_frames(5)
+	var respawned_count := [0]
+	var on_respawned := func(_p): respawned_count[0] += 1
+	Events.player_respawned.connect(on_respawned)
+	var spawn := Vector2(0, 150)
+	var visual: Node2D = _player.visual
+	for i in 10:
+		flip._try_flip()
+		size._toggle()
+		_player.take_damage(1.0)
+		await _wait_frames(3)
+		_player.kill()
+		if not _player.is_dead():
+			_fail("第 %d 輪 kill() 之後 is_dead() 應該是 true" % (i + 1))
+		await _wait_frames(2)
+		_player.revive(spawn)
+		var round_name := "第 %d 輪重生後" % (i + 1)
+		if _player.is_dead():
+			_fail("%s is_dead() 應該是 false" % round_name)
+		if not _player.global_position.is_equal_approx(spawn):
+			_fail("%s 位置應該是 %s，實際是 %s" % [round_name, spawn, _player.global_position])
+		if _player.up_direction != Vector2.UP:
+			_fail("%s 重力方向沒有復位" % round_name)
+		if visual != null and visual.scale.y < 0.0:
+			_fail("%s 角色圖還是上下顛倒" % round_name)
+		if not is_equal_approx(_player.size_factor, size.small_scale):
+			_fail("%s 體型應該是 %s，實際是 %s" % [round_name, size.small_scale, _player.size_factor])
+		if Stats.get_value(Stats.HEALTH_KIND) != Stats.get_max_value(Stats.HEALTH_KIND):
+			_fail("%s 血量沒有補滿" % round_name)
+		await _wait_frames(3)
+	if respawned_count[0] != 10:
+		_fail("player_respawned 應該發出 10 次，實際 %d 次" % respawned_count[0])
+	Events.player_respawned.disconnect(on_respawned)
+	await _clear_container(_mechanics_container)
+	_player.set_size_factor(1.0)
 
 func _clear_container(container: Node) -> void:
 	for child in container.get_children():
