@@ -28,6 +28,8 @@ region_rect = Rect2(0, 0, 16, 32)
 
 [node name="Juice" type="Node2D" parent="Player" unique_id=1855616012]
 
+[node name="Abilities" type="Node2D" parent="Player" unique_id=1733406215]
+
 [node name="Camera2D" type="Camera2D" parent="." unique_id=1851771415]
 position = Vector2(0, 57)
 script = ExtResource("3")

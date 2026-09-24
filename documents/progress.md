@@ -177,3 +177,5 @@
 - [x] U71 近戰判定區改成預製場景 `abilities/MeleeHitbox.tscn`，拿掉 `range_tiles` 拉桿，範圍與外觀改預製場景
       （驗證：`tests/Ability_MeleeTest.tscn` 按 F，左右兩邊都看得到黃色判定區，打中會扣血／擊退；
       改 `MeleeHitbox.tscn` 的形狀大小後再跑，判定區跟著變）
+- [x] U72 `W1_ToyBox`／`Gym`／`_Template`／`Showroom` 的 Player 底下補上 `Abilities` 空節點（01c §3 要求，
+      之前漏做；驗證：打開四個場景，Player 底下都有 Mechanics／Juice／Abilities 三個節點）
