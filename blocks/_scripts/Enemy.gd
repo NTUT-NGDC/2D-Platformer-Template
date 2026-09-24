@@ -47,6 +47,7 @@ func _defeat() -> void:
 		return
 	_defeated = true
 	defeated.emit()
+	Events.enemy_died.emit(global_position)
 	remove_from_group("enemy")
 	_set_alive(false)
 

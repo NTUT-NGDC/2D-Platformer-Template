@@ -231,6 +231,8 @@
       　　　學員操作速查表實際上是 `README.md`，「怎麼拖一個房間」寫在 README §5.1，「沒反應怎麼辦」補兩列；
       　　　`_help/講師流程.md` 補「這次更新刪了 Respawn.gd，要發第一次安裝包，學員要換節點」；
       　　　01c §1 補零件 `reset()` 原則
-- [ ] U82 `blocks/EventListener.tscn` 事件轉接器：下拉選單選要聽的 `Events` 事件（玩家死亡／重生／受傷／跳躍、
+- [x] U82 `blocks/EventListener.tscn` 事件轉接器：下拉選單選要聽的 `Events` 事件（玩家死亡／重生／受傷／跳躍、
       進入房間、過關、撿到道具、敵人死亡），發出不帶參數的 `triggered` 給學員用訊號連接，加入 `signal_source`
       （驗證：放一個「玩家死亡時」轉接器連到門的 `activate`，死亡時門打開；連錯函式時連線驗證器印中文警告）
+      　　→ 「撿到道具」「敵人死亡」的 `Events.item_collected`／`enemy_died` 原本沒人發出，補在 Pickup／Enemy；
+      　　　`triggered` 沒連到任何東西時印中文提醒；編輯器畫紫色圓點＋事件名稱讓學員看得到、點得到

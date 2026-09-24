@@ -66,6 +66,7 @@
 ├── MyControls      ← blocks/KeyTrigger.tscn（自訂按鍵）
 ├── RespawnHandler  ← 死掉後讓你重生（範本已經放好，刪掉就不會重生）
 ├── Room1、Room2…   ← blocks/Room.tscn（房間，見下面 5.1）
+├── EventListener   ← blocks/EventListener.tscn（選一個事件，例如「玩家死亡時」，發生時發訊號，連到門、平台…）
 └── （直接放在關卡底下） ← blocks/ 的零件（按鈕、門、風扇、敵人…）
 ```
 

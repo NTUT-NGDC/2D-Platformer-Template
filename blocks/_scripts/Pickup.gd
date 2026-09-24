@@ -43,6 +43,7 @@ func _on_body_entered(body: Node) -> void:
 	_collected = true
 	Stats.add(_stats_kind, amount)
 	collected.emit()
+	Events.item_collected.emit(global_position)
 	visible = false
 
 # 把自己恢復到關卡開始時的狀態：被撿走的放回來（數值由重生記憶退回，重生處理者呼叫）。

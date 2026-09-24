@@ -165,6 +165,24 @@ Button、Fan、Checkpoint、Goal 等沒有 `reset()`。
 
 ---
 
+## 8.5 事件轉接器 `blocks/EventListener.tscn`
+
+全域事件掛在 `Events` 自動載入上，學員在場景樹看不到、沒辦法用訊號連接。轉接器放在關卡裡，
+用下拉選單選要聽的事件，事件發生時發出**不帶參數**的 `triggered`，學員照平常連按鈕的方式連到任何零件。
+
+```gdscript
+## 要聽哪一個遊戲事件
+@export_enum("玩家死亡時", "玩家重生時", "玩家受傷時", "玩家跳躍時", "進入房間時", "過關時", "撿到道具時", "敵人被打倒時") var event: int = 0
+## 事件發生後，隔多久才發出訊號（秒）
+@export_range(0.0, 3.0) var delay: float = 0.0
+```
+
+- 自動加入 `signal_source`，連線驗證器與虛線都適用；`triggered` 沒連到任何東西時印中文提醒。
+- 可以放很多個，各聽各的事件。W2、W5 要做「死了顯示結算畫面」之類的行為，也可以用它接。
+- `Events.item_collected` 由 Pickup、`Events.enemy_died` 由 Enemy 發出。
+
+---
+
 ## 9. 驗收條件
 
 - [x] `Player.gd` 內沒有任何 `reload_current_scene()` 或重生邏輯
