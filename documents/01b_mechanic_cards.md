@@ -119,6 +119,10 @@ W1 的課堂活動是：學員線上抽一張**主限制卡** → 把對應的 `
 
 #### 4. 只能用滑鼠控制 `Mechanic_Slingshot`
 ```gdscript
+## 用哪一種按鍵拖曳；選鍵盤按鍵時，按住那顆鍵移動滑鼠瞄準，放開發射
+@export_enum("鍵盤按鍵", "滑鼠左鍵", "滑鼠右鍵", "滑鼠中鍵") var input_type: int = 1
+## 拖曳鍵（「按鍵種類」選鍵盤按鍵時才會顯示這一欄）
+@export var key: Key = KEY_E
 ## 拖到最遠時發射的力道上限
 @export_range(200.0, 1200.0) var max_launch_force: float = 700.0
 ## 拖曳超過這個距離，力道就不會再增加
@@ -128,8 +132,9 @@ W1 的課堂活動是：學員線上抽一張**主限制卡** → 把對應的 `
 ## 拖曳時要不要畫出瞄準線
 @export var show_aim_line: bool = true
 ```
-`ctx.input_locked = true`。用 `InputRouter.bind_mouse(self, MOUSE_BUTTON_LEFT, ...)` 以較高優先綁定滑鼠左鍵的
-按下／放開（滑鼠是這張卡的核心玩法，沒有讓學員換成別的按鍵的必要），跟其他綁左鍵的組件同時存在時會印衝突警告。按住往後拖，放開時
+`ctx.input_locked = true`。用 `InputRouter.bind_input(self, input_type, key, ...)` 以較高優先綁定拖曳鍵的
+按下／放開（預設滑鼠左鍵，Inspector 可比照近戰改選其他滑鼠按鍵或鍵盤按鍵；瞄準一律看滑鼠位置），
+跟其他綁同一顆鍵的組件同時存在時會印衝突警告。按住往後拖，放開時
 往拖曳的**反方向** `add_impulse()`，力道 = 拖曳距離比例 × `max_launch_force`。
 `ground_only` 開啟時，離地期間無法開始拖曳。
 瞄準線由組件自己生成 `Line2D`，學員不用擺。

@@ -9,6 +9,8 @@ func _ready() -> void:
 	print("[測試] 放開滑鼠左鍵：角色應該往拖曳的反方向射出去，拖得越遠射得越用力")
 	print("[測試] ground_only 開著：如果放開後角色還在空中，這時候按住左鍵應該沒辦法開始拖曳瞄準")
 	print("[測試] 彈弓改走 InputRouter 之後，上面的行為應該跟以前完全一樣")
+	print("[測試] 把 Mechanic_Slingshot 的 input_type 改成滑鼠右鍵再跑：右鍵拖曳能發射，左鍵應該沒反應")
+	print("[測試] 改成鍵盤按鍵（預設 E）：按住 E 移動滑鼠瞄準，放開 E 發射")
 
 func _on_mechanic_event(card: String, event: String) -> void:
 	print("[測試] Events.mechanic_event：%s / %s" % [card, event])
