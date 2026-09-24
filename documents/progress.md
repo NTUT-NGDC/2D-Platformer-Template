@@ -170,3 +170,5 @@
       拖曳／放開發射行為跟以前一樣）
 - [x] U68 `Mechanic_Slingshot` 比照近戰在 Inspector 選拖曳鍵（`input_type` + `key`，預設滑鼠左鍵）（驗證：
       `tests/Mechanic_SlingshotTest.tscn` 把 `input_type` 改成滑鼠右鍵，右鍵拖曳能發射、左鍵沒反應）
+- [x] U69 `Ability_Ranged` 新增 `aim_at_mouse` 勾選框，開啟後子彈朝滑鼠游標方向射（驗證：`tests/Ability_RangedTest.tscn`
+      點滑鼠左鍵，子彈跟著游標方向飛）

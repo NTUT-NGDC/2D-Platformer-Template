@@ -11,5 +11,6 @@ func _ready() -> void:
 	print("[測試] 按 H（Ability_Ranged_Arc，use_gravity 開）發射子彈，應該看到子彈邊飛邊往下墜，")
 	print("[測試] 跟 G 的直線子彈比較看看軌跡差異")
 	print("[測試] 往右走到 Enemy_Target 附近按 G 或 H，應該看到牠被打退一小段距離")
-	print("[測試] 點滑鼠左鍵（Ability_Ranged_Mouse，按鍵種類選滑鼠左鍵）也應該發射直線子彈")
+	print("[測試] 點滑鼠左鍵（Ability_Ranged_Mouse，滑鼠左鍵＋aim_at_mouse 開）：子彈應該朝游標方向飛，")
+	print("[測試] 把游標移到角色上方、下方、背後再點，子彈方向都要跟著游標")
 	print("[測試] 往 Wall_Block 的方向發射（不打 Enemy 或 Breakable），子彈撞到牆應該直接消失")

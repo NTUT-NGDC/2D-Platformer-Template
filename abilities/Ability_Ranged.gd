@@ -1,6 +1,6 @@
 extends AbilityBase
 
-# 遠程：按下攻擊鍵（鍵盤或滑鼠）時朝面向方向發射子彈，撞到地形或受擊物件即消失。
+# 遠程：按下攻擊鍵（鍵盤或滑鼠）時朝面向方向（或滑鼠游標方向）發射子彈，撞到地形或受擊物件即消失。
 # 拖進 Player → Abilities 底下就能用，不用連任何線。
 
 ## 用鍵盤按鍵還是滑鼠按鍵攻擊
@@ -20,6 +20,9 @@ extends AbilityBase
 
 ## 子彈要不要受重力影響（像拋物線一樣往下墜）
 @export var use_gravity: bool = false
+
+## 開啟後子彈朝滑鼠游標的方向射，關閉時朝角色面向的方向射
+@export var aim_at_mouse: bool = false
 
 const _BULLET_SCENE := preload("res://abilities/Bullet.tscn")
 const _DANGEROUS_KEYS := [
@@ -44,14 +47,14 @@ func _on_setup() -> void:
 		player.direction_changed.connect(func(dir): _facing = dir)
 	InputRouter.bind_input(self, input_type, key, InputRouter.PRESSED, _on_shoot_pressed)
 
-# 按下攻擊鍵：冷卻中不生效，否則從玩家位置朝面向方向發射一顆子彈
+# 按下攻擊鍵：冷卻中不生效，否則從玩家位置朝面向方向（aim_at_mouse 開啟時朝滑鼠游標）發射一顆子彈
 func _on_shoot_pressed() -> void:
 	if _cooldown_left > 0.0:
 		return
 	_cooldown_left = cooldown
 	var bullet: Area2D = _BULLET_SCENE.instantiate()
 	bullet.global_position = player.global_position
-	bullet.velocity = Vector2(_facing * bullet_speed, 0.0)
+	bullet.velocity = _shoot_direction() * bullet_speed
 	bullet.gravity_enabled = use_gravity
 	bullet.lifetime_left = lifetime
 	bullet.shooter = player
@@ -61,6 +64,14 @@ func _on_shoot_pressed() -> void:
 func _process(delta: float) -> void:
 	if _cooldown_left > 0.0:
 		_cooldown_left -= delta
+
+# 子彈要飛的方向：aim_at_mouse 開啟時朝滑鼠游標，游標剛好在角色身上或沒開啟就朝面向方向
+func _shoot_direction() -> Vector2:
+	if aim_at_mouse:
+		var to_mouse: Vector2 = player.get_global_mouse_position() - player.global_position
+		if to_mouse.length() > 1.0:
+			return to_mouse.normalized()
+	return Vector2(_facing, 0.0)
 
 # 選到會被瀏覽器攔截的按鍵時提醒（Ctrl、Tab、Esc、F 鍵在網頁版會觸發瀏覽器內建功能）
 func _warn_if_dangerous_key(k: Key) -> void:

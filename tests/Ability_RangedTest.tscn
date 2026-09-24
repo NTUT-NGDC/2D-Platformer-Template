@@ -50,6 +50,7 @@ use_gravity = true
 
 [node name="Ability_Ranged_Mouse" parent="Player/Abilities" instance=ExtResource("7")]
 input_type = 1
+aim_at_mouse = true
 
 [node name="Camera2D" type="Camera2D" parent="."]
 position = Vector2(-40, 50)
