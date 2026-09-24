@@ -97,7 +97,12 @@
 InputRouter.bind(owner: Node, action: StringName, phase: int, callback: Callable, priority: int = 0)
 ## 直接用按鍵綁定
 InputRouter.bind_key(owner: Node, key: Key, phase: int, callback: Callable, priority: int = 0)
+## 直接用滑鼠按鍵綁定（MOUSE_BUTTON_LEFT / RIGHT / MIDDLE）
+InputRouter.bind_mouse(owner: Node, button: MouseButton, phase: int, callback: Callable, priority: int = 0)
 ```
+
+學員按鍵觸發器對應的只聽不搶版本是 `bind_student()`／`bind_student_key()`／`bind_student_mouse()`（見 §3.5）。
+滑鼠按鍵跟鍵盤按鍵走同一套優先權與衝突警告。
 
 - 函式回傳 `true` 代表「這個輸入我處理掉了」，更低優先的綁定不會收到。
 - Player 的基本移動與跳躍用低優先註冊。蓄力青蛙跳、後座力、彈弓用較高優先攔截，不需要各自寫攔截邏輯

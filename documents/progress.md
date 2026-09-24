@@ -157,3 +157,11 @@
       　　→ 修過一次：`window/stretch/mode="viewport"` 會強制任何主視窗場景內部都先用 480x270 算畫面
       　　　再縮放，跟 Window 節點自己的 size 是兩回事，害文字被裁切。`CardDraw.gd` 的 `_ready()` 執行
       　　　時改寫 `get_tree().root.content_scale_mode` 為 DISABLED 解決，不影響遊戲本體其他場景
+
+## 階段 15：滑鼠按鍵支援
+
+- [x] U64 `InputRouter` 新增 `bind_mouse()`／`bind_student_mouse()`，滑鼠按鍵納入優先權與衝突警告（驗證：
+      `tests/InputRouterTest.tscn` 點滑鼠左鍵，高優先權與學員都收到、低優先權被擋；放開右鍵印出秒數）
+- [ ] U65 `KeyTrigger` 按鍵來源可選滑鼠左鍵／右鍵／中鍵
+- [ ] U66 攻擊能力（近戰／遠程）與有按鍵欄位的機制卡（重力翻轉／忽大忽小／衝刺）可改用滑鼠按鍵
+- [ ] U67 `Mechanic_Slingshot` 改走 `InputRouter`，不再直接讀滑鼠

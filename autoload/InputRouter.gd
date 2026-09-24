@@ -1,8 +1,8 @@
 extends Node
 
-# 所有機制卡、能力、按鍵觸發器統一透過這裡收輸入，不要各自讀 Input。
+# 所有機制卡、能力、按鍵觸發器統一透過這裡收輸入（鍵盤與滑鼠按鍵都是），不要各自讀 Input。
 # 同一個按鍵／動作、同一個時機被多邊綁定時，優先權高的先收到；它回傳 true 代表「處理掉了」，
-# 優先權較低的這一輪就不會再收到。學員自己擺的按鍵觸發器例外：一律用 bind_student_key()，
+# 優先權較低的這一輪就不會再收到。學員自己擺的按鍵觸發器例外：一律用 bind_student_key()／bind_student_mouse()，
 # 一定收得到，但不會擋住任何其他綁定（見 _dispatch_group）。
 
 # 按下的那一幀觸發一次，callback 不帶參數
@@ -22,57 +22,78 @@ class Binding extends RefCounted:
 	var phase: int
 	var callback: Callable
 	var priority: int
-	var key: int = -1
+	var temp_action: StringName = &""   # 用 bind_key()/bind_mouse() 建立的臨時動作，一般 bind() 為空
 	var is_student: bool = false
 
 var _bindings: Array[Binding] = []
 var _press_started_at: Dictionary = {}   # trigger(StringName) -> 按下當下的時間戳（秒）
-var _key_action_refs: Dictionary = {}    # key(int) -> 有幾條綁定在用這個臨時動作
+var _temp_action_refs: Dictionary = {}   # 臨時動作(StringName) -> 有幾條綁定在用它
 var _watched_owners: Dictionary = {}     # owner(Node) -> true，避免對同一個 owner 重複接 tree_exiting
 
 # 用動作名稱綁定；機制卡、能力、資工生用這個，priority 越大越先收到
 @warning_ignore("shadowed_variable_base_class")
 func bind(owner: Node, action: StringName, phase: int, callback: Callable, priority: int = 0) -> void:
-	_add_binding(owner, action, phase, callback, priority, -1, false)
+	_add_binding(owner, action, phase, callback, priority, &"", false)
 
 # 直接用按鍵綁定，內部自動建立只在執行期存在的臨時動作，不會寫回專案設定
 @warning_ignore("shadowed_variable_base_class")
 func bind_key(owner: Node, key: Key, phase: int, callback: Callable, priority: int = 0) -> void:
 	var action := _ensure_key_action(key)
-	_add_binding(owner, action, phase, callback, priority, key, false)
+	_add_binding(owner, action, phase, callback, priority, action, false)
+
+# 直接用滑鼠按鍵綁定（左鍵、右鍵、中鍵），用法跟 bind_key() 一樣
+@warning_ignore("shadowed_variable_base_class")
+func bind_mouse(owner: Node, button: MouseButton, phase: int, callback: Callable, priority: int = 0) -> void:
+	var action := _ensure_mouse_action(button)
+	_add_binding(owner, action, phase, callback, priority, action, false)
 
 # 學員自己擺的按鍵觸發器專用（KeyTrigger、MyControls）：一定收得到輸入，但不會擋住任何其他綁定
 @warning_ignore("shadowed_variable_base_class")
 func bind_student_key(owner: Node, key: Key, phase: int, callback: Callable) -> void:
 	var action := _ensure_key_action(key)
-	_add_binding(owner, action, phase, callback, STUDENT_PRIORITY, key, true)
+	_add_binding(owner, action, phase, callback, STUDENT_PRIORITY, action, true)
+
+# 學員自己擺的按鍵觸發器選滑鼠按鍵時用這個：一定收得到輸入，但不會擋住任何其他綁定
+@warning_ignore("shadowed_variable_base_class")
+func bind_student_mouse(owner: Node, button: MouseButton, phase: int, callback: Callable) -> void:
+	var action := _ensure_mouse_action(button)
+	_add_binding(owner, action, phase, callback, STUDENT_PRIORITY, action, true)
 
 # 學員自己擺的按鍵觸發器選「預設動作」時用這個：一定收得到輸入，但不會擋住任何其他綁定
 @warning_ignore("shadowed_variable_base_class")
 func bind_student(owner: Node, action: StringName, phase: int, callback: Callable) -> void:
-	_add_binding(owner, action, phase, callback, STUDENT_PRIORITY, -1, true)
+	_add_binding(owner, action, phase, callback, STUDENT_PRIORITY, &"", true)
 
 # 幫某個實體按鍵建立（或沿用）一個只在記憶體裡存在的臨時動作
 func _ensure_key_action(key: Key) -> StringName:
-	var action := StringName("_input_router_key_%d" % key)
+	var event := InputEventKey.new()
+	event.physical_keycode = key
+	return _ensure_temp_action(StringName("_input_router_key_%d" % key), event)
+
+# 幫某個滑鼠按鍵建立（或沿用）一個只在記憶體裡存在的臨時動作
+func _ensure_mouse_action(button: MouseButton) -> StringName:
+	var event := InputEventMouseButton.new()
+	event.button_index = button
+	return _ensure_temp_action(StringName("_input_router_mouse_%d" % button), event)
+
+# 臨時動作還不存在就建立，並把參照計數加一
+func _ensure_temp_action(action: StringName, event: InputEvent) -> StringName:
 	if not InputMap.has_action(action):
 		InputMap.add_action(action)
-		var event := InputEventKey.new()
-		event.physical_keycode = key
 		InputMap.action_add_event(action, event)
-	_key_action_refs[key] = _key_action_refs.get(key, 0) + 1
+	_temp_action_refs[action] = _temp_action_refs.get(action, 0) + 1
 	return action
 
 # 建立一條綁定紀錄、加入清單、順便做衝突檢查與離場自動解除的掛勾
 @warning_ignore("shadowed_variable_base_class")
-func _add_binding(owner: Node, trigger: StringName, phase: int, callback: Callable, priority: int, key: int, is_student: bool) -> void:
+func _add_binding(owner: Node, trigger: StringName, phase: int, callback: Callable, priority: int, temp_action: StringName, is_student: bool) -> void:
 	var binding := Binding.new()
 	binding.owner = owner
 	binding.trigger = trigger
 	binding.phase = phase
 	binding.callback = callback
 	binding.priority = priority
-	binding.key = key
+	binding.temp_action = temp_action
 	binding.is_student = is_student
 	_bindings.append(binding)
 	_warn_if_conflict(binding)
@@ -87,46 +108,60 @@ func _on_owner_exiting(owner: Node) -> void:
 	var remaining: Array[Binding] = []
 	for binding in _bindings:
 		if binding.owner == owner:
-			if binding.key != -1:
-				_release_key_action(binding.key)
+			if binding.temp_action != &"":
+				_release_temp_action(binding.temp_action)
 		else:
 			remaining.append(binding)
 	_bindings = remaining
 
 # 減少臨時動作的參照計數，歸零時從 InputMap 移除，避免累積用不到的動作
-func _release_key_action(key: int) -> void:
-	if not _key_action_refs.has(key):
+func _release_temp_action(action: StringName) -> void:
+	if not _temp_action_refs.has(action):
 		return
-	_key_action_refs[key] -= 1
-	if _key_action_refs[key] <= 0:
-		_key_action_refs.erase(key)
-		var action := StringName("_input_router_key_%d" % key)
+	_temp_action_refs[action] -= 1
+	if _temp_action_refs[action] <= 0:
+		_temp_action_refs.erase(action)
 		if InputMap.has_action(action):
 			InputMap.erase_action(action)
 
-# 把一條綁定換算成實際的按鍵清單，供衝突檢查比對用
-func _resolve_keys(trigger: StringName, key: int) -> Array[int]:
-	if key != -1:
-		return [key]
-	var keys: Array[int] = []
+# 把一個動作換算成實際的按鍵／滑鼠按鍵清單（例如 "key:32"、"mouse:1"），供衝突檢查比對用
+func _resolve_inputs(trigger: StringName) -> Array[String]:
+	var inputs: Array[String] = []
 	for event in InputMap.action_get_events(trigger):
 		if event is InputEventKey:
-			keys.append((event as InputEventKey).physical_keycode)
-	return keys
+			inputs.append("key:%d" % (event as InputEventKey).physical_keycode)
+		elif event is InputEventMouseButton:
+			inputs.append("mouse:%d" % (event as InputEventMouseButton).button_index)
+	return inputs
 
-# 新綁定跟既有綁定的實體按鍵、時機重疊時，印中文警告提醒可能互相搶輸入
+# 把衝突檢查用的輸入代號轉成看得懂的名稱，印在警告裡
+func _input_label(input: String) -> String:
+	var parts := input.split(":")
+	var code := int(parts[1])
+	if parts[0] == "mouse":
+		match code:
+			MOUSE_BUTTON_LEFT:
+				return "滑鼠左鍵"
+			MOUSE_BUTTON_RIGHT:
+				return "滑鼠右鍵"
+			MOUSE_BUTTON_MIDDLE:
+				return "滑鼠中鍵"
+		return "滑鼠按鍵 %d" % code
+	return OS.get_keycode_string(code)
+
+# 新綁定跟既有綁定的實體按鍵（含滑鼠按鍵）、時機重疊時，印中文警告提醒可能互相搶輸入
 func _warn_if_conflict(new_binding: Binding) -> void:
-	var new_keys := _resolve_keys(new_binding.trigger, new_binding.key)
-	if new_keys.is_empty():
+	var new_inputs := _resolve_inputs(new_binding.trigger)
+	if new_inputs.is_empty():
 		return
 	for existing in _bindings:
 		if existing == new_binding or existing.phase != new_binding.phase:
 			continue
-		var existing_keys := _resolve_keys(existing.trigger, existing.key)
-		for k in new_keys:
-			if k in existing_keys:
+		var existing_inputs := _resolve_inputs(existing.trigger)
+		for input in new_inputs:
+			if input in existing_inputs:
 				push_warning("[InputRouter] %s 跟 %s 都綁定了同一個按鍵（%s），同一時機可能互相搶輸入" % [
-					_owner_label(existing.owner), _owner_label(new_binding.owner), OS.get_keycode_string(k)
+					_owner_label(existing.owner), _owner_label(new_binding.owner), _input_label(input)
 				])
 				return
 
