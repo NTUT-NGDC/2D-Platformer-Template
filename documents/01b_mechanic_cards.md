@@ -128,8 +128,8 @@ W1 的課堂活動是：學員線上抽一張**主限制卡** → 把對應的 `
 ## 拖曳時要不要畫出瞄準線
 @export var show_aim_line: bool = true
 ```
-`ctx.input_locked = true`。用 `Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT)` 直接讀滑鼠左鍵，
-不透過 Input Map 動作（滑鼠是這張卡的核心玩法，沒有讓學員換成別的按鍵的必要）。按住往後拖，放開時
+`ctx.input_locked = true`。用 `InputRouter.bind_mouse(self, MOUSE_BUTTON_LEFT, ...)` 以較高優先綁定滑鼠左鍵的
+按下／放開（滑鼠是這張卡的核心玩法，沒有讓學員換成別的按鍵的必要），跟其他綁左鍵的組件同時存在時會印衝突警告。按住往後拖，放開時
 往拖曳的**反方向** `add_impulse()`，力道 = 拖曳距離比例 × `max_launch_force`。
 `ground_only` 開啟時，離地期間無法開始拖曳。
 瞄準線由組件自己生成 `Line2D`，學員不用擺。

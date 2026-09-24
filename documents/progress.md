@@ -166,4 +166,5 @@
       印出 pressed → released；Inspector 切到滑鼠選項時 action／key 都隱藏）
 - [x] U66 攻擊能力（近戰／遠程）與有按鍵欄位的機制卡（重力翻轉／忽大忽小／衝刺）可改用滑鼠按鍵（驗證：
       `tests/Ability_RangedTest.tscn` 點滑鼠左鍵，`Ability_Ranged_Mouse` 發射子彈）
-- [ ] U67 `Mechanic_Slingshot` 改走 `InputRouter`，不再直接讀滑鼠
+- [x] U67 `Mechanic_Slingshot` 改走 `InputRouter`，不再直接讀滑鼠（驗證：`tests/Mechanic_SlingshotTest.tscn`
+      拖曳／放開發射行為跟以前一樣）

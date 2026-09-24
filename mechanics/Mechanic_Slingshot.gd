@@ -15,12 +15,17 @@ extends MechanicBase
 ## 拖曳時要不要畫出瞄準線
 @export var show_aim_line: bool = true
 
+# 滑鼠左鍵用較高優先權向 InputRouter 註冊，跟其他綁左鍵的組件同時存在時彈弓先收到
+const _PRIORITY := 100
+
 var _dragging: bool = false
 var _drag_start: Vector2 = Vector2.ZERO
 var _aim_line: Line2D
 
-# show_aim_line 開啟時，自己生成一條瞄準線，學員不用擺
+# 向 InputRouter 註冊滑鼠左鍵的按下／放開；show_aim_line 開啟時自己生成一條瞄準線，學員不用擺
 func _on_setup() -> void:
+	InputRouter.bind_mouse(self, MOUSE_BUTTON_LEFT, InputRouter.PRESSED, _on_mouse_pressed, _PRIORITY)
+	InputRouter.bind_mouse(self, MOUSE_BUTTON_LEFT, InputRouter.RELEASED, _on_mouse_released, _PRIORITY)
 	if not show_aim_line:
 		return
 	_aim_line = Line2D.new()
@@ -29,19 +34,24 @@ func _on_setup() -> void:
 	_aim_line.visible = false
 	add_child(_aim_line)
 
-# 鍵盤全鎖住；按住滑鼠左鍵開始拖曳（ground_only 開啟時要先站在地面上），
-# 拖曳中同步更新瞄準線，放開滑鼠左鍵才真的發射
+# 按下滑鼠左鍵：開始拖曳（ground_only 開啟時要先站在地面上）；沒開始拖曳就不攔截，讓其他組件收到
+func _on_mouse_pressed() -> bool:
+	if ground_only and not player.is_on_ground():
+		return false
+	_dragging = true
+	_drag_start = player.get_global_mouse_position()
+	return true
+
+# 放開滑鼠左鍵：正在拖曳才發射並攔截，否則讓其他組件收到
+func _on_mouse_released(_seconds: float) -> bool:
+	if not _dragging:
+		return false
+	_release()
+	return true
+
+# 鍵盤全鎖住；拖曳中同步更新瞄準線
 func apply(ctx: MoveContext) -> void:
 	ctx.input_locked = true
-
-	var pressed := Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT)
-	if pressed and not _dragging:
-		if ground_only and not player.is_on_ground():
-			return
-		_dragging = true
-		_drag_start = player.get_global_mouse_position()
-	elif not pressed and _dragging:
-		_release()
 
 	if _dragging and _aim_line:
 		var drag: Vector2 = player.get_global_mouse_position() - _drag_start
