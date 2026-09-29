@@ -24,8 +24,9 @@ func apply(_ctx: MoveContext) -> void:
 func on_respawn() -> void:
 	pass
 
-# 檢查有沒有被正確掛在 Mechanics 底下，沒有就發警告
+# 加入 signal_source 讓連線驗證器檢查卡片訊號的連線；檢查有沒有被正確掛在 Mechanics 底下，沒有就發警告
 func _ready() -> void:
+	add_to_group("signal_source")
 	# 沒有被 setup 就是掛錯位置了，要看得見
 	await get_tree().process_frame
 	if player == null:

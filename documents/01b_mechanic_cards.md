@@ -78,6 +78,43 @@ W1 的課堂活動是：學員線上抽一張**主限制卡** → 把對應的 `
 
 每張主限制卡附一行「事件」，在該瞬間 emit `Events.mechanic_event`。W1 不需要有任何東西訂閱它。
 
+**卡片訊號（給學員連線）**：除了 `Events.mechanic_event`，卡片在同一個瞬間也 emit 自己宣告的訊號，讓學員在
+「節點」面板把它連到 Player 的動作函式（`stop_motion`、`freeze`…，見 `01a_shared_systems.md` §6.7）或任何零件
+的函式，自己組合出卡片沒內建的行為。規則：
+
+- 訊號**一律不帶參數**，上方加 `##` 中文說明「什麼時候發出」。
+- **會推玩家的訊號在推力施加之前發出**（射出、噴射、衝刺、各種跳、反彈、踩怪、擊飛）。訊號是同步呼叫，連到
+  `stop_motion` 時效果是「先歸零、再推」，連到 `unfreeze` 時推力不會被凍住吃掉。其他訊號在事情發生之後發出。
+- `MechanicBase` 自動加入 `signal_source`，連線驗證器會檢查卡片訊號的連線（函式不存在、參數數量不對）。
+- `enabled` 關閉時卡片不動作，自然也不發訊號。
+- 持續性效果、沒有明確「發生那一刻」的卡（磁力、黏黏地板）不加訊號。
+
+| 卡片 | 訊號 | 什麼時候發出 |
+|---|---|---|
+| `Mechanic_NoFriction` | `slide_started` | 放開方向鍵開始滑行 |
+| `Mechanic_AutoRun` | `turned_around` | 撞牆自動轉向 |
+| `Mechanic_ChargeJump` | `charge_started`、`jumped` | 開始蓄力；放開起跳（推之前） |
+| `Mechanic_Slingshot` | `drag_started`、`launched` | 開始拉；放開射出（推之前） |
+| `Mechanic_RecoilMove` | `fired`、`out_of_charges` | 噴射（推之前）；空中次數用完還按 |
+| `Mechanic_PinballBody` | `bounced_off` | 碰到敵人／尖刺被彈開（推之前） |
+| `Mechanic_GravityFlip` | `flipped` | 重力翻轉之後 |
+| `Mechanic_BouncyWorld` | `bounced` | 撞到表面反彈（推之前） |
+| `Mechanic_SpeedRamp` | `reached_max`、`speed_reset` | 加到最高速；倍率歸零 |
+| `Mechanic_SizeShift` | `grew`、`shrank` | 變大之後；變小之後 |
+| `Mechanic_Stamina` | `exhausted`、`recovered` | 體力歸零；解除懲罰 |
+| `Mechanic_FloorIsLava` | `burn_started`、`burn_stopped` | 開始站在會扣血的地板上；離開 |
+| `Mechanic_HealthDrain` | `healed` | 撿到金幣補血 |
+| `Mechanic_StickyBody` | `stuck`、`released` | 黏住；脫離 |
+| `Mechanic_StopDeath` | `punished` | 靜止太久開始懲罰（直接死或開始扣血） |
+| `Mechanic_SurvivalTimer` | `cleared` | 存活時間到 |
+| `Mechanic_SwitchWorld` | `switched` | 紅藍方塊互換之後 |
+| `Mechanic_TouchDeath` | `touched` | 碰到會死的東西（死亡之前） |
+| `Extra_Dash` | `dashed` | 衝出去（推之前） |
+| `Extra_DoubleJump` | `air_jumped` | 空中再跳（推之前） |
+| `Extra_StompOnly` | `stomped` | 踩中敵人反彈（推之前） |
+| `Extra_TimeSlow` | `started`、`ended` | 世界變慢；恢復 |
+| `Extra_WallJump` | `wall_jumped` | 蹬牆（推之前） |
+
 **有狀態的卡必須覆寫 `on_respawn()`**：玩家重生時 `Player.revive()` 會逐一呼叫，卡片在這裡把自己的狀態
 （翻轉、計時、倍率、蓄力中…）歸零，回到剛掛上去時的樣子。各卡要重置什麼見第 1 節總表的「重生時」欄，
 `—` 表示沒有要歸零的狀態、不用覆寫。規格見 `00b_rooms_and_soft_respawn.md` §7。
