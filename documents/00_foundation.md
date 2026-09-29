@@ -16,6 +16,11 @@ res://
 ├── _help/                    # 操作速查表與 FAQ（放圖文，非程式）
 ├── _tests/
 │   └── SmokeTest.tscn        # 自動化煙霧測試
+├── tests/                    # 開發用的手動測試場景，分類跟組件資料夾一樣（.gd 放各分類的 _scripts/）
+│   ├── systems/              # 共用系統（autoload、Player 生命週期、連線驗證器…）
+│   ├── mechanics/            # 機制卡（備品卡放 mechanics/_extra/）
+│   ├── blocks/               # 零件
+│   └── abilities/            # 攻擊能力
 ├── autoload/
 │   └── Events.gd             # 全域事件匯流排
 ├── player/

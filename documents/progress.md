@@ -161,21 +161,21 @@
 ## 階段 15：滑鼠按鍵支援
 
 - [x] U64 `InputRouter` 新增 `bind_mouse()`／`bind_student_mouse()`，滑鼠按鍵納入優先權與衝突警告（驗證：
-      `tests/InputRouterTest.tscn` 點滑鼠左鍵，高優先權與學員都收到、低優先權被擋；放開右鍵印出秒數）
-- [x] U65 `KeyTrigger` 按鍵來源可選滑鼠左鍵／右鍵／中鍵（驗證：`tests/KeyTriggerTest.tscn` 按住滑鼠右鍵再放開，
+      `tests/systems/InputRouterTest.tscn` 點滑鼠左鍵，高優先權與學員都收到、低優先權被擋；放開右鍵印出秒數）
+- [x] U65 `KeyTrigger` 按鍵來源可選滑鼠左鍵／右鍵／中鍵（驗證：`tests/blocks/KeyTriggerTest.tscn` 按住滑鼠右鍵再放開，
       印出 pressed → released；Inspector 切到滑鼠選項時 action／key 都隱藏）
 - [x] U66 攻擊能力（近戰／遠程）與有按鍵欄位的機制卡（重力翻轉／忽大忽小／衝刺）可改用滑鼠按鍵（驗證：
-      `tests/Ability_RangedTest.tscn` 點滑鼠左鍵，`Ability_Ranged_Mouse` 發射子彈）
-- [x] U67 `Mechanic_Slingshot` 改走 `InputRouter`，不再直接讀滑鼠（驗證：`tests/Mechanic_SlingshotTest.tscn`
+      `tests/abilities/Ability_RangedTest.tscn` 點滑鼠左鍵，`Ability_Ranged_Mouse` 發射子彈）
+- [x] U67 `Mechanic_Slingshot` 改走 `InputRouter`，不再直接讀滑鼠（驗證：`tests/mechanics/Mechanic_SlingshotTest.tscn`
       拖曳／放開發射行為跟以前一樣）
 - [x] U68 `Mechanic_Slingshot` 比照近戰在 Inspector 選拖曳鍵（`input_type` + `key`，預設滑鼠左鍵）（驗證：
-      `tests/Mechanic_SlingshotTest.tscn` 把 `input_type` 改成滑鼠右鍵，右鍵拖曳能發射、左鍵沒反應）
-- [x] U69 `Ability_Ranged` 新增 `aim_at_mouse` 勾選框，開啟後子彈朝滑鼠游標方向射（驗證：`tests/Ability_RangedTest.tscn`
+      `tests/mechanics/Mechanic_SlingshotTest.tscn` 把 `input_type` 改成滑鼠右鍵，右鍵拖曳能發射、左鍵沒反應）
+- [x] U69 `Ability_Ranged` 新增 `aim_at_mouse` 勾選框，開啟後子彈朝滑鼠游標方向射（驗證：`tests/abilities/Ability_RangedTest.tscn`
       點滑鼠左鍵，子彈跟著游標方向飛）
-- [x] U70 `Ability_Ranged` 新增 `max_range_tiles` 最大飛行格數，0 代表不限制（驗證：`tests/Ability_RangedTest.tscn`
+- [x] U70 `Ability_Ranged` 新增 `max_range_tiles` 最大飛行格數，0 代表不限制（驗證：`tests/abilities/Ability_RangedTest.tscn`
       點滑鼠左鍵，子彈飛約 5 格就消失；G／H 照舊飛到撞牆或時間到）
 - [x] U71 近戰判定區改成預製場景 `abilities/MeleeHitbox.tscn`，拿掉 `range_tiles` 拉桿，範圍與外觀改預製場景
-      （驗證：`tests/Ability_MeleeTest.tscn` 按 F，左右兩邊都看得到黃色判定區，打中會扣血／擊退；
+      （驗證：`tests/abilities/Ability_MeleeTest.tscn` 按 F，左右兩邊都看得到黃色判定區，打中會扣血／擊退；
       改 `MeleeHitbox.tscn` 的形狀大小後再跑，判定區跟著變）
 - [x] U72 `W1_ToyBox`／`Gym`／`_Template`／`Showroom` 的 Player 底下補上 `Abilities` 空節點（01c §3 要求，
       之前漏做；驗證：打開四個場景，Player 底下都有 Mechanics／Juice／Abilities 三個節點）
@@ -191,7 +191,7 @@
 > 所有有狀態的零件都各自實作 `reset()`，`RespawnHandler` 只負責呼叫。
 
 - [x] U74 `Events` 新增 `room_entered`／`respawn_requested`／`player_respawned`；`Player.kill()` 只宣告死亡、
-      新增 `revive()`；`MechanicBase` 新增 `on_respawn()`（驗證：`tests/ReviveTest.tscn` 按 K 死亡、按 R 復活到起點）
+      新增 `revive()`；`MechanicBase` 新增 `on_respawn()`（驗證：`tests/systems/ReviveTest.tscn` 按 K 死亡、按 R 復活到起點）
 - [x] U75 `blocks/Room.tscn`：`@tool` 編輯器畫邊框、依格數自動產生碰撞框、玩家進入發 `room_entered`、
       `Marker2D` 子節點當重生點（驗證：拖兩個 Room 並排，編輯器看得到邊框，走過邊界輸出面板印房間名）
 - [x] U76 `CameraRig` 接 `room_entered` 瞬間切到房間中心，震動疊加在上面
@@ -256,14 +256,14 @@
 - [x] U85 `MyControls` 合併進 `KeySettings`：KeySettings 的 Inspector「預設操作」改基本按鍵，子節點 KeyTrigger 是
       自訂按鍵清單（一列＝名稱＋按鍵＋觸發方式＋triggered 連到函式）；KeyTrigger 新增 `trigger` 下拉（按下時／
       放開時／按住時（每一幀））與不帶參數的 `triggered`；拿掉 `_my/my_controls.gd` 與 W1_ToyBox 的 MyControls
-      （驗證：`tests/KeySettingsTest.tscn` 按 E 左門一按就開關、按住 Q 右門放開才開關；KeySettings 底下的
+      （驗證：`tests/blocks/KeySettingsTest.tscn` 按 E 左門一按就開關、按住 Q 右門放開才開關；KeySettings 底下的
       非按鍵節點印警告）
       　　→ 講師決定：自訂按鍵用子節點當清單（Inspector 陣列無法指定場景節點、函式名要打字，違反鐵律一、四）。
       　　　KeyTrigger 加入 `signal_source`（原本沒加，連線驗證器從沒檢查過它），順便抓到 Showroom 的
       　　　`released(seconds)` 連到 `Fan.deactivate()` 參數數量不對，改連 `hold_ended`；KeyTrigger 一條訊號都沒連時
       　　　印中文提醒。KeyTrigger 是 Node 沒有座標，畫不出連線虛線（驗證器仍會檢查）
 - [x] U86 按鍵設定節點 `blocks/KeySettings.tscn`：下拉選單改 move_left／move_right／move_up／move_down／jump 的按鍵，
-      執行時改寫 InputMap（驗證：`tests/KeySettingsTest.tscn` 往左 J、往右 L、跳躍 Shift，A／D／空白鍵沒反應、
+      執行時改寫 InputMap（驗證：`tests/blocks/KeySettingsTest.tscn` 往左 J、往右 L、跳躍 Shift，A／D／空白鍵沒反應、
       方向鍵照樣能走，輸出面板有 Shift 跟重力翻轉卡衝突的警告）
       　　→ 講師決定：方向鍵永遠保留，只換字母鍵／空白鍵；下拉預設 None = 不改。在 `_enter_tree` 改寫，
       　　　搶在組件向 InputRouter 註冊之前，衝突警告才會用新按鍵判斷；離開場景只還原自己改過的動作
@@ -287,9 +287,9 @@
 - [x] U89 修改 `CLAUDE.md` 鐵律 4（零打字 → 打字只限名稱＋四點防呆＋打字欄位清單）、`01a` §4.1、`01c` 按鈕規格
       （驗證：讀過三份文件，確認規則寫法跟講師決定一致）
 - [x] U90 共用名稱檢查工具 `NameCheck`：整理名稱（去頭尾空白、全形轉半形）、找近似名稱；`Stats` 的打錯字檢查改用它
-      （驗證：`tests/StatsTest.tscn` 打錯字警告照舊出現；新測試場景印出整理與近似比對結果）
+      （驗證：`tests/systems/StatsTest.tscn` 打錯字警告照舊出現；新測試場景印出整理與近似比對結果）
 - [x] U91 Button 的 `pressed_by` 新增「指定群組」＋ `tag` 欄位（只在該選項顯示），編輯器黃色警告、執行時中文警告
-      （驗證：`tests/ButtonGroupTest.tscn` 鑰匙箱子推上按鈕會變綠、普通箱子跟玩家踩沒反應；Button_Typo／Button_Empty
+      （驗證：`tests/blocks/ButtonGroupTest.tscn` 鑰匙箱子推上按鈕會變綠、普通箱子跟玩家踩沒反應；Button_Typo／Button_Empty
       在場景樹有黃色驚嘆號，執行時各印一則中文警告，Typo 那則建議「鑰匙」）
       　　→ 選「指定群組」時多偵測敵人圖層；player／box／enemy 是執行時才加的群組，編輯器檢查當作存在；
       　　　群組只算玩家／箱子／敵人本體身上的（加在底下圖片不算，警告會提醒）；被攻擊觸發模式不看群組；
