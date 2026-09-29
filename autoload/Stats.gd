@@ -7,9 +7,6 @@ extends Node
 ## 血量是唯一有特殊意義的種類名稱：歸零時 Player 會死亡（見 player/Player.gd 的 take_damage）
 const HEALTH_KIND := "血量"
 
-# 兩個種類名稱的編輯距離在這個範圍內，視為可能是打錯字
-const _TYPO_MAX_DISTANCE := 1
-
 signal value_changed(kind: String, old_value: int, new_value: int)
 # ValueSettings 套用設定之後發出，HUD 用它決定要不要一開場就顯示這個數值
 signal configured(kind: String)
@@ -114,23 +111,7 @@ func _kill_player() -> void:
 func _check_typo(kind: String) -> void:
 	if kind in _known_kinds:
 		return
-	for existing in _known_kinds:
-		if _levenshtein(kind, existing) <= _TYPO_MAX_DISTANCE:
-			push_warning("[Stats] 數值種類「%s」跟已經用過的「%s」很像，是不是打錯字了？" % [kind, existing])
-			break
+	var similar := NameCheck.find_similar(kind, _known_kinds)
+	if similar != "":
+		push_warning("[Stats] 數值種類「%s」跟已經用過的「%s」很像，是不是打錯字了？" % [kind, similar])
 	_known_kinds.append(kind)
-
-# 計算兩個字串的編輯距離（改幾個字才會變成另一個），用來抓相近但打錯的名稱
-func _levenshtein(a: String, b: String) -> int:
-	var len_a := a.length()
-	var len_b := b.length()
-	var prev: Array = range(len_b + 1)
-	var curr: Array = []
-	curr.resize(len_b + 1)
-	for i in range(1, len_a + 1):
-		curr[0] = i
-		for j in range(1, len_b + 1):
-			var cost := 0 if a[i - 1] == b[j - 1] else 1
-			curr[j] = min(prev[j] + 1, min(curr[j - 1] + 1, prev[j - 1] + cost))
-		prev = curr.duplicate()
-	return prev[len_b]
