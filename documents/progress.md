@@ -305,3 +305,30 @@
       匯出 Web 版用瀏覽器開，HUD、展示間、抽卡畫面的中文都正常顯示）
       　　→ 比對過專案所有字元，字型只缺 ⚠ ≈ ✗ ⭐；前三個只在輸出面板／tooltip／註解（編輯器字型），
       　　　抽卡畫面的難度星星 ⭐（emoji）改成 ★
+
+## 階段 20：機制卡可以用訊號連動
+
+> 講師決定：學員想改卡片行為（例如「彈弓拉的時候動能歸零」）時，不再一個個加選項，改成「卡片發訊號 → 連到 Player 的
+> 動作函式」，用節點面板拖拉連線就能組合出來。全部 18 張卡＋備品卡都加訊號；連線目標直接是 Player（先例：KeyKillDemo）。
+> 規則：訊號一律不帶參數；會推玩家的訊號（射出、噴射、衝刺、跳…）在推力施加「之前」發出，連 `stop_motion` 才會是
+> 「先歸零再推」。
+
+- [x] U93 Player 新增可連線的動作函式 `stop_motion()`（動能歸零一次）、`freeze()`／`unfreeze()`（停在空中不受重力、
+      不能移動，死亡重生自動解除）；`01a` §6.6、零件手冊列出學員可以連的 Player 函式
+      （驗證：`tests/systems/PlayerActionsTest.tscn` 按 Z 歸零、按 X 凍住、按 C 解除）
+- [ ] U94 機制卡訊號共用規則：`MechanicBase` 自動加入 `signal_source`（連線驗證器會檢查）、`01b` §3 補訊號總表與發出時機規則
+      （驗證：讀 `01b` §3 的訊號表；任一張卡的測試場景 F6 照常運作，輸出面板沒有新的警告）
+- [ ] U95 彈弓卡 `drag_started`、`launched`（射出前發出）（驗證：`tests/mechanics/Mechanic_Slingshot_StopOnDragTest`／
+      `_StopOnLaunchTest`／`_FreezeWhileDragTest` 三個場景，照輸出面板的「預期」操作）
+      　　→ `launched` 拉的距離是 0 也發，不然學員「拉時凍住、射出解凍」會卡在空中
+- [ ] U96 其餘 9 張主限制卡訊號：NoFriction、AutoRun、ChargeJump、RecoilMove、PinballBody、GravityFlip、BouncyWorld、SpeedRamp、SizeShift
+      （驗證：9 張卡各自的 `tests/mechanics/Mechanic_*Test.tscn` 已放 `MechanicSignalPrinter`，F6 開場印出卡片訊號清單，
+      觸發時印「XX 發出 YY」）
+      　　→ BouncyWorld 原本的區域變數 `bounced` 跟新訊號同名，改名 `bounce_velocity`
+- [ ] U97 8 張規則卡訊號：StickyBody、Stamina、TouchDeath、SurvivalTimer、StopDeath、HealthDrain、FloorIsLava、SwitchWorld
+      （驗證：8 張卡各自的 `tests/mechanics/Mechanic_*Test.tscn` 已放 `MechanicSignalPrinter`，觸發時印「XX 發出 YY」）
+      　　→ StopDeath 扣血模式事件原本每幀發，`punished` 只在開始懲罰時發一次；StickyBody 時間到自動脫落也發
+      　　　`released`；FloorIsLava 新增踩上／離開的狀態追蹤；順手修 HealthDrain `enabled` 關閉時仍會撿金幣補血
+- [ ] U98 備品卡訊號：衝刺、二段跳、踩怪起飛、子彈時間、蹬牆跳
+      （驗證：5 張卡各自的 `tests/mechanics/_extra/Extra_*Test.tscn` 已放 `MechanicSignalPrinter`，觸發時印「XX 發出 YY」）
+      　　→ StompOnly 的 `stomped` 要在讀目前向上速度之前發，連 `stop_motion` 時彈跳高度才算得對；零件手冊補「機制卡也能連線」

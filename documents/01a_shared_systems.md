@@ -270,6 +270,21 @@ Godot 的訊號對話框本身只能部分過濾（Method 下拉主要列腳本�
 
 `signal_source` 零件使用 `@tool` 腳本，在編輯畫面中讀取自己的訊號連接清單，畫一條虛線到每個目標節點。
 
+### 6.7 Player 動作函式
+
+Player 提供幾個不帶參數、給學員從任何訊號（零件、按鍵觸發器、機制卡）直接連過去的動作。連線存在 `_my/`
+的關卡場景裡，不動 `player/Player.tscn`。這些都是通用動作，不含任何特定卡片的邏輯。
+
+| 函式 | 效果 |
+|---|---|
+| `kill` | 立刻死亡 |
+| `force_jump` | 跳一下 |
+| `flip_gravity` | 翻轉重力 |
+| `take_damage` | 扣 1 滴血 |
+| `stop_motion` | 速度歸零一次，之後照常受重力、照常能動 |
+| `freeze` | 停在原地：不受重力、不能移動、不能跳（沿用 `MoveContext.movement_frozen`），推力也會被吃掉 |
+| `unfreeze` | 解除 `freeze`；死亡重生（`revive()`）也會自動解除 |
+
 ---
 
 ## 7. 新增事件一覽

@@ -35,6 +35,7 @@ var _base_collision_size: Vector2 = Vector2.ZERO
 var _cached_jump_scale: float = 1.0
 var _cached_input_locked: bool = false
 var _impulse_grace_left: float = 0.0
+var _frozen: bool = false
 
 # 自己的跳躍用最低優先權掛在 InputRouter，讓蓄力青蛙跳這類卡可以用更高優先權攔截跳躍鍵，
 # 攔截成功時這裡的跳躍完全不會被呼叫（見 InputRouter 的優先權機制）
@@ -109,6 +110,9 @@ func _physics_process(delta: float) -> void:
 	for m in _mechanics:
 		if is_instance_valid(m) and m.enabled:
 			m.apply(ctx)
+	if _frozen:
+		ctx.movement_frozen = true
+		ctx.input_locked = true
 	_damage_scale = ctx.damage_scale
 	_cached_jump_scale = ctx.jump_scale
 	_cached_input_locked = ctx.input_locked
@@ -239,6 +243,7 @@ func revive(at_position: Vector2) -> void:
 	_was_on_wall = false
 	_last_direction = 0
 	_impulse_grace_left = 0.0
+	_frozen = false
 	for m in _mechanics:
 		if is_instance_valid(m) and m.has_method("on_respawn"):
 			m.on_respawn()
@@ -254,6 +259,22 @@ func force_jump(power_scale: float = 1.0) -> void:
 	velocity += up_direction * jump_force * power_scale
 	jumped.emit()
 	Events.player_jumped.emit()
+
+# ---- 給學員用訊號連線的動作（都不帶參數，在「節點」面板把卡片或零件的訊號連到 Player 就能用） ----
+
+# 動能歸零一次：當下的速度全部清掉，之後照常受重力、照常能移動
+func stop_motion() -> void:
+	velocity = Vector2.ZERO
+	_impulse_grace_left = 0.0
+
+# 停在原地：不受重力、不能移動、不能跳，直到呼叫 unfreeze() 或死亡重生為止
+func freeze() -> void:
+	_frozen = true
+	velocity = Vector2.ZERO
+
+# 解除 freeze()，恢復正常移動
+func unfreeze() -> void:
+	_frozen = false
 
 # 回傳角色現在是不是站在地面上
 func is_on_ground() -> bool:
