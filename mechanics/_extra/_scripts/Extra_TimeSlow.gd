@@ -16,6 +16,11 @@ extends MechanicBase
 ## 子彈時間可以持續幾秒（現實時間，不受變慢影響）
 @export_range(0.5, 5.0) var duration: float = 2.0
 
+## 世界變慢之後發出
+signal started
+## 世界恢復正常速度之後發出
+signal ended
+
 const _DANGEROUS_KEYS := [
 	KEY_CTRL, KEY_TAB, KEY_ESCAPE,
 	KEY_F1, KEY_F2, KEY_F3, KEY_F4, KEY_F5, KEY_F6,
@@ -40,10 +45,12 @@ func _on_key_pressed() -> bool:
 func _run_time_slow() -> void:
 	_active = true
 	Engine.time_scale = time_scale
+	started.emit()
 	Events.mechanic_event.emit("Extra_TimeSlow", "started")
 	await get_tree().create_timer(duration, true, false, true).timeout
 	Engine.time_scale = 1.0
 	_active = false
+	ended.emit()
 	Events.mechanic_event.emit("Extra_TimeSlow", "ended")
 
 # 選到會被瀏覽器攔截的按鍵時提醒（Ctrl、Tab、Esc、F 鍵在網頁版會觸發瀏覽器內建功能）

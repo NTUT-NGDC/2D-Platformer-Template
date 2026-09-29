@@ -1,10 +1,11 @@
-[gd_scene load_steps=7 format=3]
+[gd_scene load_steps=8 format=3]
 
 [ext_resource type="Script" path="res://tests/mechanics/_extra/_scripts/Extra_StompOnlyTest.gd" id="1"]
 [ext_resource type="PackedScene" path="res://player/Player.tscn" id="2"]
 [ext_resource type="Texture2D" uid="uid://cm8ymciwkvttp" path="res://art/white_block.png" id="3"]
 [ext_resource type="PackedScene" path="res://mechanics/_extra/Extra_StompOnly.tscn" id="4"]
 [ext_resource type="PackedScene" path="res://blocks/Enemy.tscn" id="5"]
+[ext_resource type="Script" path="res://tests/mechanics/_scripts/MechanicSignalPrinter.gd" id="signal_printer"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_high"]
 size = Vector2(160, 16)
@@ -70,3 +71,6 @@ region_rect = Rect2(0, 0, 16, 32)
 [node name="Camera2D" type="Camera2D" parent="."]
 position = Vector2(0, 80)
 zoom = Vector2(0.6, 0.6)
+
+[node name="MechanicSignalPrinter" type="Node" parent="."]
+script = ExtResource("signal_printer")

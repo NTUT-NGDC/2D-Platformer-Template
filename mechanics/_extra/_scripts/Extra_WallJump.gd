@@ -12,6 +12,9 @@ extends MechanicBase
 ## 蹬出去之後多久內不能再蹬（避免同一面牆連續蹬）
 @export_range(0.1, 1.0) var cooldown: float = 0.2
 
+## 蹬牆跳的那一刻發出，在蹬出去之前
+signal wall_jumped
+
 const _PRIORITY := 100
 
 var _cooldown_left: float = 0.0
@@ -35,6 +38,7 @@ func _on_jump_pressed() -> bool:
 	if player.is_on_ground() or not player.is_on_wall() or _cooldown_left > 0.0:
 		return false
 	var normal: Vector2 = player.get_wall_normal()
+	wall_jumped.emit()
 	player.add_impulse(normal * push_force)
 	player.force_jump(jump_scale)
 	_cooldown_left = cooldown

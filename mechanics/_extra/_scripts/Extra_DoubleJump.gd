@@ -9,6 +9,9 @@ extends MechanicBase
 ## 空中跳的力道，是一般跳躍的幾倍
 @export_range(0.3, 1.5) var jump_scale: float = 1.0
 
+## 在空中再跳一次的那一刻發出，在起跳之前
+signal air_jumped
+
 const _PRIORITY := 100
 
 var _jumps_left: int = 0
@@ -31,6 +34,7 @@ func _on_jump_pressed() -> bool:
 	if player.is_on_ground() or _jumps_left <= 0:
 		return false
 	_jumps_left -= 1
+	air_jumped.emit()
 	player.force_jump(jump_scale)
 	Events.mechanic_event.emit("Extra_DoubleJump", "jumped")
 	return true

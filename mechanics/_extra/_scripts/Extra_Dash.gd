@@ -19,6 +19,9 @@ extends MechanicBase
 ## 衝刺之間的冷卻時間
 @export_range(0.2, 3.0) var cooldown: float = 1.0
 
+## 衝刺出去的那一刻發出，在衝刺開始之前
+signal dashed
+
 const _DANGEROUS_KEYS := [
 	KEY_CTRL, KEY_TAB, KEY_ESCAPE,
 	KEY_F1, KEY_F2, KEY_F3, KEY_F4, KEY_F5, KEY_F6,
@@ -64,6 +67,7 @@ func _on_key_pressed() -> bool:
 		return false
 	var input_dir: float = player.get_move_input()
 	_dash_dir = int(sign(input_dir)) if input_dir != 0.0 else _facing
+	dashed.emit()
 	_dash_time_left = dash_duration
 	_cooldown_left = cooldown
 	Events.mechanic_event.emit("Extra_Dash", "dashed")

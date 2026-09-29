@@ -13,6 +13,9 @@ extends MechanicBase
 ## 要判定成「踩到」，玩家下墜速度至少要多快
 @export_range(20.0, 200.0) var min_fall_speed: float = 40.0
 
+## 踩中敵人、要彈起來的那一刻發出，在彈起之前
+signal stomped
+
 const _SENSOR_MASK := 1 << 3  # 圖層4「敵人」
 const _SENSOR_SIZE := Vector2(16, 32)
 
@@ -46,6 +49,7 @@ func _on_sensor_body_entered(body: Node) -> void:
 	var enemy: Node2D = body
 	if player.up_direction.dot(player.global_position - enemy.global_position) <= 0.0:
 		return
+	stomped.emit()
 	var current_up_speed: float = player.velocity.dot(player.up_direction)
 	player.add_impulse(player.up_direction * (bounce_force - current_up_speed))
 	if enemy.has_method("take_hit"):
