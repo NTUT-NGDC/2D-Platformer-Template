@@ -13,6 +13,11 @@ extends MechanicBase
 ## 天花板要不要也能黏住
 @export var ceiling_sticks: bool = true
 
+## 黏住表面之後發出
+signal stuck
+## 脫離黏著的那一刻發出（按跳躍或時間到都算），在噴出去之前
+signal released
+
 const _JUMP_PRIORITY := 100
 const _RELEASE_COOLDOWN := 0.2
 const _UP_BIAS := 0.3
@@ -93,6 +98,7 @@ func _stick_to(collider: Object, normal: Vector2) -> void:
 		_stuck_offset = player.global_position - collider.global_position
 	else:
 		_stuck_collider = null
+	stuck.emit()
 	Events.mechanic_event.emit("Mechanic_StickyBody", "stuck")
 
 # 按跳躍鍵脫離黏著：沒黏著就不處理，讓 Player 自己的跳躍照常運作
@@ -104,6 +110,7 @@ func _on_jump_pressed() -> bool:
 
 # 脫離黏著：with_impulse 為 true 時往法線加一點向上偏移噴出去，逾時自動脫落則不噴
 func _release(with_impulse: bool) -> void:
+	released.emit()
 	if with_impulse:
 		var dir: Vector2 = (_stuck_normal + player.up_direction * _UP_BIAS).normalized()
 		player.add_impulse(dir * release_force)

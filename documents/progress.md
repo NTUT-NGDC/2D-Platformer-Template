@@ -325,7 +325,7 @@
       （驗證：9 張卡各自的 `tests/mechanics/Mechanic_*Test.tscn` 已放 `MechanicSignalPrinter`，F6 開場印出卡片訊號清單，
       觸發時印「XX 發出 YY」）
       　　→ BouncyWorld 原本的區域變數 `bounced` 跟新訊號同名，改名 `bounce_velocity`
-- [ ] U97 8 張規則卡訊號：StickyBody、Stamina、TouchDeath、SurvivalTimer、StopDeath、HealthDrain、FloorIsLava、SwitchWorld
+- [x] U97 8 張規則卡訊號：StickyBody、Stamina、TouchDeath、SurvivalTimer、StopDeath、HealthDrain、FloorIsLava、SwitchWorld
       （驗證：8 張卡各自的 `tests/mechanics/Mechanic_*Test.tscn` 已放 `MechanicSignalPrinter`，觸發時印「XX 發出 YY」）
       　　→ StopDeath 扣血模式事件原本每幀發，`punished` 只在開始懲罰時發一次；StickyBody 時間到自動脫落也發
       　　　`released`；FloorIsLava 新增踩上／離開的狀態追蹤；順手修 HealthDrain `enabled` 關閉時仍會撿金幣補血

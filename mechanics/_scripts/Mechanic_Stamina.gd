@@ -16,6 +16,11 @@ extends MechanicBase
 ## 要不要在畫面上顯示體力條
 @export var show_stamina_bar: bool = true
 
+## 體力用光、開始懲罰時發出
+signal exhausted
+## 體力回復、解除懲罰時發出
+signal recovered
+
 const _MOVE_EPSILON := 5.0
 const _RECOVER_RATIO := 0.3
 const _SLOW_SCALE := 0.3
@@ -55,9 +60,11 @@ func apply(ctx: MoveContext) -> void:
 
 	if _stamina <= 0.0 and not _exhausted:
 		_exhausted = true
+		exhausted.emit()
 		Events.mechanic_event.emit("Mechanic_Stamina", "exhausted")
 	elif _exhausted and _stamina >= stamina_seconds * _RECOVER_RATIO:
 		_exhausted = false
+		recovered.emit()
 		Events.mechanic_event.emit("Mechanic_Stamina", "recovered")
 
 	if _exhausted:

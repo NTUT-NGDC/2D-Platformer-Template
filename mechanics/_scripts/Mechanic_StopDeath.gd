@@ -13,6 +13,9 @@ extends MechanicBase
 ## 快要超過時間時角色要不要閃紅警告
 @export var show_warning: bool = true
 
+## 靜止太久、開始懲罰的那一刻發出一次（直接死亡模式在死亡之前）；重新移動後才會再發
+signal punished
+
 const _PENALTY_KILL := 0
 const _MOVE_EPSILON := 5.0
 const _WARNING_RATIO := 0.7  # 逾時前這個比例的時間開始閃紅
@@ -23,6 +26,7 @@ const _CHARGE_JUMP_SCRIPT := "res://mechanics/_scripts/Mechanic_ChargeJump.gd"
 
 var _idle_seconds: float = 0.0
 var _flash_timer: float = 0.0
+var _punished: bool = false
 var _charge_jump: Node = null
 
 # 找場上有沒有蓄力青蛙跳，之後拿它的 is_charging 決定要不要暫停計時
@@ -38,6 +42,7 @@ func apply(ctx: MoveContext) -> void:
 	var moving: bool = player.velocity.length() > _MOVE_EPSILON
 	if moving:
 		_idle_seconds = 0.0
+		_punished = false
 	else:
 		_idle_seconds += ctx.delta
 
@@ -47,6 +52,9 @@ func apply(ctx: MoveContext) -> void:
 	if _idle_seconds < max_idle_seconds:
 		return
 
+	if not _punished:
+		_punished = true
+		punished.emit()
 	if penalty_mode == _PENALTY_KILL:
 		player.kill()
 		Events.mechanic_event.emit("Mechanic_StopDeath", "died")
@@ -57,6 +65,7 @@ func apply(ctx: MoveContext) -> void:
 # 重生時靜止計時歸零、顏色還原
 func on_respawn() -> void:
 	_idle_seconds = 0.0
+	_punished = false
 	_update_flash(false, 0.0)
 
 # 閃紅警告：關閉就把顏色還原、計時器歸零；開啟就每 _FLASH_INTERVAL 秒切換白／紅

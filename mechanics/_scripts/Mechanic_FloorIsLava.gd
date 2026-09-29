@@ -13,6 +13,11 @@ extends MechanicBase
 ## 要不要在畫面上顯示血條
 @export var show_health_bar: bool = true
 
+## 開始站在會扣血的地板上時發出
+signal burn_started
+## 離開會扣血的地板時發出
+signal burn_stopped
+
 const _SCOPE_LAVA_ONLY := 0
 const _FLOOR_NORMAL_MIN := 0.7
 # Stats 只認整數，累積滿一秒才扣一次整份傷害，理由同 Mechanic_HealthDrain（每幀扣一點點
@@ -20,6 +25,7 @@ const _FLOOR_NORMAL_MIN := 0.7
 const _TICK_INTERVAL := 1.0
 
 var _elapsed: float = 0.0
+var _burning: bool = false
 
 # show_health_bar 關閉時把血量那一列從 HUD 藏起來
 func _on_setup() -> void:
@@ -27,9 +33,16 @@ func _on_setup() -> void:
 		Stats.configure(Stats.HEALTH_KIND, Stats.get_value(Stats.HEALTH_KIND),
 			Stats.get_max_value(Stats.HEALTH_KIND), false, Stats.is_reset_on_death(Stats.HEALTH_KIND))
 
-# 站在扣血地板上才累積時間，離開就歸零；累積滿一秒扣一次血
+# 站在扣血地板上才累積時間，離開就歸零；累積滿一秒扣一次血。踩上去、離開的那一刻各發一次訊號
 func apply(ctx: MoveContext) -> void:
-	if not _standing_on_damaging_floor():
+	var on_damaging := _standing_on_damaging_floor()
+	if on_damaging != _burning:
+		_burning = on_damaging
+		if _burning:
+			burn_started.emit()
+		else:
+			burn_stopped.emit()
+	if not on_damaging:
 		_elapsed = 0.0
 		return
 	_elapsed += ctx.delta
@@ -41,6 +54,7 @@ func apply(ctx: MoveContext) -> void:
 # 重生時扣血計時歸零（血量由 Player.revive() 補滿，血條跟著 Stats 自動更新）
 func on_respawn() -> void:
 	_elapsed = 0.0
+	_burning = false
 
 # 掃這一幀的地板碰撞（法線接近 up_direction），依 scope 判斷腳下算不算扣血地板
 func _standing_on_damaging_floor() -> bool:

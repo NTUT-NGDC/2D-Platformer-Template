@@ -13,6 +13,9 @@ extends MechanicBase
 ## 要不要在畫面上顯示血條
 @export var show_health_bar: bool = true
 
+## 撿到金幣、補血之後發出
+signal healed
+
 # Stats 的數值只認整數，如果每個物理幀都呼叫一次 take_damage(damage_per_second * delta)，
 # 每次的量都會被 roundi() 無條件捨去變成 0（例如 1.0/60 ≈ 0.017），永遠扣不到血。
 # 改成累積滿一秒才扣一次整份傷害，跟 Lava.gd 的作法一致
@@ -43,7 +46,10 @@ func apply(ctx: MoveContext) -> void:
 func on_respawn() -> void:
 	_elapsed = 0.0
 
-# 金幣數值變多（撿到金幣）就幫玩家補血
+# 金幣數值變多（撿到金幣）就幫玩家補血；卡片關閉時不補
 func _on_stats_value_changed(kind: String, old_value: int, new_value: int) -> void:
+	if not enabled:
+		return
 	if kind == _COIN_KIND and new_value > old_value:
 		Stats.add(Stats.HEALTH_KIND, roundi(heal_per_coin))
+		healed.emit()

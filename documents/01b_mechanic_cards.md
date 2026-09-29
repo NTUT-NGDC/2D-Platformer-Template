@@ -104,8 +104,8 @@ W1 的課堂活動是：學員線上抽一張**主限制卡** → 把對應的 `
 | `Mechanic_Stamina` | `exhausted`、`recovered` | 體力歸零；解除懲罰 |
 | `Mechanic_FloorIsLava` | `burn_started`、`burn_stopped` | 開始站在會扣血的地板上；離開 |
 | `Mechanic_HealthDrain` | `healed` | 撿到金幣補血 |
-| `Mechanic_StickyBody` | `stuck`、`released` | 黏住；脫離 |
-| `Mechanic_StopDeath` | `punished` | 靜止太久開始懲罰（直接死或開始扣血） |
+| `Mechanic_StickyBody` | `stuck`、`released` | 黏住；脫離（按跳躍或時間到都算，噴出去之前） |
+| `Mechanic_StopDeath` | `punished` | 靜止太久開始懲罰（直接死亡之前／開始扣血），只發一次，重新移動後才會再發 |
 | `Mechanic_SurvivalTimer` | `cleared` | 存活時間到 |
 | `Mechanic_SwitchWorld` | `switched` | 紅藍方塊互換之後 |
 | `Mechanic_TouchDeath` | `touched` | 碰到會死的東西（死亡之前） |

@@ -1,4 +1,4 @@
-[gd_scene load_steps=9 format=3]
+[gd_scene load_steps=10 format=3]
 
 [ext_resource type="Script" path="res://tests/mechanics/_scripts/Mechanic_TouchDeathTest.gd" id="1"]
 [ext_resource type="PackedScene" path="res://player/Player.tscn" id="2"]
@@ -8,6 +8,7 @@
 [ext_resource type="PackedScene" path="res://blocks/Enemy.tscn" id="6"]
 [ext_resource type="PackedScene" path="res://blocks/Box.tscn" id="7"]
 [ext_resource type="PackedScene" path="res://blocks/RespawnHandler.tscn" id="8"]
+[ext_resource type="Script" path="res://tests/mechanics/_scripts/MechanicSignalPrinter.gd" id="signal_printer"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_wall"]
 size = Vector2(8, 32)
@@ -58,3 +59,6 @@ collision_mask = 0
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Wall_Right"]
 shape = SubResource("RectangleShape2D_wall")
+
+[node name="MechanicSignalPrinter" type="Node" parent="."]
+script = ExtResource("signal_printer")

@@ -10,6 +10,9 @@ extends MechanicBase
 ## 要不要在畫面上顯示倒數計時
 @export var show_timer: bool = true
 
+## 存活時間到、過關時發出
+signal cleared
+
 var _elapsed: float = 0.0
 var _cleared: bool = false
 
@@ -31,6 +34,7 @@ func apply(ctx: MoveContext) -> void:
 	if _elapsed >= target_seconds:
 		_cleared = true
 		Events.level_cleared.emit()
+		cleared.emit()
 		Events.mechanic_event.emit("Mechanic_SurvivalTimer", "cleared")
 
 # 重生時計時歸零重新開始

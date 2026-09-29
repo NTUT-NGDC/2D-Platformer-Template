@@ -1,4 +1,4 @@
-[gd_scene load_steps=7 format=3]
+[gd_scene load_steps=8 format=3]
 
 [ext_resource type="Script" path="res://tests/mechanics/_scripts/Mechanic_StopDeathTest.gd" id="1"]
 [ext_resource type="PackedScene" path="res://player/Player.tscn" id="2"]
@@ -6,6 +6,7 @@
 [ext_resource type="PackedScene" path="res://mechanics/Mechanic_StopDeath.tscn" id="4"]
 [ext_resource type="PackedScene" path="res://mechanics/Mechanic_ChargeJump.tscn" id="5"]
 [ext_resource type="PackedScene" path="res://blocks/RespawnHandler.tscn" id="6"]
+[ext_resource type="Script" path="res://tests/mechanics/_scripts/MechanicSignalPrinter.gd" id="signal_printer"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_floor"]
 size = Vector2(300, 16)
@@ -52,3 +53,6 @@ position = Vector2(0, -30)
 zoom = Vector2(0.8, 0.8)
 
 [node name="RespawnHandler" parent="." instance=ExtResource("6")]
+
+[node name="MechanicSignalPrinter" type="Node" parent="."]
+script = ExtResource("signal_printer")

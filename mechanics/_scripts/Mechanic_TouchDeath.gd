@@ -17,6 +17,9 @@ extends MechanicBase
 ## 碰到 group wall 的物件會不會死
 @export var die_on_wall: bool = false
 
+## 碰到會死的東西時發出，在死亡之前
+signal touched
+
 # normal 跟 up_direction 的內積絕對值小於這個值，才算「垂直面」（牆），不是地板或天花板
 const _WALL_NORMAL_LIMIT := 0.5
 const _SENSOR_MASK := (1 << 2) | (1 << 3)  # 圖層3「箱子」、圖層4「敵人」
@@ -57,7 +60,10 @@ func apply(_ctx: MoveContext) -> void:
 			_kill()
 			return
 
-# 直接殺死玩家並發出事件，不走 take_damage()，所以不受傷害倍率影響
+# 直接殺死玩家並發出事件，不走 take_damage()，所以不受傷害倍率影響；已經死了就不重複觸發
 func _kill() -> void:
+	if player.is_dead():
+		return
+	touched.emit()
 	player.kill()
 	Events.mechanic_event.emit("Mechanic_TouchDeath", "touched")

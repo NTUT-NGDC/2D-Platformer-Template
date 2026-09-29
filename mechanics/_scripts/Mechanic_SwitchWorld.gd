@@ -13,6 +13,9 @@ extends MechanicBase
 ## 切換前方塊要不要先閃爍提示
 @export var blink_before_switch: bool = true
 
+## 紅藍方塊互換之後發出
+signal switched
+
 const _START_RED := 0
 const _RED_GROUP := "switch_red"
 const _BLUE_GROUP := "switch_blue"
@@ -48,6 +51,7 @@ func apply(ctx: MoveContext) -> void:
 	_red_active = not _red_active
 	_apply_state()
 	_reset_blink()
+	switched.emit()
 	Events.mechanic_event.emit("Mechanic_SwitchWorld", "switched")
 
 # 重生時紅藍方塊回到一開始的狀態，切換倒數重新開始
