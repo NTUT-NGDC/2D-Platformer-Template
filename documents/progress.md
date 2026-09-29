@@ -318,7 +318,7 @@
       （驗證：`tests/systems/PlayerActionsTest.tscn` 按 Z 歸零、按 X 凍住、按 C 解除）
 - [x] U94 機制卡訊號共用規則：`MechanicBase` 自動加入 `signal_source`（連線驗證器會檢查）、`01b` §3 補訊號總表與發出時機規則
       （驗證：讀 `01b` §3 的訊號表；任一張卡的測試場景 F6 照常運作，輸出面板沒有新的警告）
-- [ ] U95 彈弓卡 `drag_started`、`launched`（射出前發出）（驗證：`tests/mechanics/Mechanic_Slingshot_StopOnDragTest`／
+- [x] U95 彈弓卡 `drag_started`、`launched`（射出前發出）（驗證：`tests/mechanics/Mechanic_Slingshot_StopOnDragTest`／
       `_StopOnLaunchTest`／`_FreezeWhileDragTest` 三個場景，照輸出面板的「預期」操作）
       　　→ `launched` 拉的距離是 0 也發，不然學員「拉時凍住、射出解凍」會卡在空中
 - [ ] U96 其餘 9 張主限制卡訊號：NoFriction、AutoRun、ChargeJump、RecoilMove、PinballBody、GravityFlip、BouncyWorld、SpeedRamp、SizeShift

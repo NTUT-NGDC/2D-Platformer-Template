@@ -94,7 +94,7 @@ W1 的課堂活動是：學員線上抽一張**主限制卡** → 把對應的 `
 | `Mechanic_NoFriction` | `slide_started` | 放開方向鍵開始滑行 |
 | `Mechanic_AutoRun` | `turned_around` | 撞牆自動轉向 |
 | `Mechanic_ChargeJump` | `charge_started`、`jumped` | 開始蓄力；放開起跳（推之前） |
-| `Mechanic_Slingshot` | `drag_started`、`launched` | 開始拉；放開射出（推之前） |
+| `Mechanic_Slingshot` | `drag_started`、`launched` | 開始拉；放開射出（推之前；拉的距離是 0 也發，避免凍住後解不開） |
 | `Mechanic_RecoilMove` | `fired`、`out_of_charges` | 噴射（推之前）；空中次數用完還按 |
 | `Mechanic_PinballBody` | `bounced_off` | 碰到敵人／尖刺被彈開（推之前） |
 | `Mechanic_GravityFlip` | `flipped` | 重力翻轉之後 |

@@ -21,6 +21,11 @@ extends MechanicBase
 ## 拖曳時要不要畫出瞄準線
 @export var show_aim_line: bool = true
 
+## 開始拉的那一刻發出（例如連到 Player 的 stop_motion，拉的時候速度歸零）
+signal drag_started
+## 放開、要射出去的那一刻發出，在推力之前（連到 Player 的 stop_motion 就是先歸零再射）；拉的距離是 0 也會發出
+signal launched
+
 # 拖曳鍵用較高優先權向 InputRouter 註冊，跟其他綁同一顆鍵的組件同時存在時彈弓先收到
 const _PRIORITY := 100
 const _DANGEROUS_KEYS := [
@@ -58,6 +63,7 @@ func _on_drag_pressed() -> bool:
 		return false
 	_dragging = true
 	_drag_start = player.get_global_mouse_position()
+	drag_started.emit()
 	return true
 
 # 放開拖曳鍵：正在拖曳才發射並攔截，否則讓其他組件收到
@@ -83,7 +89,8 @@ func on_respawn() -> void:
 	if _aim_line:
 		_aim_line.visible = false
 
-# 放開拖曳鍵：往拖曳的反方向發射，力道依拖曳距離比例縮放
+# 放開拖曳鍵：往拖曳的反方向發射，力道依拖曳距離比例縮放。launched 一定在推力之前發出，
+# 拉的距離是 0 也發，學員用 drag_started 凍住、launched 解凍時才不會卡在空中
 func _release() -> void:
 	_dragging = false
 	if _aim_line:
@@ -91,6 +98,7 @@ func _release() -> void:
 	var drag: Vector2 = player.get_global_mouse_position() - _drag_start
 	drag = drag.limit_length(max_drag_distance)
 	var ratio := drag.length() / max_drag_distance
+	launched.emit()
 	if ratio <= 0.0:
 		return
 	var direction := -drag.normalized()
