@@ -41,9 +41,9 @@ func _show_card(card: Resource) -> void:
 	]
 	_drag_hint_label.text = "把 mechanics/%s.tscn 拖到 Player 底下的 Mechanics" % card.file_name
 
-# 數字換成星星文字，1～2 顆
+# 數字換成星星文字，1～2 顆；用 ★ 不用 emoji，網頁版沒有 emoji 字型會變方框
 func _stars(n: int) -> String:
-	return "⭐".repeat(n)
+	return "★".repeat(n)
 
 # 還沒抽過卡之前的畫面
 func _show_placeholder() -> void:

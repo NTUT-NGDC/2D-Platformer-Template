@@ -32,6 +32,11 @@ window/size/viewport_height=270
 window/stretch/mode="viewport"
 window/stretch/scale_mode="integer"
 
+[gui]
+
+theme/custom="res://art/fonts/DefaultTheme.tres"
+theme/custom_font="res://art/fonts/Cubic_11.woff2"
+
 [input]
 
 move_left={
