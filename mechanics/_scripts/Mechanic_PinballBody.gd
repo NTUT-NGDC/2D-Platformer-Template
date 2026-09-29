@@ -15,6 +15,9 @@ extends MechanicBase
 ## 被擊飛後幾秒內不會被同一次碰撞連續觸發
 @export_range(0.1, 1.0) var invincible_seconds: float = 0.3
 
+## 碰到敵人或尖刺、要被彈開的那一刻發出，在推力之前
+signal bounced_off
+
 const _SENSOR_SIZE := Vector2(20.0, 36.0)
 
 var _sensor: Area2D
@@ -59,6 +62,7 @@ func _knock_away(other: Node) -> void:
 	if away.length() < 1.0:
 		away = Vector2.UP
 	var direction := (away.normalized() + Vector2.UP * 0.5).normalized()
+	bounced_off.emit()
 	player.add_impulse(direction * knock_force)
 	_invincible_left = invincible_seconds
 	Events.mechanic_event.emit("Mechanic_PinballBody", "knocked")

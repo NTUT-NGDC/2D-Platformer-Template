@@ -13,6 +13,11 @@ extends MechanicBase
 ## 蓄力的時候要不要禁止左右移動
 @export var lock_move_while_charging: bool = true
 
+## 開始蓄力的那一刻發出
+signal charge_started
+## 放開、要跳出去的那一刻發出，在起跳之前（連到 Player 的 stop_motion 就是先歸零再跳）
+signal jumped
+
 const _PRIORITY := 100
 
 ## 是不是正在蓄力，外部（例如停下即死卡）可以讀這個決定要不要暫停自己的邏輯
@@ -42,6 +47,7 @@ func _on_pressed() -> bool:
 		return false
 	is_charging = true
 	_charge_seconds = 0.0
+	charge_started.emit()
 	Events.mechanic_event.emit("Mechanic_ChargeJump", "charge_start")
 	return true
 
@@ -59,6 +65,7 @@ func _on_released(_seconds: float) -> bool:
 	is_charging = false
 	var charge_ratio := _charge_seconds / max_charge_seconds
 	var power := lerpf(min_jump_ratio, 1.0, charge_ratio)
+	jumped.emit()
 	player.force_jump(power)
 	Events.mechanic_event.emit("Mechanic_ChargeJump", "charge_release")
 	return true

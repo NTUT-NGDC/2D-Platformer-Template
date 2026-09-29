@@ -16,6 +16,11 @@ extends MechanicBase
 ## 每次噴射之後，多久才能再噴一次
 @export_range(0.1, 1.0) var cooldown: float = 0.3
 
+## 噴射的那一刻發出，在推力之前（連到 Player 的 stop_motion 就是先歸零再噴）
+signal fired
+## 在空中已經沒有噴射次數、還按方向鍵時發出
+signal out_of_charges
+
 # 方向鍵對應噴射方向的「反方向」
 const _DIRECTIONS := {
 	"move_up": Vector2.DOWN,
@@ -68,12 +73,14 @@ func _try_fire(direction: Vector2) -> void:
 		return
 	var in_air: bool = not player.is_on_ground()
 	if in_air and _charges_left <= 0:
+		out_of_charges.emit()
 		Events.mechanic_event.emit("Mechanic_RecoilMove", "recoil_empty")
 		_flash_empty()
 		return
 	if in_air:
 		_charges_left -= 1
 	_cooldown_left = cooldown
+	fired.emit()
 	player.add_impulse(direction * recoil_strength)
 	Events.mechanic_event.emit("Mechanic_RecoilMove", "recoil_fired")
 

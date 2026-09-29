@@ -12,6 +12,9 @@ extends MechanicBase
 ## 轉向後多久內不能再轉向，避免卡在角落抖動
 @export_range(0.05, 0.5) var turn_cooldown: float = 0.15
 
+## 撞到牆壁或箱子、自動轉向之後發出
+signal turned_around
+
 const _DIR_RIGHT := 0
 
 var _dir: int = 1
@@ -45,6 +48,7 @@ func _turn_around() -> void:
 	_dir *= -1
 	_turn_cooldown_left = turn_cooldown
 	_sync_visual()
+	turned_around.emit()
 	Events.mechanic_event.emit("Mechanic_AutoRun", "wall_turned")
 
 # 依目前方向翻轉角色視覺

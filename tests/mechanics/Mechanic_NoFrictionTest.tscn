@@ -1,10 +1,11 @@
-[gd_scene load_steps=6 format=3]
+[gd_scene load_steps=7 format=3]
 
 [ext_resource type="Script" path="res://tests/mechanics/_scripts/Mechanic_NoFrictionTest.gd" id="1"]
 [ext_resource type="PackedScene" path="res://player/Player.tscn" id="2"]
 [ext_resource type="TileSet" uid="uid://6xyxoqkb30in" path="res://art/default_tile.tres" id="3"]
 [ext_resource type="Texture2D" path="res://art/white_block.png" id="4"]
 [ext_resource type="PackedScene" path="res://mechanics/Mechanic_NoFriction.tscn" id="5"]
+[ext_resource type="Script" path="res://tests/mechanics/_scripts/MechanicSignalPrinter.gd" id="signal_printer"]
 
 [node name="Mechanic_NoFrictionTest" type="Node2D"]
 script = ExtResource("1")
@@ -33,3 +34,6 @@ remaining_friction = 0.0
 [node name="Camera2D" type="Camera2D" parent="."]
 position = Vector2(-20, 57)
 current = true
+
+[node name="MechanicSignalPrinter" type="Node" parent="."]
+script = ExtResource("signal_printer")

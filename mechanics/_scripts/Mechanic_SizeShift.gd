@@ -22,6 +22,11 @@ extends MechanicBase
 ## 體型是否連動推力、擊退、跳躍力
 @export var size_affects_stats: bool = true
 
+## 變大之後發出
+signal grew
+## 變小之後發出
+signal shrank
+
 const _TRIGGER_KEY := 0
 const _AUTO_INTERVAL := 3.0
 
@@ -86,6 +91,10 @@ func _try_apply_size(target: float) -> bool:
 	if target > player.size_factor and _would_overlap_terrain(target):
 		return false
 	player.set_size_factor(target)
+	if target > 1.0:
+		grew.emit()
+	else:
+		shrank.emit()
 	Events.mechanic_event.emit("Mechanic_SizeShift", "grew" if target > 1.0 else "shrank")
 	return true
 

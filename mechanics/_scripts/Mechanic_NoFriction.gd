@@ -6,6 +6,9 @@ extends MechanicBase
 ## 放開方向鍵後還剩多少摩擦力，0 表示完全不減速
 @export_range(0.0, 1.0) var remaining_friction: float = 0.0
 
+## 放開方向鍵、開始滑行的那一刻發出
+signal slide_started
+
 var _was_sliding: bool = false
 
 # 把摩擦力改成 remaining_friction；放開方向鍵後如果角色還在滑，第一幀發出 slide_start 事件
@@ -15,5 +18,6 @@ func apply(ctx: MoveContext) -> void:
 	var is_moving := not is_zero_approx(player.velocity.x)
 	var sliding := not has_input and is_moving
 	if sliding and not _was_sliding:
+		slide_started.emit()
 		Events.mechanic_event.emit("Mechanic_NoFriction", "slide_start")
 	_was_sliding = sliding

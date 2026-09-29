@@ -321,7 +321,7 @@
 - [x] U95 彈弓卡 `drag_started`、`launched`（射出前發出）（驗證：`tests/mechanics/Mechanic_Slingshot_StopOnDragTest`／
       `_StopOnLaunchTest`／`_FreezeWhileDragTest` 三個場景，照輸出面板的「預期」操作）
       　　→ `launched` 拉的距離是 0 也發，不然學員「拉時凍住、射出解凍」會卡在空中
-- [ ] U96 其餘 9 張主限制卡訊號：NoFriction、AutoRun、ChargeJump、RecoilMove、PinballBody、GravityFlip、BouncyWorld、SpeedRamp、SizeShift
+- [x] U96 其餘 9 張主限制卡訊號：NoFriction、AutoRun、ChargeJump、RecoilMove、PinballBody、GravityFlip、BouncyWorld、SpeedRamp、SizeShift
       （驗證：9 張卡各自的 `tests/mechanics/Mechanic_*Test.tscn` 已放 `MechanicSignalPrinter`，F6 開場印出卡片訊號清單，
       觸發時印「XX 發出 YY」）
       　　→ BouncyWorld 原本的區域變數 `bounced` 跟新訊號同名，改名 `bounce_velocity`

@@ -15,6 +15,9 @@ extends MechanicBase
 ## 翻轉之後多久內不能再翻轉
 @export_range(0.1, 1.0) var cooldown: float = 0.3
 
+## 重力翻轉之後發出
+signal flipped
+
 const _TRIGGER_KEY := 0
 const _TRIGGER_LAND := 1
 const _TRIGGER_WALL := 2
@@ -65,6 +68,7 @@ func _try_flip() -> void:
 	if player.visual:
 		player.visual.scale.y *= -1
 	_cooldown_left = cooldown
+	flipped.emit()
 	Events.mechanic_event.emit("Mechanic_GravityFlip", "flipped")
 
 # 選到會被瀏覽器攔截的按鍵時提醒（Ctrl、Tab、Esc、F 鍵在網頁版會觸發瀏覽器內建功能）

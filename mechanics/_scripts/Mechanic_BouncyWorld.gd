@@ -9,6 +9,9 @@ extends MechanicBase
 ## 站在地板上時要不要也會彈起來
 @export var floor_bounces: bool = true
 
+## 撞到表面、要反彈的那一刻發出，在反彈之前（反彈速度用撞上前的速度算，連 stop_motion 不會讓反彈消失）
+signal bounced
+
 # 反彈速度低於這個值就不再彈，不然速度會越彈越小、永遠在原地抖動
 const _MIN_BOUNCE_SPEED := 40.0
 
@@ -64,7 +67,8 @@ func on_respawn() -> void:
 func _try_bounce(normal: Vector2) -> bool:
 	if _last_velocity.length() < _MIN_BOUNCE_SPEED:
 		return false
-	var bounced := _last_velocity.bounce(normal) * bounciness
-	player.add_impulse(bounced - player.velocity)
+	var bounce_velocity := _last_velocity.bounce(normal) * bounciness
+	bounced.emit()
+	player.add_impulse(bounce_velocity - player.velocity)
 	Events.mechanic_event.emit("Mechanic_BouncyWorld", "bounced")
 	return true

@@ -1,10 +1,11 @@
-[gd_scene load_steps=6 format=3]
+[gd_scene load_steps=7 format=3]
 
 [ext_resource type="Script" path="res://tests/mechanics/_scripts/Mechanic_GravityFlipTest.gd" id="1"]
 [ext_resource type="PackedScene" path="res://player/Player.tscn" id="2"]
 [ext_resource type="TileSet" uid="uid://6xyxoqkb30in" path="res://art/default_tile.tres" id="3"]
 [ext_resource type="Texture2D" path="res://art/white_block.png" id="4"]
 [ext_resource type="PackedScene" path="res://mechanics/Mechanic_GravityFlip.tscn" id="5"]
+[ext_resource type="Script" path="res://tests/mechanics/_scripts/MechanicSignalPrinter.gd" id="signal_printer"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_ceiling"]
 size = Vector2(300, 8)
@@ -45,3 +46,6 @@ cooldown = 0.3
 [node name="Camera2D" type="Camera2D" parent="."]
 position = Vector2(-20, 0)
 zoom = Vector2(0.55, 0.55)
+
+[node name="MechanicSignalPrinter" type="Node" parent="."]
+script = ExtResource("signal_printer")

@@ -15,6 +15,11 @@ extends MechanicBase
 ## 停下來時倍率要不要歸零重新累積
 @export var reset_on_stop: bool = true
 
+## 速度加到最高倍率時發出
+signal reached_max
+## 停下來、速度倍率歸零時發出
+signal speed_reset
+
 const _NORMAL_COLOR := Color(1.0, 1.0, 1.0)
 const _MAX_SPEED_COLOR := Color(1.0, 0.4, 0.2)
 
@@ -30,9 +35,11 @@ func apply(ctx: MoveContext) -> void:
 		_multiplier = minf(_multiplier + rate * ctx.delta, max_multiplier)
 		if _multiplier >= max_multiplier and not _reached_max:
 			_reached_max = true
+			reached_max.emit()
 			Events.mechanic_event.emit("Mechanic_SpeedRamp", "speed_max")
 	elif reset_on_stop:
 		if _multiplier > 1.0:
+			speed_reset.emit()
 			Events.mechanic_event.emit("Mechanic_SpeedRamp", "speed_reset")
 		_multiplier = 1.0
 		_reached_max = false
