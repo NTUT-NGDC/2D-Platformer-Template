@@ -17,6 +17,7 @@ const _KIND_HEALTH := 2
 const _SIGNAL_LINE_COLOR := Color(1.0, 0.85, 0.2, 0.85)
 
 var _collected: bool = false
+var _value_returned: bool = false
 var _stats_kind: String = ""
 
 # 依 kind 算出對應的 Stats 種類名稱，設定碰撞層／遮罩，只偵測玩家
@@ -46,13 +47,26 @@ func _on_body_entered(body: Node) -> void:
 	Events.item_collected.emit(global_position)
 	visible = false
 
-# 把自己恢復到關卡開始時的狀態：被撿走的放回來（數值由重生記憶退回，重生處理者呼叫）。
+# 把自己恢復到關卡開始時的狀態：被撿走的放回來（數值由 rewind_values() 退，重生處理者呼叫）。
 # 數值設成「死亡不退回」的道具不放回來，不然同一個可以一直重複撿
 func reset() -> void:
-	if _stats_kind != Stats.HEALTH_KIND and not Stats.is_reset_on_death(_stats_kind):
+	if not _rewinds_on_death():
 		return
 	_collected = false
+	_value_returned = false
 	visible = true
+
+# 被撿走過的話，把當初加的數值扣回來；同一次撿只扣一次（重生處理者呼叫，在 reset() 之前）
+func rewind_values() -> void:
+	if not _collected or _value_returned or not _rewinds_on_death():
+		return
+	_value_returned = true
+	if _stats_kind != Stats.HEALTH_KIND:
+		Stats.add(_stats_kind, -amount)
+
+# 這個道具的數值死掉時要不要退：血包不退（重生本來就補滿血）、設成「死亡不退回」的種類也不退
+func _rewinds_on_death() -> bool:
+	return _stats_kind == Stats.HEALTH_KIND or Stats.is_reset_on_death(_stats_kind)
 
 # 編輯畫面持續請求重畫，讓虛線跟著訊號連接的變化即時更新
 func _process(_delta: float) -> void:

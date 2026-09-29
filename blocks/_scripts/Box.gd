@@ -27,10 +27,6 @@ func reset() -> void:
 	PhysicsServer2D.body_set_state(get_rid(), PhysicsServer2D.BODY_STATE_TRANSFORM, Transform2D(0.0, _start_position))
 	global_position = _start_position
 
-# 回傳一開始的位置，重生處理者用它判斷這個箱子屬於哪個房間（箱子被推到別的房間也一樣）
-func get_reset_position() -> Vector2:
-	return _start_position
-
 # 被攻擊打到：只受擊退，不扣血、沒有耐久
 func take_hit(_damage: int, knockback: Vector2, source: Node) -> void:
 	Events.hit.emit(self, source)

@@ -54,10 +54,16 @@ Player **不得**自己呼叫重生、不得知道處理者是誰。場景裡沒
 - 碰撞框依格數自動產生（內部節點，場景樹看不到、學員拖不壞）；`collision_layer = 0`，
   子彈、近戰判定打不到房間。
 - 玩家**中心點**跨進房間時才發 `Events.room_entered`（碰到邊就發的話，站在交界來回走鏡頭會卡在錯的房間）。
-- 重生點：房間底下有 `Marker2D` 就用它（學員用拖的，不打字）；沒有就用底部中央往上兩格。
-  放了不只一個 `Marker2D` 時警告，只用第一個。
-- 提供 `get_center()`、`get_spawn_point()`、`has_point(global_point)`。
-- 編輯器裡畫淺藍色邊框、房間名稱、黃色重生點標記。
+- 房間起點（在這個房間死掉回到的位置）：Inspector「房間起點」群組的 `spawn_x`（離左邊幾格，預設 15）、
+  `spawn_y`（離底部幾格，預設 2）兩個拉桿，預設＝底部中央往上兩格。拉桿範圍固定，超出房間時夾回房間內，
+  並顯示黃色警告。原本拖 `Marker2D` 的做法取消（講師決定：改用拉桿，避免兩種方法並存）；底下還有 `Marker2D`
+  時黃色警告＋執行時中文提醒改用拉桿。
+- `use_room_start`（預設勾）：這個房間有沒有房間起點。不勾時在這個房間死掉，依序退回：房間裡踩過的 Checkpoint >
+  最後踩到的 Checkpoint（可能在別的房間）> 玩家一開始的位置（講師決定：用來做「這段沒存檔，死了退回上一個重生點」）。
+  編輯器裡黃點變灰、標「房間起點（不使用）」。Room 執行時加入 `room` group，重生處理者用它找座標落在哪個房間。
+- 提供 `get_center()`、`get_spawn_point()`、`uses_room_start()`、`has_point(global_point)`。
+- 編輯器裡畫淺藍色邊框、房間名稱、黃色「房間起點」標記（不使用重生點時標註「不使用重生點」）。
+  「重生點」這個名稱保留給 Checkpoint 零件，避免學員搞混。
 
 ---
 
@@ -89,14 +95,26 @@ Player **不得**自己呼叫重生、不得知道處理者是誰。場景裡沒
 **回到目前房間**：
 
 1. 等 `delay` 秒；等待期間玩家已經被別人復活就不處理。
-2. `reset_room_objects` 為真時，對目前房間內有 `reset()` 的節點逐一呼叫（沒有房間時＝整個關卡）。
-   會移動的零件用 `get_reset_position()`（原本位置）判斷屬於哪個房間。
-3. `RespawnMemory.restore_values()` 退回數值。
-4. 重生位置：同房間內踩過的 Checkpoint > 房間重生點 > 沒有房間時踩過的 Checkpoint > 玩家一開始的位置。
+2. `reset_room_objects` 為真時，對**掛在目前房間底下**（Room 的子孫節點）有 `reset()` 的節點逐一呼叫。
+   講師決定：物件歸屬看場景樹，不看位置（學員看得到、改得到）。場景裡完全沒有 Room 時＝整個關卡。
+   Room 範圍內有會放回去、但沒掛在任何 Room 底下的物件時，Room 顯示黃色驚嘆號並在執行時印中文警告；
+   這些物件不會被放回去。
+   Room 底下可以放重生分組 `blocks/RespawnGroup.tscn`（Node2D，子物件位置才跟得上），底下的物件套用分組規則：
+   `reset_objects` 不勾時，在房間裡死掉不放回這一組；`rewind_values` 不勾時，這一組帶來的數值不倒回。
+   巢狀分組以最近的分組為準。整關重來一律全部放回、全部倒回，不看分組。
+   有 Room 的關卡裡分組放在 Room 外面時，RespawnHandler 開場印中文警告；沒有 Room 的關卡整個場景一起復位，分組照樣有效。
+3. 數值由物件自己倒回（講師決定，取代原本的數值快照）：步驟 2 放回之前，先對同一批物件呼叫 `rewind_values()`。
+   Pickup 被撿走過就扣回當初加的數值，Door 開門時付掉的鑰匙／金幣如數還回；同一次只倒回一次（「不放回但倒回」
+   的分組下次死掉不會再扣）。`reset_on_death` 關掉的種類不倒回。血量由 `revive()` 補滿。
+   物件跟數值永遠一起動，不會出現同一枚金幣撿兩次。**之後新增會改數值的零件，都要實作 `rewind_values()`。**
+   `reset_room_objects` 不勾時什麼都不放回、數值也不倒回。
+4. 重生位置：同房間內踩過的 Checkpoint > 房間起點（房間勾了 `use_room_start` 才算）> 最後踩到的 Checkpoint（可能在
+   別的房間）> 玩家一開始的位置。沒有房間時：踩過的 Checkpoint > 玩家一開始的位置。
+   重生到別的房間時，死掉的房間跟重生的房間都放回、倒回；退回玩家一開始的位置時不清空踩過的 Checkpoint。
    沒有房間時第一次死亡印中文提示。
 5. 發 `Events.respawn_requested`，呼叫 `player.revive(位置)`；勾了 `send_restart_signal` 再發 `Events.level_restarted`。
 
-**整關重來**（軟重置，不重載場景）：所有零件 `reset()`、數值退回最一開始、清空 Checkpoint、玩家回到一開始的位置，
+**整關重來**（軟重置，不重載場景）：所有 Room 底下的零件 `rewind_values()` + `reset()`（不看分組）、清空 Checkpoint、玩家回到一開始的位置，
 Room 會重新發 `room_entered` 讓鏡頭切回第一個房間。
 
 場景裡放了兩個 RespawnHandler 時只有第一個生效，其他的印警告。
@@ -105,17 +123,16 @@ Room 會重新發 `room_entered` 讓鏡頭切回第一個房間。
 
 ## 5. RespawnMemory（改寫）
 
-不再跨場景載入，只管「數值要退回哪個時間點」與「踩過的 Checkpoint 位置」。
+不再跨場景載入，只記「踩過的 Checkpoint 位置」。數值不記：由放回去的物件自己倒回（§4 步驟 3）。
 
-- **存檔點＝進入房間的那一刻**（沒有房間的場景才用踩到 Checkpoint 的那一刻）。跟「只復位目前房間」
-  對齊，避免金幣被扣了但道具沒回來、或同一枚金幣撿兩次。
-- `restore_values()`：數值退回存檔點；存檔點之後才第一次出現的種類退回最初值。血量由 `revive()` 補滿。
-- `restart_level()`：數值退回最一開始並清空所有記錄。
-- `ValueSettings` 把 `reset_on_death` 關掉的種類，死亡完全不影響。
+- `restart_level()`：清空所有記錄。
+- 踩過的 Checkpoint **每個房間各記一個**（那個房間最後踩到的），另外記「全關卡最後踩到的」一個。
+  重生時「同一個房間裡踩過的 Checkpoint」查的是該房間自己的記錄，不會被別的房間後來踩的蓋掉。
+- `clear()`（整關重來、過關）時 `call_group("checkpoint", "forget")`，所有 Checkpoint 變回沒踩過，可以再踩一次。
+- `ValueSettings` 把 `reset_on_death` 關掉的種類，死亡完全不影響（Pickup／Door 不放回也不倒回）。
 - 拿掉 `remember()` / `recall()` 與 `persistent` group（不重載場景就不需要）。
-
-**已知限制（講師決定先不處理）**：沒有 Room、但有 Checkpoint 的場景，Checkpoint 前撿的道具重生後會再出現，
-可以重複撿。拖了 Room 就不會發生。
+- 拿掉數值快照（進房間／踩 Checkpoint 當下的數值）：數值只會因為物件被放回而倒回。沒有 Room 的關卡整個場景一起
+  放回，Checkpoint 前撿的道具也會回來、數值一起扣回，不會重複撿（原本的已知限制因此消失）。
 
 ---
 

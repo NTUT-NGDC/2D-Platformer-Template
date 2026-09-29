@@ -3,11 +3,20 @@ extends Area2D
 
 # 房間：同一個場景裡切出一塊塊畫面大小的區域，玩家走進來時發出 Events.room_entered，
 # 鏡頭與重生處理者訂閱它。碰撞框依格數自動產生，學員不用拉；節點原點 = 房間左上角。
-# 想指定重生位置就在底下拖一個 Marker2D，沒放的話自動用「底部中央往上兩格」。
+# 玩家在這個房間死掉時回到「房間起點」，用 spawn_x／spawn_y 拉桿調位置（黃點會跟著動）。
+# 房間裡踩過的重生點（Checkpoint）優先。use_room_start 取消勾選時這個房間沒有起點，
+# 死掉會退回最後踩到的重生點（可能在別的房間），都沒踩過就回到玩家一開始的位置。
+# 金幣、箱子、敵人這類會放回去的東西要拖到 Room 底下，玩家在這個房間死掉時才會放回去；
+# 範圍內有沒掛在任何 Room 底下的，場景樹會顯示黃色驚嘆號。
 
 const _TILE_SIZE := 16
 const _BORDER_COLOR := Color(0.35, 0.8, 1.0, 0.9)
 const _SPAWN_COLOR := Color(1.0, 0.85, 0.2, 0.9)
+const _SPAWN_OFF_COLOR := Color(0.6, 0.6, 0.6, 0.7)
+# 編輯器裡每隔幾秒重新檢查一次黃色警告，學員把東西拖進來之後驚嘆號會跟著消失
+const _WARNING_REFRESH_SECONDS := 1.0
+# 警告裡最多列出幾個沒掛進來的物件名稱，太多就只顯示數量
+const _MAX_LISTED_OBJECTS := 3
 
 @export_group("房間設定")
 ## 房間寬度，以格為單位（16px 一格，30 格 = 一個螢幕寬）
@@ -21,35 +30,59 @@ const _SPAWN_COLOR := Color(1.0, 0.85, 0.2, 0.9)
 		height_in_tiles = value
 		_update_shape()
 
+@export_group("房間起點")
+## 房間起點離房間左邊幾格（30 格寬的房間，15 就是正中間）。玩家在這個房間死掉會回到這裡
+@export_range(0, 128) var spawn_x: int = 15:
+	set(value):
+		spawn_x = value
+		_update_shape()
+## 房間起點離房間底部幾格（2 就是站在最下面一排地板上）
+@export_range(0, 64) var spawn_y: int = 2:
+	set(value):
+		spawn_y = value
+		_update_shape()
+## 勾選：在這個房間死掉可以回到房間起點；不勾：這個房間沒有起點，死掉會退回最後踩到的重生點（可能在別的房間）
+@export var use_room_start: bool = true
+
 # 目前玩家所在房間的 instance id；所有 Room 共用，用來避免重複發出 room_entered
 static var _current_room_id: int = 0
 
 var _collision: CollisionShape2D = null
 var _player: Node2D = null
+var _warning_timer: float = 0.0
 
 # 產生碰撞框；遊戲中設定只偵測玩家，並檢查重生點設定
 func _ready() -> void:
 	_ensure_collision()
 	if Engine.is_editor_hint():
-		child_entered_tree.connect(func(_n): queue_redraw())
-		child_exiting_tree.connect(func(_n): queue_redraw())
+		child_entered_tree.connect(func(_n): _update_shape())
+		child_exiting_tree.connect(func(_n): _update_shape())
 		return
+	add_to_group("room")
 	collision_layer = 0       # 房間不需要被任何東西偵測到（子彈、近戰判定不會打到房間）
 	collision_mask = 1 << 0   # 圖層 1「玩家」
 	monitorable = false
 	body_entered.connect(_on_body_entered)
 	body_exited.connect(_on_body_exited)
-	if _count_markers() > 1:
-		push_warning("[房間] %s 底下有不只一個 Marker2D，只會用第一個當重生點" % name)
-		printerr("⚠ [房間] %s 底下有 %d 個 Marker2D，只會用第一個當重生點，其他的可以刪掉" % [name, _count_markers()])
+	_print_problems.call_deferred()
+
+# 執行時把房間設定的問題印到輸出面板；延後一幀，等整個場景都進場、current_scene 設好
+func _print_problems() -> void:
+	for message in _get_problems(get_tree().current_scene):
+		push_warning("[房間] %s：%s" % [name, message])
+		print("[房間] %s：%s" % [name, message])
 
 # 回傳房間中心的全域座標，鏡頭切換用這個
 func get_center() -> Vector2:
 	return global_position + _get_size() / 2.0
 
-# 回傳玩家在這個房間死掉時要回到的全域座標，重生處理者用這個
+# 回傳玩家在這個房間死掉時要回到的全域座標（房間起點），重生處理者用這個
 func get_spawn_point() -> Vector2:
 	return to_global(_get_local_spawn_point())
+
+# 回傳這個房間有沒有啟用房間起點，重生處理者用這個
+func uses_room_start() -> bool:
+	return use_room_start
 
 # 回傳某個全域座標在不在這個房間範圍內，重生處理者找「房間裡的零件」用這個
 func has_point(global_point: Vector2) -> bool:
@@ -82,21 +115,68 @@ func _physics_process(_delta: float) -> void:
 func _get_size() -> Vector2:
 	return Vector2(width_in_tiles, height_in_tiles) * _TILE_SIZE
 
-# 重生點的區域座標：有 Marker2D 子節點就用它，沒有就用底部中央往上兩格
+# 房間起點的區域座標：依 spawn_x／spawn_y 換算，超出房間就夾回房間裡
 func _get_local_spawn_point() -> Vector2:
-	for child in get_children():
-		if child is Marker2D:
-			return (child as Marker2D).position
-	var size := _get_size()
-	return Vector2(size.x / 2.0, size.y - _TILE_SIZE * 2)
+	var x := clampi(spawn_x, 0, width_in_tiles)
+	var y := clampi(spawn_y, 0, height_in_tiles)
+	return Vector2(x * _TILE_SIZE, (height_in_tiles - y) * _TILE_SIZE)
 
-# 數一下底下有幾個 Marker2D
-func _count_markers() -> int:
-	var count := 0
+# 檢查房間設定有沒有問題，回傳中文說明（編輯器黃色警告跟執行時警告共用）
+func _get_problems(scene_root: Node) -> PackedStringArray:
+	var problems := PackedStringArray()
+	if spawn_x > width_in_tiles:
+		problems.append("spawn_x（%d）超過房間寬度（%d 格），房間起點被放在房間最右邊" % [spawn_x, width_in_tiles])
+	if spawn_y > height_in_tiles:
+		problems.append("spawn_y（%d）超過房間高度（%d 格），房間起點被放在房間最上面" % [spawn_y, height_in_tiles])
 	for child in get_children():
 		if child is Marker2D:
-			count += 1
-	return count
+			problems.append("底下的 %s 已經不會決定重生位置了，請改用 Inspector 的 spawn_x／spawn_y 拉桿，然後把它刪掉" % child.name)
+	if scene_root != null:
+		var loose := _find_loose_objects(scene_root)
+		if not loose.is_empty():
+			problems.append("%s 在房間範圍內，但沒有放在 Room 底下，玩家死掉時不會被放回去。把它拖到 %s 底下" % [_list_names(loose), name])
+	return problems
+
+# 編輯器場景樹的黃色驚嘆號：房間起點超出房間、底下還放著舊的 Marker2D、範圍內有沒掛進來的物件
+func _get_configuration_warnings() -> PackedStringArray:
+	if not is_inside_tree():
+		return PackedStringArray()
+	return _get_problems(get_tree().edited_scene_root)
+
+# 找出落在這個房間範圍內、會被放回去、但沒有掛在任何 Room 底下的物件
+func _find_loose_objects(scene_root: Node) -> Array[Node]:
+	var out: Array[Node] = []
+	_scan_loose(scene_root, out)
+	return out
+
+# 往下掃場景樹，碰到 Room 就整棵跳過（掛在任何 Room 底下的都算有歸屬）
+func _scan_loose(node: Node, out: Array[Node]) -> void:
+	if node.get_script() == get_script():
+		return
+	if node is Node2D and _is_resettable(node) and has_point((node as Node2D).global_position):
+		out.append(node)
+	for child in node.get_children():
+		_scan_loose(child, out)
+
+# 這個節點的腳本有沒有 reset()（玩家死掉時會被放回去的零件）；看腳本本身，編輯器裡也查得到
+func _is_resettable(node: Node) -> bool:
+	var script: Script = node.get_script()
+	if script == null:
+		return false
+	for method in script.get_script_method_list():
+		if method["name"] == "reset":
+			return true
+	return false
+
+# 把物件名稱排成「A、B、C 等 5 個」給警告訊息用
+func _list_names(nodes: Array[Node]) -> String:
+	var names := PackedStringArray()
+	for i in mini(nodes.size(), _MAX_LISTED_OBJECTS):
+		names.append(nodes[i].name)
+	var text := "、".join(names)
+	if nodes.size() > _MAX_LISTED_OBJECTS:
+		text += " 等 %d 個" % nodes.size()
+	return text
 
 # 建立房間自己用的碰撞框節點（不存進場景檔，學員在場景樹裡看不到也改不到）
 func _ensure_collision() -> void:
@@ -107,21 +187,28 @@ func _ensure_collision() -> void:
 	add_child(_collision, false, Node.INTERNAL_MODE_FRONT)
 	_update_shape()
 
-# 依格數更新碰撞框大小與位置，並重畫編輯器邊框
+# 依格數更新碰撞框大小與位置，並重畫編輯器邊框、更新黃色警告
 func _update_shape() -> void:
 	queue_redraw()
+	if Engine.is_editor_hint() and is_inside_tree():
+		update_configuration_warnings()
 	if _collision == null:
 		return
 	var size := _get_size()
 	(_collision.shape as RectangleShape2D).size = size
 	_collision.position = size / 2.0
 
-# 編輯畫面持續重畫，Marker2D 被拖動時重生點標記才會跟著動
-func _process(_delta: float) -> void:
-	if Engine.is_editor_hint():
-		queue_redraw()
+# 編輯畫面持續重畫，房間起點標記跟著拉桿即時更新；每隔一段時間重新檢查黃色警告
+func _process(delta: float) -> void:
+	if not Engine.is_editor_hint():
+		return
+	queue_redraw()
+	_warning_timer += delta
+	if _warning_timer >= _WARNING_REFRESH_SECONDS:
+		_warning_timer = 0.0
+		update_configuration_warnings()
 
-# 編輯畫面用：畫房間邊框、房間名稱、重生點標記
+# 編輯畫面用：畫房間邊框、房間名稱、房間起點標記（不使用房間起點時改成灰色並標註）
 func _draw() -> void:
 	if not Engine.is_editor_hint():
 		return
@@ -129,5 +216,7 @@ func _draw() -> void:
 	draw_rect(Rect2(Vector2.ZERO, size), _BORDER_COLOR, false, 2.0)
 	draw_string(ThemeDB.fallback_font, Vector2(4, 14), name, HORIZONTAL_ALIGNMENT_LEFT, -1, 12, _BORDER_COLOR)
 	var spawn := _get_local_spawn_point()
-	draw_circle(spawn, 4.0, _SPAWN_COLOR)
-	draw_string(ThemeDB.fallback_font, spawn + Vector2(6, -6), "重生點", HORIZONTAL_ALIGNMENT_LEFT, -1, 10, _SPAWN_COLOR)
+	var color := _SPAWN_COLOR if use_room_start else _SPAWN_OFF_COLOR
+	var label := "房間起點" if use_room_start else "房間起點（不使用）"
+	draw_circle(spawn, 4.0, color)
+	draw_string(ThemeDB.fallback_font, spawn + Vector2(6, -6), label, HORIZONTAL_ALIGNMENT_LEFT, -1, 10, color)

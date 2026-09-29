@@ -63,10 +63,6 @@ func reset() -> void:
 		add_to_group("enemy")
 		_set_alive(true)
 
-# 回傳一開始的位置，重生處理者用它判斷這個敵人屬於哪個房間（巡邏走到別的房間也一樣）
-func get_reset_position() -> Vector2:
-	return _start_position
-
 # 切換「活著」的狀態：看不看得見、有沒有碰撞、會不會傷害玩家、會不會動
 func _set_alive(alive: bool) -> void:
 	visible = alive

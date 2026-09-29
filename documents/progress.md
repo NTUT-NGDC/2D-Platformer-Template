@@ -332,3 +332,40 @@
 - [x] U98 備品卡訊號：衝刺、二段跳、踩怪起飛、子彈時間、蹬牆跳
       （驗證：5 張卡各自的 `tests/mechanics/_extra/Extra_*Test.tscn` 已放 `MechanicSignalPrinter`，觸發時印「XX 發出 YY」）
       　　→ StompOnly 的 `stomped` 要在讀目前向上速度之前發，連 `stop_motion` 時彈跳高度才算得對；零件手冊補「機制卡也能連線」
+
+## 階段 21：房間起點與重生點
+
+> 講師決定：Room 用拉桿調房間起點（取代拖 Marker2D），黃點改名「房間起點」、「重生點」只指 Checkpoint；
+> Room 可以選要不要讓房間裡的重生點優先。多個 Room＋多個重生點同時出現的情況要再多測。
+
+- [x] U99 Room 新增 `spawn_x`／`spawn_y` 拉桿（格，spawn_y 從底部算）、`use_room_start` 勾選框；拿掉 Marker2D
+      （底下還有的話黃色警告＋中文提醒）；超出房間夾回並警告；RespawnHandler 看 `use_room_start`；`00b` §2 §4、零件手冊更新
+      （驗證：`tests/blocks/RoomTest.tscn` Room2 的黃點「房間起點」在小平台上，拉 `spawn_x` 黃點跟著動、拉超過 30 出現黃色驚嘆號；
+      `tests/blocks/RespawnHandlerTest.tscn` 照原本步驟死在 Room2 會回到小平台）
+      　　→ 三個測試場景的 Marker2D (120,160) 換成 spawn_x 8、spawn_y 7（x 從 120 變 128，差半格）
+      　　→ 講師修正：勾選框是「這個房間的起點要不要用」，不是關掉 Checkpoint。不用時退回：房間內踩過的 Checkpoint
+      　　　> 最後踩到的 Checkpoint（可能在別的房間）> 玩家一開始的位置；重生到別的房間時死掉的房間跟重生的房間都
+      　　　復位；數值退回最後踩到 Checkpoint 當下（`RespawnMemory` 每次踩到都記一份）
+- [x] U100 多個 Room＋多個 Checkpoint 測試場景；修「只記得最後踩的重生點」（改成每個房間各記一個）與「整關重來後
+      重生點失效」（Checkpoint 跟著復位）
+      （驗證：`tests/blocks/MultiRoomRespawnTest.tscn` 照輸出面板 ①～⑨ 操作）
+      　　→ `RespawnMemory` 每個房間各記最後踩到的重生點（`has_checkpoint_in`／`get_checkpoint_position_in`）；
+      　　　`clear()` 時 call_group("checkpoint", "forget") 讓重生點變回沒踩過（整關重來、過關都會清）
+      　　→ 發現：Pickup `reset()` 一律放回地上，存檔點之後撿的跟之前撿的分不出來 → 同一枚金幣可以撿兩次
+      　　　（重回房間、退回別房間的重生點都會發生），待講師決定
+- [x] U101 物件歸屬改成「拖到 Room 底下」：RespawnHandler 只復位 Room 子孫節點裡有 `reset()` 的（沒有 Room 的關卡照舊整個場景）；
+      Room 範圍內有沒掛進任何 Room 的會復位物件時黃色驚嘆號＋執行時中文警告（每秒重新檢查）；拿掉 Box／Enemy 的
+      `get_reset_position()`；RoomResetTest、MultiRoomRespawnTest 的物件搬進 Room 底下
+      （驗證：`tests/blocks/RoomResetTest.tscn` 照原本步驟在 Room2 死掉，箱子／敵人／金幣／可破壞方塊都復原；把 Coin_1 拖出
+      Room2 放到關卡底下，Room2 出現黃色驚嘆號、F6 死掉後 Coin_1 不會回來）
+      　　→ 講師決定：物件歸屬看場景樹不看位置；沒掛進 Room 的不復位＋警告；Showroom／W1_ToyBox 沒有 Room，不用搬
+- [x] U102 `RespawnGroup` 分組節點（放在 Room 底下，底下的物件套用分組規則）＋ `reset_objects`
+      （驗證：`tests/blocks/RoomResetTest.tscn` 敵人放在「不放回」分組 OneTime，照輸出面板 ①～⑤ 操作）
+      　　→ 分組做成 Node2D；整關重來不看分組；編輯器在分組的子物件頭上標分組名稱；有 Room 的關卡分組放在 Room 外面時
+      　　　開場印警告。順手修 U101 造成的 RoomResetTest X 鍵打不到 Room 底下的敵人（改用 find_children）
+- [x] U103 數值改成「物件放回時自己退還」（Pickup 扣回、Door 還回），拿掉 RespawnMemory 的數值快照；`RespawnGroup` 加 `rewind_values`
+      （驗證：`tests/blocks/RoomResetTest.tscn` Coin_3 在「數值不倒回」分組 Farm；`RespawnHandlerTest`、`MultiRoomRespawnTest`、
+      `tests/systems/RespawnMemoryTest.tscn` 都改用場景裡的金幣，照輸出面板步驟看金幣數）
+      　　→ 先 `rewind_values()` 再 `reset()`（靠「還沒放回」判斷有沒有被撿過）；同一次只倒回一次（`_value_returned`／`_paid` 歸零）；
+      　　　巢狀分組以最近的為準；`reset_room_objects` 不勾＝不放回也不倒回；除錯按鍵直接加的數值不會倒回，
+      　　　RespawnHandlerTest／RespawnMemoryTest 的 C 鍵改成場景裡的金幣；00b §5「沒有 Room 會重複撿」的已知限制消失

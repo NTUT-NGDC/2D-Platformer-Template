@@ -21,6 +21,7 @@ func _ready() -> void:
 	if Engine.is_editor_hint():
 		return
 	add_to_group("signal_source")
+	add_to_group("checkpoint")
 	collision_layer = 1 << 4  # 圖層 5「感應」
 	collision_mask = 1 << 0   # 圖層 1「玩家」
 	body_entered.connect(_on_body_entered)
@@ -35,6 +36,11 @@ func _on_body_entered(body: Node) -> void:
 	_update_visual()
 	reached.emit()
 	Events.checkpoint_reached.emit(self)
+
+# 變回沒踩過的樣子，重生記憶被清空（整關重來、過關）時呼叫，之後可以再踩一次
+func forget() -> void:
+	_touched = false
+	_update_visual()
 
 # 踩過一次之後外觀保持「已啟用」的顏色，之後再踩也不會變回去
 func _update_visual() -> void:
