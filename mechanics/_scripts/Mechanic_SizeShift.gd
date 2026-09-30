@@ -120,13 +120,13 @@ func _apply_stat_scales(ctx: MoveContext) -> void:
 	var f: float = player.size_factor
 	if f > 1.0 and big_scale > 1.0:
 		var t := (f - 1.0) / (big_scale - 1.0)
-		ctx.push_scale = lerpf(1.0, 1.6, t)
-		ctx.knockback_scale = lerpf(1.0, 0.6, t)
-		ctx.jump_scale = lerpf(1.0, 0.7, t)
+		ctx.push_scale *= lerpf(1.0, 1.6, t)
+		ctx.knockback_scale *= lerpf(1.0, 0.6, t)
+		ctx.jump_scale *= lerpf(1.0, 0.7, t)
 	elif f < 1.0 and small_scale < 1.0:
 		var t := (1.0 - f) / (1.0 - small_scale)
-		ctx.jump_scale = lerpf(1.0, 1.3, t)
-		ctx.knockback_scale = lerpf(1.0, 1.6, t)
+		ctx.jump_scale *= lerpf(1.0, 1.3, t)
+		ctx.knockback_scale *= lerpf(1.0, 1.6, t)
 
 # 選到會被瀏覽器攔截的按鍵時提醒（Ctrl、Tab、Esc、F 鍵在網頁版會觸發瀏覽器內建功能）
 func _warn_if_dangerous_key(k: Key) -> void:

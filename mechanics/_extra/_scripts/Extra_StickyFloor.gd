@@ -16,4 +16,4 @@ const _EFFECT_SLOW := 0
 func apply(ctx: MoveContext) -> void:
 	if not player.is_on_ground():
 		return
-	ctx.speed_scale = slow_scale if effect == _EFFECT_SLOW else 0.0
+	ctx.speed_scale *= slow_scale if effect == _EFFECT_SLOW else 0.0

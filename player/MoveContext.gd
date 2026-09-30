@@ -1,6 +1,10 @@
 extends RefCounted
 class_name MoveContext
 
+# 每個物理幀 Player 新建一份，依序交給每張機制卡的 apply() 調整，最後由 Player 算出移動。
+# 規則：倍率一律乘上去（ctx.speed_scale *= 1.5），旗標只設成 true，這樣多張卡同時掛也不會互相蓋掉；
+# auto_run_dir 只能有一個值，場景樹裡排在後面的卡蓋過前面的。
+
 var speed_scale: float = 1.0
 var jump_scale: float = 1.0
 var gravity_scale: float = 1.0

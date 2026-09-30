@@ -53,8 +53,8 @@ func apply(ctx: MoveContext) -> void:
 		return
 	_dash_time_left -= ctx.delta
 	ctx.auto_run_dir = _dash_dir
-	ctx.speed_scale = dash_speed / player.move_speed
-	ctx.gravity_scale = 0.0
+	ctx.speed_scale *= dash_speed / player.move_speed
+	ctx.gravity_scale *= 0.0
 
 # 重生時取消衝刺中的狀態、冷卻歸零
 func on_respawn() -> void:

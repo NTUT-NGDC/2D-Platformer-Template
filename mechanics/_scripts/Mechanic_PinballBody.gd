@@ -39,7 +39,7 @@ func _on_setup() -> void:
 
 # 每幀把傷害歸零，並倒數無敵時間
 func apply(ctx: MoveContext) -> void:
-	ctx.damage_scale = 0.0
+	ctx.damage_scale *= 0.0
 	if _invincible_left > 0.0:
 		_invincible_left -= ctx.delta
 

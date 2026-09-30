@@ -68,7 +68,7 @@ func apply(ctx: MoveContext) -> void:
 		Events.mechanic_event.emit("Mechanic_Stamina", "recovered")
 
 	if _exhausted:
-		ctx.speed_scale = 0.0 if penalty_mode == 0 else _SLOW_SCALE
+		ctx.speed_scale *= 0.0 if penalty_mode == 0 else _SLOW_SCALE
 
 	_refresh_bar()
 

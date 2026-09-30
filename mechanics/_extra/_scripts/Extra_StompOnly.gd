@@ -37,7 +37,7 @@ func _on_setup() -> void:
 
 # 一般跳躍完全失效
 func apply(ctx: MoveContext) -> void:
-	ctx.jump_scale = 0.0
+	ctx.jump_scale *= 0.0
 
 # 碰到敵人：要正在快速下墜、而且人在敵人上方，才算踩中——反彈起跳、對敵人造成傷害
 func _on_sensor_body_entered(body: Node) -> void:

@@ -44,8 +44,8 @@ func apply(ctx: MoveContext) -> void:
 		_multiplier = 1.0
 		_reached_max = false
 
-	ctx.speed_scale = _multiplier
-	ctx.jump_scale = 1.0 + (_multiplier - 1.0) * speed_affects_jump
+	ctx.speed_scale *= _multiplier
+	ctx.jump_scale *= 1.0 + (_multiplier - 1.0) * speed_affects_jump
 	_sync_visual()
 
 # 重生時速度倍率歸 1、顏色還原

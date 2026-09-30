@@ -63,7 +63,7 @@ func on_respawn() -> void:
 
 # 黏著中：凍結重力與輸入、跟著黏住的物體移動、逾時自動脫落
 func _apply_stuck(ctx: MoveContext) -> void:
-	ctx.gravity_scale = 0.0
+	ctx.gravity_scale *= 0.0
 	ctx.input_locked = true
 	ctx.movement_frozen = true
 

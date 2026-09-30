@@ -391,3 +391,24 @@
       煙霧測試新增第 7 步、零件手冊
       （驗證：`tests/blocks/EnemyShooterTest.tscn` 照輸出面板步驟；`tests/blocks/EnemyTest.tscn` 照舊）
       　　→ 講師決定：放 `blocks/`、欄位不限 4 個（8 個全留）
+
+## 階段 23：擴充性整理（W1 補充）
+
+> 講師決定：擴充性檢查找到的問題全部處理，並加入可切換的鏡頭模式。
+> 順序：先修會讓組件打架的 bug（U108），再做不改行為的重構（U109–U111），最後才是新功能（U112–U117）。
+
+- [x] U108 `MoveContext` 倍率改成乘上去（`*=`），修「兩張卡調同一個倍率只有後面的生效」（越跑越快＋體力、越跑越快＋忽大忽小、
+      衝刺、黏黏地板）；`auto_run_dir` 維持後面蓋前面並寫進文件；`00_foundation` 補機制卡寫 `MoveContext` 的規則
+      （驗證：`tests/systems/MoveContextStackTest.tscn` 照輸出面板步驟）
+- [ ] U109 危險按鍵清單＋警告收進 InputRouter（`InputRouter.warn_if_dangerous_key()`），9 份重複的刪掉；行為不變
+- [ ] U110 編輯器訊號連線虛線抽成共用工具，10 個零件改用；行為不變
+- [ ] U111 碰撞層常數 `Layers`（`Layers.PLAYER`、`Layers.TERRAIN`…），46 處位元運算改用；`01a` §2 對照；行為不變
+- [ ] U112 瞬間傷害統一走 `take_hit()`：碰到敵人、尖刺扣血改成 `take_hit()`（有擊退、會發 `Events.hit`）；
+      持續傷害（岩漿每秒扣血、血量流失、地板是岩漿）維持 `take_damage()`，不算「被打到」
+- [ ] U113 `Pickup` 種類新增「自訂」，選了才出現打字欄位（數值種類名稱），照鐵律 4 四點防呆、用 `NameCheck`；
+      補進 `CLAUDE.md` 打字欄位清單
+- [ ] U114 `Door` 開門方式新增「自訂數值」，同 U113 的打字欄位與防呆
+- [ ] U115 可以用訊號開關的零件（Receiver）：EnemyShooter、Launcher 新增 `activate`／`deactivate`／`toggle`＋`start_on`
+- [ ] U116 可以用訊號開關的零件（Receiver）：Spike、Lava、Portal 新增 `activate`／`deactivate`／`toggle`＋`start_on`
+- [ ] U117 `CameraRig` 鏡頭模式下拉：瞬切（預設，現在的行為）／房間內跟隨（跟著玩家但不超出目前房間，房間比畫面小的那一軸
+      固定在中心，換房間瞬切）／自由跟隨（忽略房間）；拿掉 `follow_player`（Showroom 改用自由跟隨）；`00b` §1 §3 更新

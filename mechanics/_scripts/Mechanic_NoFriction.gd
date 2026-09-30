@@ -13,7 +13,7 @@ var _was_sliding: bool = false
 
 # 把摩擦力改成 remaining_friction；放開方向鍵後如果角色還在滑，第一幀發出 slide_start 事件
 func apply(ctx: MoveContext) -> void:
-	ctx.friction_scale = remaining_friction
+	ctx.friction_scale *= remaining_friction
 	var has_input := not is_zero_approx(player.get_move_input())
 	var is_moving := not is_zero_approx(player.velocity.x)
 	var sliding := not has_input and is_moving
