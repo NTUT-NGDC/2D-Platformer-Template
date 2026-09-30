@@ -55,5 +55,5 @@ func _on_detector_exited(body: Node) -> void:
 
 # 把目前的開關狀態套用到碰撞與外觀上
 func _apply_state() -> void:
-	_shape.disabled = not _active
+	_shape.set_deferred("disabled", not _active)
 	_visual.visible = _active

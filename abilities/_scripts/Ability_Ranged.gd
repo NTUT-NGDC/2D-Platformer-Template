@@ -28,7 +28,6 @@ extends AbilityBase
 @export var aim_at_mouse: bool = false
 
 const _TILE_SIZE := 16.0
-const _BULLET_SCENE := preload("res://abilities/Bullet.tscn")
 const _DANGEROUS_KEYS := [
 	KEY_CTRL, KEY_TAB, KEY_ESCAPE,
 	KEY_F1, KEY_F2, KEY_F3, KEY_F4, KEY_F5, KEY_F6,
@@ -56,14 +55,10 @@ func _on_shoot_pressed() -> void:
 	if _cooldown_left > 0.0:
 		return
 	_cooldown_left = cooldown
-	var bullet: Area2D = _BULLET_SCENE.instantiate()
-	bullet.global_position = player.global_position
-	bullet.velocity = _shoot_direction() * bullet_speed
+	var bullet := Bullet.spawn(player, _shoot_direction(), bullet_speed, Bullet.TEAM_PLAYER)
 	bullet.gravity_enabled = use_gravity
 	bullet.lifetime_left = lifetime
 	bullet.max_distance = max_range_tiles * _TILE_SIZE
-	bullet.shooter = player
-	get_tree().current_scene.add_child(bullet)
 
 # 每一幀處理冷卻倒數
 func _process(delta: float) -> void:
@@ -72,11 +67,10 @@ func _process(delta: float) -> void:
 
 # 子彈要飛的方向：aim_at_mouse 開啟時朝滑鼠游標，游標剛好在角色身上或沒開啟就朝面向方向
 func _shoot_direction() -> Vector2:
+	var facing_dir := Aim.facing(_facing)
 	if aim_at_mouse:
-		var to_mouse: Vector2 = player.get_global_mouse_position() - player.global_position
-		if to_mouse.length() > 1.0:
-			return to_mouse.normalized()
-	return Vector2(_facing, 0.0)
+		return Aim.toward_mouse(player, facing_dir)
+	return facing_dir
 
 # 選到會被瀏覽器攔截的按鍵時提醒（Ctrl、Tab、Esc、F 鍵在網頁版會觸發瀏覽器內建功能）
 func _warn_if_dangerous_key(k: Key) -> void:

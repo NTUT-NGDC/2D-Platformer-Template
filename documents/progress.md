@@ -369,3 +369,25 @@
       　　→ 先 `rewind_values()` 再 `reset()`（靠「還沒放回」判斷有沒有被撿過）；同一次只倒回一次（`_value_returned`／`_paid` 歸零）；
       　　　巢狀分組以最近的為準；`reset_room_objects` 不勾＝不放回也不倒回；除錯按鍵直接加的數值不會倒回，
       　　　RespawnHandlerTest／RespawnMemoryTest 的 C 鍵改成場景裡的金幣；00b §5「沒有 Room 會重複撿」的已知限制消失
+
+## 階段 22：射擊擴充（W1 補充）
+
+> 講師決定：學員想要「滑鼠控制的後座力移動」「開槍有後座力」「敵人會朝玩家射擊」。射擊只做一份共用：子彈分陣營、
+> 產生子彈與瞄準方向都走共用函式；玩家受擊也走 `take_hit()`，扣血照舊交給 Stats。開槍後座力做兩種讓學員選：
+> 遠程的後座力拉桿（一般射擊帶一點後座），或把後座力卡的 `fired` 訊號連到遠程的 `shoot()`（只能靠開槍移動）。
+> 敵人子彈會不會打壞可破壞方塊／按下按鈕做成選用勾選框，預設不會。
+
+- [x] U104 射擊地基：`Bullet` 加 `class_name`、陣營（玩家方／敵方）、`damage`、`hit_objects`、共用 `Bullet.spawn()`；
+      共用瞄準工具 `Aim`；Player 實作 `take_hit()`（扣血交給 `take_damage()`＝Stats，再加擊退）；`Ability_Ranged` 改用共用函式，行為不變；
+      箱子新增 `block_bullets`（會不會擋子彈，預設會）
+      （驗證：`tests/abilities/Ability_RangedTest.tscn` 照舊；`tests/abilities/BulletTeamTest.tscn` 照輸出面板步驟）
+- [ ] U105 後座力卡新增 `input_type`（方向鍵／滑鼠左鍵／右鍵／中鍵），選滑鼠時按滑鼠鍵往游標反方向噴；輸入改走 InputRouter
+      （驗證：`tests/mechanics/Mechanic_RecoilMoveTest.tscn` 方向鍵照舊（含斜角）；`tests/mechanics/Mechanic_RecoilMove_MouseTest.tscn` 照輸出面板步驟）
+- [ ] U106 `Ability_Ranged` 新增 `shoot()`（給訊號連線用，不看冷卻）、`recoil_strength` 後座力拉桿、`damage` 傷害拉桿、
+      `input_type`「只用訊號觸發」（沒連線時開場警告）
+      （驗證：`tests/abilities/Ability_Ranged_RecoilTest.tscn` 照輸出面板 ①② 操作；`Ability_RangedTest.tscn` 照舊）
+- [ ] U107 `blocks/EnemyShooter` 敵人射擊組件：拖到關卡裡的 Enemy 底下就生效（Enemy 主動找子節點 `setup()`），8 個欄位分「射擊」
+      「子彈」兩組；放錯位置黃色驚嘆號＋中文警告；Enemy 新增 `is_defeated()`／`get_facing()`／`hold_still()`；玩家重生時敵方子彈消失；
+      煙霧測試新增第 7 步、零件手冊
+      （驗證：`tests/blocks/EnemyShooterTest.tscn` 照輸出面板步驟；`tests/blocks/EnemyTest.tscn` 照舊）
+      　　→ 講師決定：放 `blocks/`、欄位不限 4 個（8 個全留）

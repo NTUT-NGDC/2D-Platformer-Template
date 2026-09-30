@@ -222,6 +222,16 @@ func take_damage(amount: float = 1.0) -> void:
 	hurt.emit()
 	Events.player_hurt.emit()
 
+# 被攻擊打到（敵人子彈這類），扣血交給 take_damage()（也就是 Stats 的血量），再加上擊退；
+# 跟敵人、可破壞方塊用同一個受擊介面，攻擊方不用分辨打到的是誰
+func take_hit(damage: int, knockback: Vector2, source: Node) -> void:
+	if _is_dead:
+		return
+	Events.hit.emit(self, source)
+	take_damage(damage)
+	if not _is_dead:
+		add_impulse(knockback)
+
 # 宣告玩家死亡，實際要發生什麼事（重生、結算畫面…）由聽到 player_died 訊號的人決定
 func kill() -> void:
 	if _is_dead:

@@ -80,7 +80,7 @@
 
 | 零件 | 檔名 | 身體 | 欄位 | 訊號 |
 |---|---|---|---|---|
-| 箱子 | `Box.tscn` | 會動 | `weight`（輕／重） | 無 |
+| 箱子 | `Box.tscn` | 會動 | `weight`（輕／重）、`block_bullets`（會不會擋子彈，預設會） | 無 |
 | 道具 | `Pickup.tscn` | 感應 | `kind`（金幣／鑰匙／血包／分數）、`amount`（數量） | `collected` |
 | 彈射台 | `Launcher.tscn` | 實心 | `mode`（彈簧／彈跳床）、`direction`（上／左／右）、`force`（力道） | `launched` |
 | 尖刺 | `Spike.tscn` | 感應 | `penalty`（扣血／即死）、`damage`（扣血量） | 無 |
@@ -115,6 +115,12 @@
 - 近戰：按下 `key` 時在面向方向短暫生成判定區。
 - 遠程：按下 `key` 時朝面向方向發射子彈，撞到地形或受擊物件即消失。
 - 打到實作受擊介面（`Hittable`）的東西時呼叫 `take_hit()`。
+- 子彈一律用 `Bullet.spawn(發射者, 方向, 速度, 陣營)` 產生（`abilities/_scripts/Bullet.gd`），遠程能力與敵人射擊共用。
+  陣營 `Bullet.TEAM_PLAYER` 打敵人、箱子、物件；`Bullet.TEAM_ENEMY` 打玩家，不打其他敵人，
+  可破壞方塊／按鈕這類物件只有 `hit_objects` 開啟時才會被打到（撞到仍會消失）。
+- 瞄準方向一律用共用工具 `Aim`（`abilities/_base/Aim.gd`）：`toward_mouse()`、`toward_player()`、`toward_point()`、`facing()`，
+  要新增瞄準方式只改這一份。
+- 撞到的東西有 `block_bullets` 屬性且為 `false`（例如箱子關掉「會不會擋子彈」）時，子彈直接穿過去。
 - 拖到錯誤位置時印中文警告，規則同機制卡。
 
 ---

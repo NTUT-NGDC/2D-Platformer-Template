@@ -6,6 +6,9 @@ extends RigidBody2D
 ## 重量：輕的比較好推、重的比較不好推
 @export_enum("輕", "重") var weight: int = 0
 
+## 會不會擋子彈：關掉的話子彈（玩家的、敵人的都一樣）會直接穿過去
+@export var block_bullets: bool = true
+
 const _LIGHT_MASS := 1.0
 const _HEAVY_MASS := 4.0
 

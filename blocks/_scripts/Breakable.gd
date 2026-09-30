@@ -74,7 +74,7 @@ func _break() -> void:
 	if _is_broken:
 		return
 	_is_broken = true
-	_shape.disabled = true
+	_shape.set_deferred("disabled", true)
 	_visual.visible = false
 	broken.emit()
 	if respawn_time > 0.0:
