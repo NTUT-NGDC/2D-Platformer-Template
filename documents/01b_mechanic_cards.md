@@ -29,7 +29,7 @@ W1 的課堂活動是：學員線上抽一張**主限制卡** → 把對應的 `
 | 2 | `Mechanic_AutoRun` | 只能往前 | 操作 | `ctx.auto_run_dir`，撞牆反轉 | 方向回到一開始設定的方向 |
 | 3 | `Mechanic_ChargeJump` | 蓄力青蛙跳 | 操作 | `InputRouter` 高優先攔截跳躍鍵，`force_jump()` | 取消蓄力中的狀態 |
 | 4 | `Mechanic_Slingshot` | 只能用滑鼠控制 | 操作 | `ctx.input_locked` + 拖曳放開 `add_impulse()` | 取消拖曳、藏起瞄準線 |
-| 5 | `Mechanic_RecoilMove` | 只用後座力移動 | 操作 | `ctx.input_locked` + 方向鍵反向 `add_impulse()` | 噴射次數補滿、冷卻歸零、顏色還原 |
+| 5 | `Mechanic_RecoilMove` | 只用後座力移動 | 操作 | `ctx.input_locked` + 方向鍵（或滑鼠鍵朝游標）反向 `add_impulse()` | 噴射次數補滿、冷卻歸零、顏色還原 |
 | 6 | `Mechanic_PinballBody` | 彈珠台體質 | 物理 | `ctx.damage_scale = 0` + 碰撞擊飛 | 無敵時間歸零 |
 | 7 | `Mechanic_GravityFlip` | 重力翻轉 | 物理 | `flip_gravity()` | 角色圖轉回正的、冷卻歸零（重力由 `revive()` 復位） |
 | 8 | `Mechanic_BouncyWorld` | 彈性宇宙 | 物理 | 撞擊時反向 `add_impulse()` | 清掉速度記錄與輸入鎖 |
@@ -183,6 +183,8 @@ W1 的課堂活動是：學員線上抽一張**主限制卡** → 把對應的 `
 
 #### 5. 只用後座力移動 `Mechanic_RecoilMove`
 ```gdscript
+## 用方向鍵噴，還是按滑鼠鍵往游標的「反方向」噴
+@export_enum("方向鍵", "滑鼠左鍵", "滑鼠右鍵", "滑鼠中鍵") var input_type: int = 0
 ## 每次噴射的力道大小
 @export_range(100.0, 800.0) var recoil_strength: float = 350.0
 ## 落地前最多能噴射幾次
@@ -193,6 +195,8 @@ W1 的課堂活動是：學員線上抽一張**主限制卡** → 把對應的 `
 @export_range(0.1, 1.0) var cooldown: float = 0.3
 ```
 `ctx.input_locked = true`。按下方向鍵（上下左右）→ 往**反方向** `add_impulse()`。
+`input_type` 選滑鼠按鍵時，改成按下該滑鼠鍵 → 往**游標的反方向** `add_impulse()`（方向用 `Aim.toward_mouse()`），
+游標剛好在角色身上不噴。方向鍵與滑鼠鍵都透過 `InputRouter` 綁定；同一幀按下的方向先疊加，`apply()` 裡只噴一次（保留斜角）。
 每次噴射消耗一次，`refill_on_land` 開啟時著地即補滿。次數用完時 `visual` 短暫閃灰提示。
 **遊玩空間必須夠開闊**，否則這張卡玩不動。
 事件：`recoil_fired`、`recoil_empty`

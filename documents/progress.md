@@ -381,7 +381,7 @@
       共用瞄準工具 `Aim`；Player 實作 `take_hit()`（扣血交給 `take_damage()`＝Stats，再加擊退）；`Ability_Ranged` 改用共用函式，行為不變；
       箱子新增 `block_bullets`（會不會擋子彈，預設會）
       （驗證：`tests/abilities/Ability_RangedTest.tscn` 照舊；`tests/abilities/BulletTeamTest.tscn` 照輸出面板步驟）
-- [ ] U105 後座力卡新增 `input_type`（方向鍵／滑鼠左鍵／右鍵／中鍵），選滑鼠時按滑鼠鍵往游標反方向噴；輸入改走 InputRouter
+- [x] U105 後座力卡新增 `input_type`（方向鍵／滑鼠左鍵／右鍵／中鍵），選滑鼠時按滑鼠鍵往游標反方向噴；輸入改走 InputRouter
       （驗證：`tests/mechanics/Mechanic_RecoilMoveTest.tscn` 方向鍵照舊（含斜角）；`tests/mechanics/Mechanic_RecoilMove_MouseTest.tscn` 照輸出面板步驟）
 - [ ] U106 `Ability_Ranged` 新增 `shoot()`（給訊號連線用，不看冷卻）、`recoil_strength` 後座力拉桿、`damage` 傷害拉桿、
       `input_type`「只用訊號觸發」（沒連線時開場警告）

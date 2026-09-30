@@ -1,8 +1,12 @@
 extends MechanicBase
 
-# 只用後座力移動：鍵盤不能直接控制方向，按方向鍵是往反方向噴一下（後座力）。
+# 只用後座力移動：鍵盤不能直接控制方向，按方向鍵是往反方向噴一下（後座力）；
+# input_type 選滑鼠按鍵時，改成按滑鼠鍵往游標的反方向噴。
 # 在地面上噴不限次數；在空中每次噴射消耗一次 air_charges，落地依 refill_on_land 決定
 # 要不要補滿。拖進 Player → Mechanics 底下就能用，不用連任何線。
+
+## 用方向鍵噴，還是按滑鼠鍵往游標的「反方向」噴
+@export_enum("方向鍵", "滑鼠左鍵", "滑鼠右鍵", "滑鼠中鍵") var input_type: int = 0
 
 ## 每次噴射的力道大小
 @export_range(100.0, 800.0) var recoil_strength: float = 350.0
@@ -18,7 +22,7 @@ extends MechanicBase
 
 ## 噴射的那一刻發出，在推力之前（連到 Player 的 stop_motion 就是先歸零再噴）
 signal fired
-## 在空中已經沒有噴射次數、還按方向鍵時發出
+## 在空中已經沒有噴射次數、還按噴射鍵時發出
 signal out_of_charges
 
 # 方向鍵對應噴射方向的「反方向」
@@ -33,12 +37,26 @@ const _FLASH_DURATION := 0.15
 var _charges_left: int = 0
 var _cooldown_left: float = 0.0
 var _was_on_floor: bool = true
+var _pending_direction: Vector2 = Vector2.ZERO
 
-# 套用一開始的噴射次數
+# 套用一開始的噴射次數，向 InputRouter 註冊方向鍵或滑鼠鍵
 func _on_setup() -> void:
 	_charges_left = air_charges
+	if input_type == 0:
+		for action in _DIRECTIONS:
+			InputRouter.bind(self, action, InputRouter.PRESSED, _on_direction_pressed.bind(action))
+	else:
+		InputRouter.bind_input(self, input_type, KEY_NONE, InputRouter.PRESSED, _on_mouse_pressed)
 
-# 鍵盤鎖住方向控制，改成偵測四個方向鍵的按下瞬間；落地時視 refill_on_land 補滿次數
+# 按下方向鍵：先記下要噴的方向，同一幀按的方向會疊加，等 apply() 再一次噴出去
+func _on_direction_pressed(action: String) -> void:
+	_pending_direction += _DIRECTIONS[action]
+
+# 按下滑鼠鍵：記下游標的反方向，游標剛好在角色身上就不噴
+func _on_mouse_pressed() -> void:
+	_pending_direction += -Aim.toward_mouse(player, Vector2.ZERO)
+
+# 鍵盤鎖住方向控制，把這一幀收到的噴射方向噴出去；落地時視 refill_on_land 補滿次數
 func apply(ctx: MoveContext) -> void:
 	ctx.input_locked = true
 
@@ -50,12 +68,11 @@ func apply(ctx: MoveContext) -> void:
 	if _cooldown_left > 0.0:
 		_cooldown_left -= ctx.delta
 
-	# 先收集這一幀所有剛按下的方向疊加成一個向量，只噴射一次；不然同時按兩個方向鍵時，
-	# 第一個方向噴射成功會立刻進入冷卻，同一幀第二個方向的呼叫馬上被冷卻擋掉，吃不到斜角
-	var combined := Vector2.ZERO
-	for action in _DIRECTIONS:
-		if Input.is_action_just_pressed(action):
-			combined += _DIRECTIONS[action]
+	# 這一幀所有剛按下的方向已經疊加成一個向量，只噴射一次；不然同時按兩個方向鍵時，
+	# 第一個方向噴射成功會立刻進入冷卻，同一幀第二個方向馬上被冷卻擋掉，吃不到斜角
+	# （InputRouter 是自動載入，每一幀都比 Player 先派發輸入，所以這裡一定收得到）
+	var combined := _pending_direction
+	_pending_direction = Vector2.ZERO
 	if combined != Vector2.ZERO:
 		_try_fire(combined.normalized())
 
@@ -64,6 +81,7 @@ func on_respawn() -> void:
 	_charges_left = air_charges
 	_cooldown_left = 0.0
 	_was_on_floor = true
+	_pending_direction = Vector2.ZERO
 	if player.visual:
 		player.visual.modulate = Color.WHITE
 
