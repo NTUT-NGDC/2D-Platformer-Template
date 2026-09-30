@@ -102,7 +102,7 @@
 | 能力 | 檔名 | 欄位 |
 |---|---|---|
 | 近戰 | `Ability_Melee.tscn` | `input_type`（鍵盤／滑鼠按鍵）、`key`（攻擊鍵，選鍵盤時才顯示）、`cooldown`（冷卻秒數）、`knockback`（擊退力道）、`damage`（傷害） |
-| 遠程 | `Ability_Ranged.tscn` | `input_type`（鍵盤／滑鼠按鍵）、`key`（攻擊鍵，選鍵盤時才顯示）、`bullet_speed`（子彈速度）、`cooldown`（冷卻秒數）、`lifetime`（存在秒數）、`max_range_tiles`（最大飛行格數，0 不限制）、`use_gravity`（受重力影響）、`aim_at_mouse`（朝滑鼠游標射） |
+| 遠程 | `Ability_Ranged.tscn` | `input_type`（鍵盤／滑鼠按鍵／只用訊號觸發）、`key`（攻擊鍵，選鍵盤時才顯示）、`bullet_speed`（子彈速度）、`cooldown`（冷卻秒數）、`lifetime`（存在秒數）、`max_range_tiles`（最大飛行格數，0 不限制）、`use_gravity`（受重力影響）、`aim_at_mouse`（朝滑鼠游標射）、`damage`（傷害）、`recoil_strength`（開槍後座力，0 代表沒有） |
 
 不預先註冊共用的攻擊動作，`key: Key` 由學員在能力自己的 Inspector 選，透過
 `InputRouter.bind_input(self, input_type, key, ...)` 綁定，`input_type` 可改選滑鼠左鍵／右鍵／中鍵（見 `01a_shared_systems.md` §3）。能力不算第 1 節「零件」，
@@ -113,7 +113,12 @@
 直接改這個場景，Inspector 不提供範圍拉桿。
 
 - 近戰：按下 `key` 時在面向方向短暫生成判定區。
-- 遠程：按下 `key` 時朝面向方向發射子彈，撞到地形或受擊物件即消失。
+- 遠程：按下 `key` 時朝面向方向發射子彈，撞到地形或受擊物件即消失。`recoil_strength` 大於 0 時，開槍同時用
+  `add_impulse()` 把玩家往射擊的反方向推。
+- 遠程提供不帶參數的 `shoot()`，給學員從任何訊號連過來開槍（不看冷卻，節奏由發訊號的一方決定）。
+  `input_type` 選「只用訊號觸發」時不綁按鍵；這時如果沒有任何訊號連到 `shoot()`，開場印中文警告。
+  「只能靠開槍移動」＝後座力卡（滑鼠模式）的 `fired` 連到「只用訊號觸發」＋ `aim_at_mouse` 的遠程 `shoot()`，
+  這時遠程的 `recoil_strength` 保持 0（推力由後座力卡負責，兩邊都推會推兩次）。
 - 打到實作受擊介面（`Hittable`）的東西時呼叫 `take_hit()`。
 - 子彈一律用 `Bullet.spawn(發射者, 方向, 速度, 陣營)` 產生（`abilities/_scripts/Bullet.gd`），遠程能力與敵人射擊共用。
   陣營 `Bullet.TEAM_PLAYER` 打敵人、箱子、物件；`Bullet.TEAM_ENEMY` 打玩家，不打其他敵人，

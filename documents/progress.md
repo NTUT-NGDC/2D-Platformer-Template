@@ -383,7 +383,7 @@
       （驗證：`tests/abilities/Ability_RangedTest.tscn` 照舊；`tests/abilities/BulletTeamTest.tscn` 照輸出面板步驟）
 - [x] U105 後座力卡新增 `input_type`（方向鍵／滑鼠左鍵／右鍵／中鍵），選滑鼠時按滑鼠鍵往游標反方向噴；輸入改走 InputRouter
       （驗證：`tests/mechanics/Mechanic_RecoilMoveTest.tscn` 方向鍵照舊（含斜角）；`tests/mechanics/Mechanic_RecoilMove_MouseTest.tscn` 照輸出面板步驟）
-- [ ] U106 `Ability_Ranged` 新增 `shoot()`（給訊號連線用，不看冷卻）、`recoil_strength` 後座力拉桿、`damage` 傷害拉桿、
+- [x] U106 `Ability_Ranged` 新增 `shoot()`（給訊號連線用，不看冷卻）、`recoil_strength` 後座力拉桿、`damage` 傷害拉桿、
       `input_type`「只用訊號觸發」（沒連線時開場警告）
       （驗證：`tests/abilities/Ability_Ranged_RecoilTest.tscn` 照輸出面板 ①② 操作；`Ability_RangedTest.tscn` 照舊）
 - [ ] U107 `blocks/EnemyShooter` 敵人射擊組件：拖到關卡裡的 Enemy 底下就生效（Enemy 主動找子節點 `setup()`），8 個欄位分「射擊」
