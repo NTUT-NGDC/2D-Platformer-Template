@@ -378,9 +378,10 @@ build/
 5. 觸發 `Events.hitstop_requested` 10 次，確認結束後 `Engine.time_scale == 1.0`
 6. 掛重力翻轉、忽大忽小、越跑越快，連續 `kill()` / `revive()` 10 次，每次重生後位置、重力、角色圖方向、
    體型、血量、`is_dead()` 都要正確歸零（見 `00b_rooms_and_soft_respawn.md` §8）
-7. 每個階段結束後拔掉所有組件，確認 Player 仍能正常移動
-8. 任何一項失敗：`printerr` 說明 + `get_tree().quit(1)`
-9. 全部通過：`print("SMOKE TEST PASSED")` + `quit(0)`
+7. 放兩隻掛了 `blocks/EnemyShooter` 的敵人朝玩家連射 3 秒（玩家死掉就復活，中途打倒一隻），確認有射出子彈、不會崩潰
+8. 每個階段結束後拔掉所有組件，確認 Player 仍能正常移動
+9. 任何一項失敗：`printerr` 說明 + `get_tree().quit(1)`
+10. 全部通過：`print("SMOKE TEST PASSED")` + `quit(0)`
 
 **新增任何機制卡或 Juice 組件時，測試會自動掃資料夾，不需要手動維護清單。**
 

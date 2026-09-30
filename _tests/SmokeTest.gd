@@ -83,6 +83,10 @@ func _run_all_steps() -> void:
 	await _test_kill_revive()
 	await _assert_can_move("死亡重生測試")
 
+	# 7. 兩隻掛了敵人射擊的敵人朝玩家連射，玩家死掉就復活，中途打倒一隻
+	await _test_enemy_shooter()
+	await _assert_can_move("敵人射擊測試")
+
 	if _failed:
 		print("SMOKE TEST FAILED")
 		get_tree().quit(1)
@@ -194,6 +198,39 @@ func _test_kill_revive() -> void:
 	Events.player_respawned.disconnect(on_respawned)
 	await _clear_container(_mechanics_container)
 	_player.set_size_factor(1.0)
+
+# 放兩隻掛了 EnemyShooter 的敵人（一隻射前停一下、一隻不停）用最短間隔朝玩家射，
+# 玩家死掉就原地復活，中途打倒一隻，最後全部移除，確認整段不會崩潰、Player 還在
+func _test_enemy_shooter() -> void:
+	var enemies: Array[Node2D] = []
+	for x in [-120.0, 120.0]:
+		var enemy: Node2D = load("res://blocks/Enemy.tscn").instantiate()
+		var shooter: Node2D = load("res://blocks/EnemyShooter.tscn").instantiate()
+		shooter.cooldown = 0.3
+		shooter.detect_range_tiles = 0
+		shooter.stop_to_shoot = x > 0.0
+		enemy.add_child(shooter)
+		enemy.position = Vector2(x, 170)
+		add_child(enemy)
+		enemies.append(enemy)
+	var shots := [0]
+	for enemy in enemies:
+		enemy.get_node("EnemyShooter").shot.connect(func(): shots[0] += 1)
+	for i in 6:
+		await _wait_frames(30)
+		if _player.is_dead():
+			_player.revive(Vector2.ZERO)
+		if i == 3:
+			enemies[0].take_hit(99, Vector2.ZERO, self)
+	if shots[0] == 0:
+		_fail("敵人射擊測試：3 秒內一發子彈都沒射出")
+	if not is_instance_valid(_player):
+		_fail("敵人射擊測試時 Player 消失了")
+	for enemy in enemies:
+		enemy.queue_free()
+	await get_tree().process_frame
+	if _player.is_dead():
+		_player.revive(Vector2.ZERO)
 
 func _clear_container(container: Node) -> void:
 	for child in container.get_children():

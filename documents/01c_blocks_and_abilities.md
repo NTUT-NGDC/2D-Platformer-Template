@@ -85,11 +85,20 @@
 | 彈射台 | `Launcher.tscn` | 實心 | `mode`（彈簧／彈跳床）、`direction`（上／左／右）、`force`（力道） | `launched` |
 | 尖刺 | `Spike.tscn` | 感應 | `penalty`（扣血／即死）、`damage`（扣血量） | 無 |
 | 笨敵人 | `Enemy.tscn` | 會動 | `speed`（速度）、`health`（血量）、`damage`（傷害）、`turn_at_ledge`（走到邊緣會轉身） | `defeated` |
+| 敵人射擊 | `EnemyShooter.tscn` | 無（掛在 Enemy 底下） | 「射擊」組：`aim_type`（朝玩家／朝面向方向／固定往左右上下）、`cooldown`（射擊間隔）、`detect_range_tiles`（偵測格數，0 不限）、`stop_to_shoot`（開槍前停一下）；「子彈」組：`bullet_speed`、`use_gravity`、`damage`、`hit_objects`（會不會打壞物件） | `shot` |
 
 - 箱子實作受擊介面，被攻擊時只受擊退。
 - 道具：血包加血量，但不超過上限。
 - 彈射台：彈簧為固定力道；彈跳床為反彈落下速度，掉越高彈越高。
 - 笨敵人撞牆轉身，實作受擊介面，血量歸零後消失（重生時照常復活）。
+- 敵人射擊是笨敵人的攻擊組件：學員把它拖到關卡裡某個 Enemy 的底下（Enemy 實例的子節點，存在 `_my/` 的關卡場景，
+  不動 `blocks/Enemy.tscn`）。Enemy 在 `_ready()` 掃子節點、之後新增的子節點也會掃，有 `setup()` 的就呼叫 `setup(self)`
+  （零連線，比照 Player → Abilities）；`reset()` 時呼叫子節點的 `on_reset()`。Enemy 提供給組件的公開函式：
+  `is_defeated()`、`get_facing()`、`hold_still(秒數)`（原地停下、不轉身）。
+  射擊組件用 `Bullet.spawn()`（敵方陣營）從自己的位置射出，移動這個節點就是移動槍口；敵人被打倒時停火。
+  「每個零件最多 4 個欄位」的例外：講師決定 8 個欄位全留，用 `@export_group` 分成「射擊」「子彈」兩組。
+  沒放在 Enemy 底下：編輯器黃色驚嘆號＋執行時中文警告。編輯器裡畫出偵測範圍的圓與固定方向的箭頭。
+  敵方子彈在玩家重生（`Events.player_respawned`）時全部消失。
 - `collected`、`broken`、`defeated` 讓學員可以做出「打倒敵人就開門」「撿到道具就啟動平台」這類組合。
 
 ---

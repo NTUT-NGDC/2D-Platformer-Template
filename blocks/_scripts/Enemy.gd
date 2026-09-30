@@ -3,6 +3,7 @@ extends CharacterBody2D
 # 笨敵人：會動，左右巡邏，撞牆自動轉身，turn_at_ledge 開啟時走到懸崖邊也會轉身。
 # 被攻擊會扣血，歸零時消失並發出 defeated；碰到玩家會造成傷害。
 # 拖進場景就能用，不用連任何線。
+# 攻擊組件（例如 EnemyShooter）拖到關卡裡這個敵人的底下就會生效：敵人主動找子節點呼叫 setup()。
 
 ## 巡邏速度
 @export_range(20.0, 200.0) var speed: float = 60.0
@@ -31,6 +32,19 @@ var _health_left: int = 0
 var _stun_time_left: float = 0.0
 var _start_position: Vector2 = Vector2.ZERO
 var _defeated: bool = false
+var _hold_time_left: float = 0.0
+
+# 回傳這個敵人是不是已經被打倒了，攻擊組件用這個決定要不要停手
+func is_defeated() -> bool:
+	return _defeated
+
+# 回傳目前巡邏的方向（-1 左、1 右），攻擊組件「朝面向方向」用這個
+func get_facing() -> int:
+	return _direction
+
+# 原地停下幾秒（不巡邏，仍受重力），攻擊組件射擊前用這個讓玩家看得出牠要開槍了
+func hold_still(duration: float) -> void:
+	_hold_time_left = maxf(_hold_time_left, duration)
 
 # 被攻擊打到：扣血並被擊退一下，歸零時消失
 func take_hit(hit_damage: int, knockback: Vector2, source: Node) -> void:
@@ -58,6 +72,10 @@ func reset() -> void:
 	_direction = 1
 	_health_left = health
 	_stun_time_left = 0.0
+	_hold_time_left = 0.0
+	for child in get_children():
+		if child.has_method("on_reset"):
+			child.on_reset()
 	if _defeated:
 		_defeated = false
 		add_to_group("enemy")
@@ -80,6 +98,14 @@ func _ready() -> void:
 	_hurtbox.collision_layer = 0
 	_hurtbox.collision_mask = 1 << 0  # 圖層 1「玩家」
 	_hurtbox.body_entered.connect(_on_hurtbox_entered)
+	for child in get_children():
+		_try_setup(child)
+	child_entered_tree.connect(_try_setup)
+
+# 子節點有 setup() 的就是攻擊組件，把自己交給它（沒有 setup() 的是碰撞形狀、偵測線這類，跳過）
+func _try_setup(child: Node) -> void:
+	if child.has_method("setup"):
+		child.setup(self)
 
 # 碰到玩家造成傷害，碰一次算一次
 func _on_hurtbox_entered(body: Node) -> void:
@@ -87,15 +113,19 @@ func _on_hurtbox_entered(body: Node) -> void:
 		body.take_damage(damage)
 
 # 每個物理幀：套用重力、往目前方向移動，撞牆或走到懸崖邊就轉身；
-# 被擊退期間（_stun_time_left > 0）先不控制水平速度，讓擊退看得出來
+# 被擊退期間（_stun_time_left > 0）先不控制水平速度，讓擊退看得出來；
+# hold_still() 停下期間原地不動、也不轉身
 func _physics_process(delta: float) -> void:
 	velocity.y += _GRAVITY * delta
 	if _stun_time_left > 0.0:
 		_stun_time_left -= delta
+	elif _hold_time_left > 0.0:
+		_hold_time_left -= delta
+		velocity.x = 0.0
 	else:
 		velocity.x = _direction * speed
 	move_and_slide()
-	if _stun_time_left <= 0.0:
+	if _stun_time_left <= 0.0 and _hold_time_left <= 0.0:
 		if is_on_wall():
 			_turn_around()
 		elif turn_at_ledge and not _has_ground_ahead():
