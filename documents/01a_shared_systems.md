@@ -260,6 +260,12 @@ func take_hit(damage: int, knockback: Vector2, source: Node) -> void
 
 打中時 emit `Events.hit(target, source)`，供 W3 的頓幀與震動訂閱。
 
+**瞬間傷害一律走 `take_hit()`，持續傷害走 `take_damage()`**：碰到敵人、尖刺（扣血模式）、子彈這類「被打到一下」的，
+呼叫玩家的 `take_hit()`（有擊退、會發 `Events.hit`）；岩漿每秒扣血、血量流失、地板是岩漿這類持續傷害
+直接呼叫 `take_damage()`，不算「被打到」（沒有擊退、不發 `Events.hit`）。碰到敵人、尖刺的擊退方向是
+「從敵人／尖刺指向玩家，再往玩家的上方偏一點」。玩家收到的擊退會乘上 `ctx.knockback_scale`（忽大忽小調整、
+彈珠台體質設成 0 只留自己的彈開）。
+
 ### 6.5 連線驗證器
 
 遊戲開始時掃描所有 `signal_source` 零件（含按鍵觸發器）的訊號連接，以中文警告回報：

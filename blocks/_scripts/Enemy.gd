@@ -14,6 +14,9 @@ extends CharacterBody2D
 ## 碰到玩家造成的傷害
 @export_range(1, 10) var damage: int = 1
 
+## 碰到玩家時把玩家彈開的力道，0 = 不彈開只扣血
+@export_range(0.0, 800.0) var knockback: float = 300.0
+
 ## 走到懸崖邊會不會轉身，關掉的話會直接走下去
 @export var turn_at_ledge: bool = true
 
@@ -107,10 +110,14 @@ func _try_setup(child: Node) -> void:
 	if child.has_method("setup"):
 		child.setup(self)
 
-# 碰到玩家造成傷害，碰一次算一次
+# 碰到玩家：打玩家一下（扣血＋把玩家往外、往上彈開），碰一次算一次
 func _on_hurtbox_entered(body: Node) -> void:
-	if body.is_in_group("player") and body.has_method("take_damage"):
-		body.take_damage(damage)
+	var player := body as CharacterBody2D
+	if player == null or not player.is_in_group("player") or not player.has_method("take_hit"):
+		return
+	var away := (player.global_position - global_position).normalized()
+	var direction := (away + player.up_direction * 0.5).normalized()
+	player.take_hit(damage, direction * knockback, self)
 
 # 每個物理幀：套用重力、往目前方向移動，撞牆或走到懸崖邊就轉身；
 # 被擊退期間（_stun_time_left > 0）先不控制水平速度，讓擊退看得出來；

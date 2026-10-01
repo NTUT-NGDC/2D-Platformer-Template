@@ -37,9 +37,10 @@ func _on_setup() -> void:
 	_sensor.body_entered.connect(_on_sensor_entered)
 	_sensor.area_entered.connect(_on_sensor_entered)
 
-# 每幀把傷害歸零，並倒數無敵時間
+# 每幀把傷害和被打的擊退歸零（只留自己的彈開，不跟敵人／尖刺的擊退疊在一起），並倒數無敵時間
 func apply(ctx: MoveContext) -> void:
 	ctx.damage_scale *= 0.0
+	ctx.knockback_scale *= 0.0
 	if _invincible_left > 0.0:
 		_invincible_left -= ctx.delta
 

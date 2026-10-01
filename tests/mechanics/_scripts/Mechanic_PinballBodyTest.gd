@@ -7,6 +7,7 @@ func _ready() -> void:
 	print("[測試] 血量目前：%d/%d" % [Stats.get_value(Stats.HEALTH_KIND), Stats.get_max_value(Stats.HEALTH_KIND)])
 	print("[測試] 走到 Enemy_Target（被兩面牆夾住）身上撞一下：應該被彈開，血量不會減少")
 	print("[測試] 走到 Spike_Target（扣血模式，不是即死）上面：應該被彈開，血量一樣不會減少")
+	print("[測試] 彈開的力道只有彈珠台自己的 knock_force，不會再疊上敵人／尖刺的 knockback（不會變成兩倍遠）")
 	print("[測試] 被彈開後的 0.3 秒內，就算還黏在對方旁邊也不會連續再彈一次")
 
 func _on_mechanic_event(card: String, event: String) -> void:

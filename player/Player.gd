@@ -31,6 +31,7 @@ var _was_moving: bool = false
 var _was_on_wall: bool = false
 var _is_dead: bool = false
 var _damage_scale: float = 1.0
+var _knockback_scale: float = 1.0
 var _base_collision_size: Vector2 = Vector2.ZERO
 var _cached_jump_scale: float = 1.0
 var _cached_input_locked: bool = false
@@ -114,6 +115,7 @@ func _physics_process(delta: float) -> void:
 		ctx.movement_frozen = true
 		ctx.input_locked = true
 	_damage_scale = ctx.damage_scale
+	_knockback_scale = ctx.knockback_scale
 	_cached_jump_scale = ctx.jump_scale
 	_cached_input_locked = ctx.input_locked
 
@@ -222,7 +224,8 @@ func take_damage(amount: float = 1.0) -> void:
 	hurt.emit()
 	Events.player_hurt.emit()
 
-# 被攻擊打到（敵人子彈這類），扣血交給 take_damage()（也就是 Stats 的血量），再加上擊退；
+# 被攻擊打到（碰到敵人、尖刺、敵人子彈這類），扣血交給 take_damage()（也就是 Stats 的血量），
+# 再加上擊退（會乘上機制卡調的擊退倍率）；
 # 跟敵人、可破壞方塊用同一個受擊介面，攻擊方不用分辨打到的是誰
 func take_hit(damage: int, knockback: Vector2, source: Node) -> void:
 	if _is_dead:
@@ -230,7 +233,7 @@ func take_hit(damage: int, knockback: Vector2, source: Node) -> void:
 	Events.hit.emit(self, source)
 	take_damage(damage)
 	if not _is_dead:
-		add_impulse(knockback)
+		add_impulse(knockback * _knockback_scale)
 
 # 宣告玩家死亡，實際要發生什麼事（重生、結算畫面…）由聽到 player_died 訊號的人決定
 func kill() -> void:

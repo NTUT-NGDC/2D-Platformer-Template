@@ -403,8 +403,10 @@
 - [x] U109 危險按鍵清單＋警告收進 InputRouter（`InputRouter.warn_if_dangerous_key()`），9 份重複的刪掉；行為不變
 - [x] U110 編輯器訊號連線虛線抽成共用工具 `SignalLines`，11 個零件改用（含 U107 的 EnemyShooter）；行為不變
 - [x] U111 碰撞層常數 `Layers`（`Layers.PLAYER`、`Layers.TERRAIN`…），56 處位元運算改用（21 個腳本）；`01a` §2 對照；行為不變
-- [ ] U112 瞬間傷害統一走 `take_hit()`：碰到敵人、尖刺扣血改成 `take_hit()`（有擊退、會發 `Events.hit`）；
+- [x] U112 瞬間傷害統一走 `take_hit()`：碰到敵人、尖刺扣血改成 `take_hit()`（有擊退、會發 `Events.hit`）；
       持續傷害（岩漿每秒扣血、血量流失、地板是岩漿）維持 `take_damage()`，不算「被打到」
+      　　→ 講師決定：Enemy、Spike 各新增 `knockback` 拉桿（0 = 不擊退）；方向「從敵人／尖刺指向玩家再往上偏」；
+      　　　Player.take_hit() 的擊退乘上 `ctx.knockback_scale`，彈珠台體質設成 0（只留自己的彈開，不疊加）
 - [ ] U113 `Pickup` 種類新增「自訂」，選了才出現打字欄位（數值種類名稱），照鐵律 4 四點防呆、用 `NameCheck`；
       補進 `CLAUDE.md` 打字欄位清單
 - [ ] U114 `Door` 開門方式新增「自訂數值」，同 U113 的打字欄位與防呆
