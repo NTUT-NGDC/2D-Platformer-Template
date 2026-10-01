@@ -41,12 +41,6 @@ const _TRIGGER_HELD := 2
 const _SOURCE_KEY := 0
 const _SOURCE_ACTION := 4
 
-const _DANGEROUS_KEYS := [
-	KEY_CTRL, KEY_TAB, KEY_ESCAPE,
-	KEY_F1, KEY_F2, KEY_F3, KEY_F4, KEY_F5, KEY_F6,
-	KEY_F7, KEY_F8, KEY_F9, KEY_F10, KEY_F11, KEY_F12,
-]
-
 # 依 key_source 顯示對應欄位，其他隱藏（選滑鼠按鍵時兩個都隱藏），學員不會被無關的欄位搞混
 func _validate_property(property: Dictionary) -> void:
 	if property.name == "same_key_as" and key_source != _SOURCE_ACTION:
@@ -68,7 +62,7 @@ func _ready() -> void:
 		InputRouter.bind_student_mouse(self, button, InputRouter.HELD, _on_held)
 		InputRouter.bind_student_mouse(self, button, InputRouter.RELEASED, _on_released)
 	else:
-		_warn_if_dangerous_key(key)
+		InputRouter.warn_if_dangerous_key(key, "[按鍵觸發器]")
 		InputRouter.bind_student_key(self, key, InputRouter.PRESSED, _on_pressed)
 		InputRouter.bind_student_key(self, key, InputRouter.HELD, _on_held)
 		InputRouter.bind_student_key(self, key, InputRouter.RELEASED, _on_released)
@@ -100,11 +94,3 @@ func _warn_if_not_connected() -> void:
 			return
 	push_warning("[按鍵觸發器] %s 的 triggered 沒有連到任何東西，按了不會有反應" % name)
 	printerr("⚠ [按鍵觸發器] %s 還沒連線：選它 → 右邊「節點」面板 → 雙擊 triggered → 選要控制的零件和函式" % name)
-
-# 選到會被瀏覽器攔截的按鍵時提醒（Ctrl、Tab、Esc、F 鍵在網頁版會觸發瀏覽器內建功能）
-func _warn_if_dangerous_key(k: Key) -> void:
-	if k not in _DANGEROUS_KEYS:
-		return
-	var message := "[按鍵觸發器] 選到的按鍵「%s」在網頁版可能會觸發瀏覽器內建功能，建議換一個" % OS.get_keycode_string(k)
-	push_warning(message)
-	printerr("⚠ %s" % message)

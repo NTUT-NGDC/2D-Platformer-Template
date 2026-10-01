@@ -18,6 +18,13 @@ const MOUSE_BUTTONS: Array[MouseButton] = [MOUSE_BUTTON_LEFT, MOUSE_BUTTON_RIGHT
 # 學員按鍵觸發器專用的優先權：故意設到不可能有人蓋過去的低點
 const STUDENT_PRIORITY := -2147483648
 
+# 在網頁版會被瀏覽器攔截、觸發內建功能的按鍵（Ctrl、Tab、Esc、F 鍵）
+const DANGEROUS_KEYS: Array[Key] = [
+	KEY_CTRL, KEY_TAB, KEY_ESCAPE,
+	KEY_F1, KEY_F2, KEY_F3, KEY_F4, KEY_F5, KEY_F6,
+	KEY_F7, KEY_F8, KEY_F9, KEY_F10, KEY_F11, KEY_F12,
+]
+
 # 一條綁定紀錄
 class Binding extends RefCounted:
 	var owner: Node
@@ -58,6 +65,14 @@ func bind_input(owner: Node, input_type: int, key: Key, phase: int, callback: Ca
 		bind_key(owner, key, phase, callback, priority)
 	else:
 		bind_mouse(owner, MOUSE_BUTTONS[input_type - 1], phase, callback, priority)
+
+# 組件選到網頁版會出事的按鍵時印中文警告；label 是訊息開頭，例如「[近戰]」
+func warn_if_dangerous_key(key: Key, label: String) -> void:
+	if key not in DANGEROUS_KEYS:
+		return
+	var message := "%s 選到的按鍵「%s」在網頁版可能會觸發瀏覽器內建功能，建議換一個" % [label, OS.get_keycode_string(key)]
+	push_warning(message)
+	printerr("⚠ %s" % message)
 
 # 學員自己擺的按鍵觸發器專用（KeyTrigger）：一定收得到輸入，但不會擋住任何其他綁定
 @warning_ignore("shadowed_variable_base_class")

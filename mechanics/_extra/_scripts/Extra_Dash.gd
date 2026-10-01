@@ -22,12 +22,6 @@ extends MechanicBase
 ## 衝刺出去的那一刻發出，在衝刺開始之前
 signal dashed
 
-const _DANGEROUS_KEYS := [
-	KEY_CTRL, KEY_TAB, KEY_ESCAPE,
-	KEY_F1, KEY_F2, KEY_F3, KEY_F4, KEY_F5, KEY_F6,
-	KEY_F7, KEY_F8, KEY_F9, KEY_F10, KEY_F11, KEY_F12,
-]
-
 var _dash_time_left: float = 0.0
 var _cooldown_left: float = 0.0
 var _facing: int = 1
@@ -41,7 +35,7 @@ func _validate_property(property: Dictionary) -> void:
 # 綁衝刺鍵、記住角色面向方向（沒按方向鍵時要往這個方向衝）
 func _on_setup() -> void:
 	if input_type == 0:
-		_warn_if_dangerous_key(key)
+		InputRouter.warn_if_dangerous_key(key, "[衝刺]")
 	InputRouter.bind_input(self, input_type, key, InputRouter.PRESSED, _on_key_pressed)
 	player.direction_changed.connect(func(dir: int): _facing = dir)
 
@@ -72,11 +66,3 @@ func _on_key_pressed() -> bool:
 	_cooldown_left = cooldown
 	Events.mechanic_event.emit("Extra_Dash", "dashed")
 	return true
-
-# 選到會被瀏覽器攔截的按鍵時提醒（Ctrl、Tab、Esc、F 鍵在網頁版會觸發瀏覽器內建功能）
-func _warn_if_dangerous_key(k: Key) -> void:
-	if k not in _DANGEROUS_KEYS:
-		return
-	var message := "[衝刺] 選到的按鍵「%s」在網頁版可能會觸發瀏覽器內建功能，建議換一個" % OS.get_keycode_string(k)
-	push_warning(message)
-	printerr("⚠ %s" % message)

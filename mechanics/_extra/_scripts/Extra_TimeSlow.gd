@@ -21,17 +21,11 @@ signal started
 ## 世界恢復正常速度之後發出
 signal ended
 
-const _DANGEROUS_KEYS := [
-	KEY_CTRL, KEY_TAB, KEY_ESCAPE,
-	KEY_F1, KEY_F2, KEY_F3, KEY_F4, KEY_F5, KEY_F6,
-	KEY_F7, KEY_F8, KEY_F9, KEY_F10, KEY_F11, KEY_F12,
-]
-
 var _active: bool = false
 
 # 綁子彈時間鍵
 func _on_setup() -> void:
-	_warn_if_dangerous_key(key)
+	InputRouter.warn_if_dangerous_key(key, "[子彈時間]")
 	InputRouter.bind_key(self, key, InputRouter.PRESSED, _on_key_pressed)
 
 # 正在進行中就不重複觸發；否則開始子彈時間
@@ -52,11 +46,3 @@ func _run_time_slow() -> void:
 	_active = false
 	ended.emit()
 	Events.mechanic_event.emit("Extra_TimeSlow", "ended")
-
-# 選到會被瀏覽器攔截的按鍵時提醒（Ctrl、Tab、Esc、F 鍵在網頁版會觸發瀏覽器內建功能）
-func _warn_if_dangerous_key(k: Key) -> void:
-	if k not in _DANGEROUS_KEYS:
-		return
-	var message := "[子彈時間] 選到的按鍵「%s」在網頁版可能會觸發瀏覽器內建功能，建議換一個" % OS.get_keycode_string(k)
-	push_warning(message)
-	printerr("⚠ %s" % message)

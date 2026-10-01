@@ -21,11 +21,6 @@ extends AbilityBase
 
 const _HITBOX_SCENE := preload("res://abilities/MeleeHitbox.tscn")
 const _HITBOX_DURATION := 0.15
-const _DANGEROUS_KEYS := [
-	KEY_CTRL, KEY_TAB, KEY_ESCAPE,
-	KEY_F1, KEY_F2, KEY_F3, KEY_F4, KEY_F5, KEY_F6,
-	KEY_F7, KEY_F8, KEY_F9, KEY_F10, KEY_F11, KEY_F12,
-]
 
 var _facing: int = 1
 var _cooldown_left: float = 0.0
@@ -39,7 +34,7 @@ func _validate_property(property: Dictionary) -> void:
 # 接玩家面向訊號、向 InputRouter 註冊攻擊鍵
 func _on_setup() -> void:
 	if input_type == 0:
-		_warn_if_dangerous_key(key)
+		InputRouter.warn_if_dangerous_key(key, "[近戰]")
 	if player.has_signal("direction_changed"):
 		player.direction_changed.connect(func(dir): _facing = dir)
 	InputRouter.bind_input(self, input_type, key, InputRouter.PRESSED, _on_attack_pressed)
@@ -63,11 +58,3 @@ func _on_attack_pressed() -> void:
 func _process(delta: float) -> void:
 	if _cooldown_left > 0.0:
 		_cooldown_left -= delta
-
-# 選到會被瀏覽器攔截的按鍵時提醒（Ctrl、Tab、Esc、F 鍵在網頁版會觸發瀏覽器內建功能）
-func _warn_if_dangerous_key(k: Key) -> void:
-	if k not in _DANGEROUS_KEYS:
-		return
-	var message := "[近戰] 選到的按鍵「%s」在網頁版可能會觸發瀏覽器內建功能，建議換一個" % OS.get_keycode_string(k)
-	push_warning(message)
-	printerr("⚠ %s" % message)

@@ -38,11 +38,6 @@ extends AbilityBase
 const _TILE_SIZE := 16.0
 # input_type 的「只用訊號觸發」選項
 const _SIGNAL_ONLY := 4
-const _DANGEROUS_KEYS := [
-	KEY_CTRL, KEY_TAB, KEY_ESCAPE,
-	KEY_F1, KEY_F2, KEY_F3, KEY_F4, KEY_F5, KEY_F6,
-	KEY_F7, KEY_F8, KEY_F9, KEY_F10, KEY_F11, KEY_F12,
-]
 
 var _facing: int = 1
 var _cooldown_left: float = 0.0
@@ -55,7 +50,7 @@ func _validate_property(property: Dictionary) -> void:
 # 接玩家面向訊號，向 InputRouter 註冊攻擊鍵；選「只用訊號觸發」時不綁按鍵，改檢查有沒有訊號連到 shoot()
 func _on_setup() -> void:
 	if input_type == 0:
-		_warn_if_dangerous_key(key)
+		InputRouter.warn_if_dangerous_key(key, "[遠程]")
 	if player.has_signal("direction_changed"):
 		player.direction_changed.connect(func(dir): _facing = dir)
 	if input_type == _SIGNAL_ONLY:
@@ -106,13 +101,5 @@ func _warn_if_shoot_not_connected() -> void:
 		if callable.get_method() == "shoot":
 			return
 	var message := "[%s] 按鍵種類選了「只用訊號觸發」，但沒有任何訊號連到 shoot()，永遠不會開槍。請在「節點」面板把訊號（例如後座力卡的 fired）連到這個節點的 shoot" % name
-	push_warning(message)
-	printerr("⚠ %s" % message)
-
-# 選到會被瀏覽器攔截的按鍵時提醒（Ctrl、Tab、Esc、F 鍵在網頁版會觸發瀏覽器內建功能）
-func _warn_if_dangerous_key(k: Key) -> void:
-	if k not in _DANGEROUS_KEYS:
-		return
-	var message := "[遠程] 選到的按鍵「%s」在網頁版可能會觸發瀏覽器內建功能，建議換一個" % OS.get_keycode_string(k)
 	push_warning(message)
 	printerr("⚠ %s" % message)

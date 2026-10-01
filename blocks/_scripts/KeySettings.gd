@@ -18,11 +18,6 @@ extends Node
 @export var jump_key: Key = KEY_NONE
 
 const _ARROW_KEYS := [KEY_LEFT, KEY_RIGHT, KEY_UP, KEY_DOWN]
-const _DANGEROUS_KEYS := [
-	KEY_CTRL, KEY_TAB, KEY_ESCAPE,
-	KEY_F1, KEY_F2, KEY_F3, KEY_F4, KEY_F5, KEY_F6,
-	KEY_F7, KEY_F8, KEY_F9, KEY_F10, KEY_F11, KEY_F12,
-]
 const _ACTION_NAMES := {
 	"move_left": "往左",
 	"move_right": "往右",
@@ -79,10 +74,7 @@ func _replace_key(action: String, key: Key) -> void:
 	new_event.physical_keycode = key
 	InputMap.action_add_event(action, new_event)
 	print("[按鍵設定] %s 改成 %s" % [_ACTION_NAMES[action], OS.get_keycode_string(key)])
-	if key in _DANGEROUS_KEYS:
-		var message := "[按鍵設定] %s 選的按鍵「%s」在網頁版可能會觸發瀏覽器內建功能，建議換一個" % [_ACTION_NAMES[action], OS.get_keycode_string(key)]
-		push_warning(message)
-		printerr("⚠ %s" % message)
+	InputRouter.warn_if_dangerous_key(key, "[按鍵設定] %s" % _ACTION_NAMES[action])
 
 # 檢查有沒有兩個基本動作用到同一顆鍵（例如跳躍改成 A，但往左也是 A）
 func _warn_duplicates() -> void:

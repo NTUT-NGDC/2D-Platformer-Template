@@ -30,12 +30,6 @@ signal shrank
 const _TRIGGER_KEY := 0
 const _AUTO_INTERVAL := 3.0
 
-const _DANGEROUS_KEYS := [
-	KEY_CTRL, KEY_TAB, KEY_ESCAPE,
-	KEY_F1, KEY_F2, KEY_F3, KEY_F4, KEY_F5, KEY_F6,
-	KEY_F7, KEY_F8, KEY_F9, KEY_F10, KEY_F11, KEY_F12,
-]
-
 var _is_big: bool = false
 var _pending_factor: float = 0.0
 var _auto_time_left: float = _AUTO_INTERVAL
@@ -52,7 +46,7 @@ func _on_setup() -> void:
 	player.set_size_factor(small_scale)
 	if trigger_timing == _TRIGGER_KEY:
 		if input_type == 0:
-			_warn_if_dangerous_key(key)
+			InputRouter.warn_if_dangerous_key(key, "[忽大忽小]")
 		InputRouter.bind_input(self, input_type, key, InputRouter.PRESSED, _toggle)
 
 # 隨時間模式的倒數；有待處理的變大請求時，每幀重新檢查空間夠不夠
@@ -127,11 +121,3 @@ func _apply_stat_scales(ctx: MoveContext) -> void:
 		var t := (1.0 - f) / (1.0 - small_scale)
 		ctx.jump_scale *= lerpf(1.0, 1.3, t)
 		ctx.knockback_scale *= lerpf(1.0, 1.6, t)
-
-# 選到會被瀏覽器攔截的按鍵時提醒（Ctrl、Tab、Esc、F 鍵在網頁版會觸發瀏覽器內建功能）
-func _warn_if_dangerous_key(k: Key) -> void:
-	if k not in _DANGEROUS_KEYS:
-		return
-	var message := "[忽大忽小] 選到的按鍵「%s」在網頁版可能會觸發瀏覽器內建功能，建議換一個" % OS.get_keycode_string(k)
-	push_warning(message)
-	printerr("⚠ %s" % message)

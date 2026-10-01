@@ -28,11 +28,6 @@ signal launched
 
 # 拖曳鍵用較高優先權向 InputRouter 註冊，跟其他綁同一顆鍵的組件同時存在時彈弓先收到
 const _PRIORITY := 100
-const _DANGEROUS_KEYS := [
-	KEY_CTRL, KEY_TAB, KEY_ESCAPE,
-	KEY_F1, KEY_F2, KEY_F3, KEY_F4, KEY_F5, KEY_F6,
-	KEY_F7, KEY_F8, KEY_F9, KEY_F10, KEY_F11, KEY_F12,
-]
 
 var _dragging: bool = false
 var _drag_start: Vector2 = Vector2.ZERO
@@ -46,7 +41,7 @@ func _validate_property(property: Dictionary) -> void:
 # 向 InputRouter 註冊拖曳鍵的按下／放開；show_aim_line 開啟時自己生成一條瞄準線，學員不用擺
 func _on_setup() -> void:
 	if input_type == 0:
-		_warn_if_dangerous_key(key)
+		InputRouter.warn_if_dangerous_key(key, "[彈弓]")
 	InputRouter.bind_input(self, input_type, key, InputRouter.PRESSED, _on_drag_pressed, _PRIORITY)
 	InputRouter.bind_input(self, input_type, key, InputRouter.RELEASED, _on_drag_released, _PRIORITY)
 	if not show_aim_line:
@@ -104,11 +99,3 @@ func _release() -> void:
 	var direction := -drag.normalized()
 	player.add_impulse(direction * max_launch_force * ratio)
 	Events.mechanic_event.emit("Mechanic_Slingshot", "launched")
-
-# 選到會被瀏覽器攔截的按鍵時提醒（Ctrl、Tab、Esc、F 鍵在網頁版會觸發瀏覽器內建功能）
-func _warn_if_dangerous_key(k: Key) -> void:
-	if k not in _DANGEROUS_KEYS:
-		return
-	var message := "[彈弓] 選到的按鍵「%s」在網頁版可能會觸發瀏覽器內建功能，建議換一個" % OS.get_keycode_string(k)
-	push_warning(message)
-	printerr("⚠ %s" % message)

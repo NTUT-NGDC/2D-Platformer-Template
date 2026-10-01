@@ -400,7 +400,7 @@
 - [x] U108 `MoveContext` 倍率改成乘上去（`*=`），修「兩張卡調同一個倍率只有後面的生效」（越跑越快＋體力、越跑越快＋忽大忽小、
       衝刺、黏黏地板）；`auto_run_dir` 維持後面蓋前面並寫進文件；`00_foundation` 補機制卡寫 `MoveContext` 的規則
       （驗證：`tests/systems/MoveContextStackTest.tscn` 照輸出面板步驟）
-- [ ] U109 危險按鍵清單＋警告收進 InputRouter（`InputRouter.warn_if_dangerous_key()`），9 份重複的刪掉；行為不變
+- [x] U109 危險按鍵清單＋警告收進 InputRouter（`InputRouter.warn_if_dangerous_key()`），9 份重複的刪掉；行為不變
 - [ ] U110 編輯器訊號連線虛線抽成共用工具，10 個零件改用；行為不變
 - [ ] U111 碰撞層常數 `Layers`（`Layers.PLAYER`、`Layers.TERRAIN`…），46 處位元運算改用；`01a` §2 對照；行為不變
 - [ ] U112 瞬間傷害統一走 `take_hit()`：碰到敵人、尖刺扣血改成 `take_hit()`（有擊退、會發 `Events.hit`）；
