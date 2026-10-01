@@ -21,6 +21,9 @@ signal stopped_moving
 @export_range(200.0, 2000.0) var gravity: float = 980.0
 ## 地面摩擦係數：0 = 像冰面一樣滑不停，1 = 放開方向鍵立刻煞停。
 @export_range(0.0, 1.0) var ground_friction: float = 0.8
+## 速度上限（像素／秒）：所有東西推出來的速度加起來都不會超過這個值，太快會穿牆。
+## 一格是 16 像素；速度到 960 差不多每幀走一整格
+@export_range(400.0, 2000.0) var max_speed: float = 1200.0
 
 var visual: Node2D = null
 var size_factor: float = 1.0
@@ -124,6 +127,7 @@ func _physics_process(delta: float) -> void:
 
 	_apply_horizontal(ctx, delta)
 	_apply_vertical(ctx, delta)
+	velocity = velocity.limit_length(max_speed)
 
 	move_and_slide()
 

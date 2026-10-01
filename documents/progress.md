@@ -448,3 +448,12 @@
       畫面：「過關！」、用了幾秒（`show_time`）、死了幾次（`show_deaths`）、選填一行 `message`、「按 R 再玩一次」；
       過關時暫停遊戲，按 R 呼叫 RespawnHandler 新增的 `restart_level_now()` 整關重來（沒有 RespawnHandler 時印中文提醒、只關掉畫面）。
       終點踩到後變色、整關重來時恢復；場景裡沒有過關畫面時，終點有黃色驚嘆號、過關當下印中文提醒
+
+## 階段 27：最大速度
+
+> 講師決定：學員反映反彈太快會穿牆（Player 沒有速度上限，彈性宇宙 bounciness > 1 時越彈越快）。
+> Player「移動參數」群組加 `max_speed` 拉桿（400～2000，預設 1200），每幀移動前把總速度限制在這以內；
+> 彈性宇宙 bounciness 維持 0.3～1.5（越彈越快當成玩法保留，由最大速度擋住）。
+
+- [x] U121 `Player.max_speed`：`move_and_slide()` 前 `velocity.limit_length(max_speed)`，所有機制卡、零件推出來的速度一起限制；
+      `00_foundation` 與零件手冊補上這個參數
