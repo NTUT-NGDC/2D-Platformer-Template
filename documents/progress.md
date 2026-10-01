@@ -457,3 +457,11 @@
 
 - [x] U121 `Player.max_speed`：`move_and_slide()` 前 `velocity.limit_length(max_speed)`，所有機制卡、零件推出來的速度一起限制；
       `00_foundation` 與零件手冊補上這個參數
+
+## 階段 28：不反彈方塊
+
+> 講師決定：彈性宇宙卡沒辦法指定「撞到這個就停下來」，改 Layer 會變成穿過去。做一個拖進關卡的「不反彈方塊」：
+> 實心地形，掛彈性宇宙卡的玩家撞到它照一般碰撞停下來，撞到其他地方照常反彈。
+
+- [x] U122 `blocks/NoBounceBlock.tscn`：實心（圖層 2 地形），`width_tiles`／`height_tiles` 拉桿調大小（編輯器即時顯示），加入 group `no_bounce`；
+      彈性宇宙卡跳過撞到 `no_bounce` 的碰撞；`01a` §2 group 表、`01b` 彈性宇宙、`01c` 地形類、零件手冊補上

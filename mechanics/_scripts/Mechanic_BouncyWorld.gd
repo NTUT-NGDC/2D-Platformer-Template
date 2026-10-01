@@ -34,7 +34,11 @@ func apply(ctx: MoveContext) -> void:
 	var floor_normal := Vector2.ZERO
 	var other_normal := Vector2.ZERO
 	for i in player.get_slide_collision_count():
-		var normal: Vector2 = player.get_slide_collision(i).get_normal()
+		var collision: KinematicCollision2D = player.get_slide_collision(i)
+		var collider: Object = collision.get_collider()
+		if collider is Node and (collider as Node).is_in_group("no_bounce"):
+			continue  # 不反彈方塊：照一般碰撞停下來，不算「撞到要彈的表面」
+		var normal: Vector2 = collision.get_normal()
 		if normal.dot(player.up_direction) > 0.7:
 			touching_floor = true
 			floor_normal = normal

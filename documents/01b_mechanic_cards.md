@@ -241,6 +241,7 @@ group 定義）。
 ```
 碰撞時取法線反彈（`velocity.bounce(normal)`，CharacterBody2D 不吃 PhysicsMaterial）。
 **必須設下限**：速度低於閾值就停止彈跳，否則會永遠抖動。
+撞到 group `no_bounce` 的東西（`blocks/NoBounceBlock.tscn`）不彈，照一般碰撞停下來。
 事件：`bounced`
 
 #### 9. 越跑越快 `Mechanic_SpeedRamp`
