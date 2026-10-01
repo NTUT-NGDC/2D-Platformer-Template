@@ -22,6 +22,10 @@ extends Area2D
 		tag = value
 		update_configuration_warnings()
 
+## 玩家死掉重生時，這顆按鈕要不要回到關著的狀態（開著的話會發出 turned_off，連著的門、平台、敵人射擊也會跟著關）；
+## 不勾的話維持死掉前的樣子
+@export var reset_on_death: bool = false
+
 ## 開啟時發出，依「觸發方式」決定時機
 signal turned_on
 ## 關閉時發出（踩一下永久開模式不會用到這個）
@@ -50,7 +54,7 @@ var _tag: String = ""
 var _warning_timer: float = 0.0
 
 # 設定碰撞層／遮罩，並依模式決定要不要監聽踩踏。
-# 按鈕沒有 reset()：它的開關狀態連著別的零件，重生時維持原狀才不會跟門、平台對不上。
+# 預設重生時維持原狀（開關狀態連著別的零件，維持原狀才不會卡關），勾了 reset_on_death 才會 reset()。
 func _ready() -> void:
 	if Engine.is_editor_hint():
 		return
@@ -109,6 +113,18 @@ func take_hit(_damage: int, _knockback: Vector2, source: Node) -> void:
 	if mode != _MODE_HIT:
 		return
 	_toggle()
+	_update_visual()
+
+# 重生時回到關著的狀態（重生處理者呼叫，reset_on_death 有勾才做）；原本開著就發出 turned_off，
+# 連著的零件跟著關掉，兩邊才不會對不上
+func reset() -> void:
+	if not reset_on_death:
+		return
+	var was_on := _is_on or _permanently_triggered
+	_is_on = false
+	_permanently_triggered = false
+	if was_on:
+		turned_off.emit()
 	_update_visual()
 
 # 切換開關狀態並 emit 對應訊號

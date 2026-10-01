@@ -411,7 +411,9 @@
       補進 `CLAUDE.md` 打字欄位清單
 - [x] U114 `Door` 開門方式新增「自訂數值」，同 U113 的打字欄位與防呆
       （跟道具不同：場景裡沒有別人用這個名稱也要警告，因為只有道具、ValueSettings 會給數值，找不到 = 門永遠打不開）
-- [ ] U115 可以用訊號開關的零件（Receiver）：EnemyShooter、Launcher 新增 `activate`／`deactivate`／`toggle`＋`start_on`
+- [x] U115 可以用訊號開關的零件（Receiver）：EnemyShooter、Launcher 新增 `activate`／`deactivate`／`toggle`＋`start_on`
+      　　→ 講師決定（驗收時發現死亡後開火按鈕沒重置）：Button 新增 `reset_on_death`（預設不勾＝維持 00b §8 原則），
+      　　　勾了在重生時回到關著並發出 `turned_off`，連著的零件跟著關；被控制的零件本身不重置，避免跟按鈕對不上
 - [ ] U116 可以用訊號開關的零件（Receiver）：Spike、Lava、Portal 新增 `activate`／`deactivate`／`toggle`＋`start_on`
 - [ ] U117 `CameraRig` 鏡頭模式下拉：瞬切（預設，現在的行為）／房間內跟隨（跟著玩家但不超出目前房間，房間比畫面小的那一軸
       固定在中心，換房間瞬切）／自由跟隨（忽略房間）；拿掉 `follow_player`（Showroom 改用自由跟隨）；`00b` §1 §3 更新

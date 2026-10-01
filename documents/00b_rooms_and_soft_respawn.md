@@ -177,8 +177,9 @@ func reset() -> void:
 | Breakable、CrumbleFloor | 碎掉的長回來，取消還在倒數的碎裂／重生計時 |
 | MovingPlatform | 回起點；動不動照舊由訊號決定 |
 | Door | 只有鑰匙／金幣門關回去；數值設成死亡不退回且會消耗時不重置 |
+| Button | 預設不重置；勾了 `reset_on_death` 才回到關著的狀態，原本開著就發出 `turned_off`，連著的零件跟著關掉（學員自己選要不要） |
 
-Button、Fan、Checkpoint、Goal 等沒有 `reset()`。
+Fan、Launcher、EnemyShooter、Checkpoint、Goal 等沒有 `reset()`（開關狀態交給控制它的按鈕決定）。
 
 ---
 

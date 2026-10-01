@@ -4,6 +4,7 @@ extends Node2D
 # 敵人射擊：拖到關卡裡某個 Enemy 的底下，那個敵人就會定時開槍。
 # 敵人主動找到這個節點並呼叫 setup()，不用連任何線；敵人被打倒時停火，重生復位時計時重來。
 # 子彈用 Bullet.spawn()（敵方陣營），從這個節點的位置射出，想改槍口位置就移動這個節點。
+# 也可以用 activate/deactivate/toggle 開關（例如踩按鈕讓敵人開始開槍）；開關狀態重生時不重置。
 
 @export_group("射擊")
 ## 往哪裡射
@@ -20,6 +21,8 @@ extends Node2D
 		queue_redraw()
 ## 開槍前先停下來一下，讓玩家看得出牠要開槍了
 @export var stop_to_shoot: bool = true
+## 一開始就會開槍（關著的話要靠別的零件的訊號 activate 才會開始射）
+@export var start_on: bool = true
 
 @export_group("子彈")
 ## 子彈速度
@@ -45,6 +48,26 @@ const _ARROW_COLOR := Color(1.0, 0.3, 0.3, 0.9)
 var enemy: Node2D = null
 var _cooldown_left: float = 0.0
 var _windup_left: float = 0.0
+var _active: bool = true
+
+## 開始射擊（從頭倒數冷卻，不會一開就馬上射）
+func activate() -> void:
+	if _active:
+		return
+	_active = true
+	_cooldown_left = cooldown
+
+## 停火，正在準備開的那一槍也取消
+func deactivate() -> void:
+	_active = false
+	_windup_left = 0.0
+
+## 切換
+func toggle() -> void:
+	if _active:
+		deactivate()
+	else:
+		activate()
 
 # 敵人呼叫，把自己交給這個組件
 func setup(e: Node2D) -> void:
@@ -52,7 +75,7 @@ func setup(e: Node2D) -> void:
 	_cooldown_left = cooldown
 	print("[%s] 已啟用" % name)
 
-# 敵人復位時呼叫（重生處理者 → Enemy.reset()），計時重來
+# 敵人復位時呼叫（重生處理者 → Enemy.reset()），計時重來；開關狀態不動
 func on_reset() -> void:
 	_cooldown_left = cooldown
 	_windup_left = 0.0
@@ -62,6 +85,7 @@ func _ready() -> void:
 	if Engine.is_editor_hint():
 		return
 	add_to_group("signal_source")
+	_active = start_on
 	await get_tree().process_frame
 	if enemy == null:
 		push_warning("[%s] 沒有放在 Enemy 底下，不會開槍" % name)
@@ -86,7 +110,7 @@ func _physics_process(delta: float) -> void:
 	if Engine.is_editor_hint():
 		queue_redraw()
 		return
-	if enemy == null or not is_instance_valid(enemy) or enemy.is_defeated():
+	if not _active or enemy == null or not is_instance_valid(enemy) or enemy.is_defeated():
 		return
 	if _windup_left > 0.0:
 		_windup_left -= delta

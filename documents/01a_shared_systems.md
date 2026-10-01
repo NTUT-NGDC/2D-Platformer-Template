@@ -240,7 +240,7 @@ signal value_changed(kind: String, old_value: int, new_value: int)
 
 ### 6.3 接收函式（接收介面 `Receiver`）
 
-門、移動平台、風扇等零件實作。每個零件把給學員連接的函式寫在腳本最上方，附一行中文註解。
+門、移動平台、風扇、彈射台、敵人射擊等零件實作。每個零件把給學員連接的函式寫在腳本最上方，附一行中文註解。
 
 ```gdscript
 ## 開啟

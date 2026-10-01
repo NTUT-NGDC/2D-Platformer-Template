@@ -19,7 +19,7 @@
   `Modulate`（顏色選擇器，不用打字）。
 - **死亡不重新載入場景**：有實體狀態的零件（箱子、敵人、道具、可破壞方塊、崩塌地板、移動平台位置、
   鑰匙／金幣門）各自實作 `reset()`，由 `RespawnHandler` 在重生時呼叫；被打倒、被撿走改成藏起來，不刪除節點。
-  訊號控制的開關狀態（按鈕、訊號門、風扇與平台的啟動開關）不重置。見 `00b_rooms_and_soft_respawn.md` §8。
+  訊號控制的開關狀態（按鈕、訊號門、風扇、平台、彈射台、敵人射擊的啟動開關）不重置。見 `00b_rooms_and_soft_respawn.md` §8。
 
 零件之間怎麼用訊號連動、`Receiver` / `Hittable` 介面長怎樣、連線驗證器與視覺化怎麼運作，見
 `01a_shared_systems.md` §6。
@@ -34,7 +34,7 @@
 
 | 零件 | 檔名 | 身體 | 欄位 | 訊號 |
 |---|---|---|---|---|
-| 按鈕 | `Button.tscn` | 感應 | `mode`（踩住才開／踩一下切換／踩一下永久開／被攻擊觸發）、`pressed_by`（玩家與箱子／只有玩家／只有箱子／指定群組）、`tag`（群組名稱，只在選「指定群組」時顯示） | `turned_on`、`turned_off` |
+| 按鈕 | `Button.tscn` | 感應 | `mode`（踩住才開／踩一下切換／踩一下永久開／被攻擊觸發）、`pressed_by`（玩家與箱子／只有玩家／只有箱子／指定群組）、`tag`（群組名稱，只在選「指定群組」時顯示）、`reset_on_death`（死亡重生時回到關著，預設不勾） | `turned_on`、`turned_off` |
 | 按鍵觸發器 | `KeyTrigger.tscn` | 無 | `key_source`（自訂按鍵／滑鼠左鍵／滑鼠右鍵／滑鼠中鍵／跟基本操作同一顆鍵）、`key` 或 `same_key_as`（依來源顯示其一，選滑鼠按鍵時都不顯示）、`trigger`（按下時／放開時／按住時（每一幀）） | `triggered`（學員用）；進階：`pressed`、`released`、`hold_started`、`hold_ended`、`held(seconds)` |
 | 傳送門 | `Portal.tscn` | 感應 | `pair`（另一座傳送門）、`keep_velocity`（保留速度，預設開）、`allow_boxes`（箱子也能傳） | `teleported` |
 | 重生點 | `Checkpoint.tscn` | 感應 | 無 | `reached` |
@@ -83,10 +83,10 @@
 |---|---|---|---|---|
 | 箱子 | `Box.tscn` | 會動 | `weight`（輕／重）、`block_bullets`（會不會擋子彈，預設會） | 無 |
 | 道具 | `Pickup.tscn` | 感應 | `kind`（金幣／鑰匙／血包／分數／自訂）、`custom_kind`（自訂的數值種類名稱，選「自訂」才出現，可打字）、`amount`（數量） | `collected` |
-| 彈射台 | `Launcher.tscn` | 實心 | `mode`（彈簧／彈跳床）、`direction`（上／左／右）、`force`（力道） | `launched` |
+| 彈射台 | `Launcher.tscn` | 實心 | `mode`（彈簧／彈跳床）、`direction`（上／左／右）、`force`（力道）、`start_on`（一開始就開；關著時還是實心，只是不彈）；可連接 `activate`、`deactivate`、`toggle` | `launched` |
 | 尖刺 | `Spike.tscn` | 感應 | `penalty`（扣血／即死）、`damage`（扣血量）、`knockback`（扣血時彈開玩家的力道，0 不彈開） | 無 |
 | 笨敵人 | `Enemy.tscn` | 會動 | `speed`（速度）、`health`（血量）、`damage`（傷害）、`knockback`（碰到玩家時彈開的力道，0 不彈開）、`turn_at_ledge`（走到邊緣會轉身） | `defeated` |
-| 敵人射擊 | `EnemyShooter.tscn` | 無（掛在 Enemy 底下） | 「射擊」組：`aim_type`（朝玩家／朝面向方向／固定往左右上下）、`cooldown`（射擊間隔）、`detect_range_tiles`（偵測格數，0 不限）、`stop_to_shoot`（開槍前停一下）；「子彈」組：`bullet_speed`、`use_gravity`、`damage`、`hit_objects`（會不會打壞物件） | `shot` |
+| 敵人射擊 | `EnemyShooter.tscn` | 無（掛在 Enemy 底下） | 「射擊」組：`aim_type`（朝玩家／朝面向方向／固定往左右上下）、`cooldown`（射擊間隔）、`detect_range_tiles`（偵測格數，0 不限）、`stop_to_shoot`（開槍前停一下）、`start_on`（一開始就會開槍）；可連接 `activate`、`deactivate`、`toggle`；「子彈」組：`bullet_speed`、`use_gravity`、`damage`、`hit_objects`（會不會打壞物件） | `shot` |
 
 - 箱子實作受擊介面，被攻擊時只受擊退。
 - 道具：血包加血量，但不超過上限。種類選「自訂」時可以打數值種類名稱（`CLAUDE.md` 鐵律 4 的打字欄位，用 `NameCheck`）：
