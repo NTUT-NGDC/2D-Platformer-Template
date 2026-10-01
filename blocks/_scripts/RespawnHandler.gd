@@ -73,6 +73,15 @@ func _on_player_died() -> void:
 	if send_restart_signal:
 		Events.level_restarted.emit()
 
+# 馬上整關重來（玩家沒死也可以），過關畫面按「再玩一次」用這個
+func restart_level_now() -> void:
+	var player := get_tree().get_first_node_in_group("player")
+	if player == null or not player.has_method("revive"):
+		return
+	_restart_level(player)
+	if send_restart_signal:
+		Events.level_restarted.emit()
+
 # 回到目前房間：放回死掉的房間的東西並倒回數值；重生到別的房間時，重生的房間也一起處理
 func _respawn_in_room(player: Node) -> void:
 	var target := _pick_respawn()

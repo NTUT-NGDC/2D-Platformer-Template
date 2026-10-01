@@ -89,6 +89,9 @@ Claude Code 在這個專案裡的所有對話回覆、進度回報、驗收結�
 目前的打字欄位：`ValueSettings.kind`（數值種類，見 `documents/01a_shared_systems.md` §4.1）、
 `Button.tag`、`Pickup.custom_kind`（種類選「自訂」才出現）、`Door.custom_kind`（開門方式選「自訂數值」才出現）（見 `documents/01c_blocks_and_abilities.md`）。新增打字欄位時要補進這份清單。
 
+**顯示文字例外（講師決定）**：`ClearScreen.message`（過關畫面最下面製作者選填的一行字）是純顯示用的文字，不拿去比對任何東西，
+所以只需要做到「不打字也能用（空白就不顯示）」和「去掉頭尾空白」，不需要編輯器檢查與近似建議。
+
 ### 5. 組件之間不准打架
 
 任意組合、任意數量的機制卡與 Juice 組件同時存在時，遊戲不得崩潰或卡死。

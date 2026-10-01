@@ -10,6 +10,7 @@
 [ext_resource type="PackedScene" path="res://blocks/Portal.tscn" id="9"]
 [ext_resource type="PackedScene" path="res://blocks/Checkpoint.tscn" id="10"]
 [ext_resource type="PackedScene" path="res://blocks/Goal.tscn" id="11"]
+[ext_resource type="PackedScene" path="res://blocks/ClearScreen.tscn" id="40"]
 [ext_resource type="PackedScene" path="res://blocks/Door.tscn" id="12"]
 [ext_resource type="PackedScene" path="res://blocks/MovingPlatform.tscn" id="13"]
 [ext_resource type="PackedScene" path="res://blocks/Fan.tscn" id="14"]
@@ -107,6 +108,8 @@ text = "重生點"
 
 [node name="Show_Goal" parent="." instance=ExtResource("11")]
 position = Vector2(1704, 144)
+
+[node name="ClearScreen" parent="." instance=ExtResource("40")]
 
 [node name="Label_Goal" type="Label" parent="."]
 offset_left = 1664.0

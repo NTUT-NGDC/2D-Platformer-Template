@@ -39,6 +39,7 @@
 | 傳送門 | `Portal.tscn` | 感應 | `pair`（另一座傳送門）、`keep_velocity`（保留速度，預設開）、`allow_boxes`（箱子也能傳）、`start_on`（一開始就開；關著時站進來不傳，但另一座傳過來照樣會出現）；可連接 `activate`、`deactivate`、`toggle` | `teleported` |
 | 重生點 | `Checkpoint.tscn` | 感應 | 無 | `reached` |
 | 終點 | `Goal.tscn` | 感應 | 無 | `reached` |
+| 過關畫面 | `ClearScreen.tscn` | 無（畫面） | `show_time`（顯示用了幾秒）、`show_deaths`（顯示死了幾次）、`message`（最下面選填的一行字，可打字）；可連接 `activate`（顯示過關畫面） | 無 |
 | 時間軸 | `Timeline.tscn` | 無 | `start_on`（開場就開始計時）、`on_death`（從 0 重來／繼續跑）、`loop`（跑完最後一個事件從頭再來）、`show_time`（畫面右上角顯示秒數）；可連接 `activate`（開始／繼續）、`deactivate`（暫停）、`toggle`、`restart`（從 0 重來） | 無（訊號在底下的事件） |
 | 時間軸事件 | `TimelineEvent.tscn` | 無（放在 Timeline 底下） | `enabled`、`time`（從時間軸開始算起第幾秒觸發） | `triggered` |
 
@@ -49,7 +50,10 @@
   列出場景中現有的群組、附近似名稱建議；比對前先整理名稱（`NameCheck`）。
 - 按鍵觸發器的 `same_key_as` 與 `key` 用 `_validate_property` 依 `key_source` 顯示其中一個；選滑鼠按鍵時兩個都隱藏，改用 `InputRouter.bind_student_mouse()`。
 - 傳送門：A 指定 B 後，B 自動連回 A；傳送後 0.3 秒內不會再次觸發，避免來回彈。
-- 終點 emit `Events.level_cleared`。W1 玩具箱不使用。
+- 終點踩到時變綠並 emit `Events.level_cleared`，整關重來時恢復（`reset()`）。W1 玩具箱不使用。
+- 過關畫面拖進關卡就自動接 `Events.level_cleared`（終點、存活計時卡），不用連線；跳出時遊戲暫停，按 R（`restart` 動作）
+  呼叫 `RespawnHandler.restart_level_now()` 整關重來（數值倒回、重生點清空），用了幾秒、死了幾次歸零。
+  場景裡沒有過關畫面時：終點有黃色驚嘆號，過關當下 `RespawnMemory` 印中文提醒。沒有 RespawnHandler 時按 R 只關掉畫面並印提醒。
 - 時間軸沿用「按鍵設定＋按鍵觸發器」的父子結構：`Timeline` 底下放 `TimelineEvent` 子節點，一個子節點一列，
   節點名稱＝這一列的名稱（例如「10秒開門」），要多一列就 Ctrl+D 複製。秒數一律是從時間軸開始算起的時間點
   （像影片時間刻度），不是等上一列之後幾秒，子節點上下順序不影響觸發時間（講師決定）。時間到時事件發出不帶參數的 `triggered`，

@@ -28,9 +28,11 @@ func _on_player_died() -> void:
 	if get_tree().get_first_node_in_group("respawn_handler") == null:
 		print("[重生] 玩家死亡了，但場景裡沒有 RespawnHandler，所以不會重生。想要重生就把 blocks/RespawnHandler.tscn 拖進關卡")
 
-# 到達終點：清空所有重生記憶
+# 到達終點：清空所有重生記憶；場景裡沒有過關畫面的話提醒學員，不然看起來像沒反應
 func _on_level_cleared() -> void:
 	clear()
+	if get_tree().get_first_node_in_group("clear_screen") == null:
+		print("[過關] 過關了，但場景裡沒有過關畫面（ClearScreen），所以畫面上不會有反應。想要過關畫面就把 blocks/ClearScreen.tscn 拖進關卡")
 
 # 整關重來時呼叫：清空踩過的重生點（數值由放回去的物件自己倒回）
 func restart_level() -> void:
