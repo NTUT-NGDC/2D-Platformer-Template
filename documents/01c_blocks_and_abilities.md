@@ -39,6 +39,8 @@
 | 傳送門 | `Portal.tscn` | 感應 | `pair`（另一座傳送門）、`keep_velocity`（保留速度，預設開）、`allow_boxes`（箱子也能傳）、`start_on`（一開始就開；關著時站進來不傳，但另一座傳過來照樣會出現）；可連接 `activate`、`deactivate`、`toggle` | `teleported` |
 | 重生點 | `Checkpoint.tscn` | 感應 | 無 | `reached` |
 | 終點 | `Goal.tscn` | 感應 | 無 | `reached` |
+| 時間軸 | `Timeline.tscn` | 無 | `start_on`（開場就開始計時）、`on_death`（從 0 重來／繼續跑）、`loop`（跑完最後一個事件從頭再來）、`show_time`（畫面右上角顯示秒數）；可連接 `activate`（開始／繼續）、`deactivate`（暫停）、`toggle`、`restart`（從 0 重來） | 無（訊號在底下的事件） |
+| 時間軸事件 | `TimelineEvent.tscn` | 無（放在 Timeline 底下） | `enabled`、`time`（從時間軸開始算起第幾秒觸發） | `triggered` |
 
 - 按鈕的 `turned_on` / `turned_off` 依模式決定：踩住才開為壓下／離開；切換為每踩一次交替；永久為只發一次 `turned_on`。
 - 按鈕的 `pressed_by` 選「指定群組」時，只有屬於 `tag` 群組的物體踩得動。群組由學員在「節點」面板 → 群組自己加在
@@ -48,6 +50,13 @@
 - 按鍵觸發器的 `same_key_as` 與 `key` 用 `_validate_property` 依 `key_source` 顯示其中一個；選滑鼠按鍵時兩個都隱藏，改用 `InputRouter.bind_student_mouse()`。
 - 傳送門：A 指定 B 後，B 自動連回 A；傳送後 0.3 秒內不會再次觸發，避免來回彈。
 - 終點 emit `Events.level_cleared`。W1 玩具箱不使用。
+- 時間軸沿用「按鍵設定＋按鍵觸發器」的父子結構：`Timeline` 底下放 `TimelineEvent` 子節點，一個子節點一列，
+  節點名稱＝這一列的名稱（例如「10秒開門」），要多一列就 Ctrl+D 複製。秒數一律是從時間軸開始算起的時間點
+  （像影片時間刻度），不是等上一列之後幾秒，子節點上下順序不影響觸發時間（講師決定）。時間到時事件發出不帶參數的 `triggered`，
+  學員照平常連按鈕的方式連到零件。編輯器裡在 Timeline 旁按秒數列出「秒數｜事件名稱」並畫訊號虛線。
+  事件沒放在 Timeline 底下、Timeline 底下沒有事件或混進別的東西時有黃色驚嘆號＋中文警告；事件沒連線時印中文警告。
+  `on_death` 聽 `Events.player_respawned`，不走 `reset()`（時間軸通常不在房間裡，不受房間與重生分組影響）。
+  `loop` 的一輪長度＝啟用中事件的最大秒數，最大秒數是 0 時不重來。
 
 ### 2.2 接收類
 

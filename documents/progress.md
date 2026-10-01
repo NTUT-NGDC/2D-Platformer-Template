@@ -417,3 +417,15 @@
 - [x] U116 可以用訊號開關的零件（Receiver）：Spike、Lava、Portal 新增 `activate`／`deactivate`／`toggle`＋`start_on`
 - [x] U117 `CameraRig` 鏡頭模式下拉：瞬切（預設，現在的行為）／房間內跟隨（跟著玩家但不超出目前房間，房間比畫面小的那一軸
       固定在中心，換房間瞬切）／自由跟隨（忽略房間）；拿掉 `follow_player`（Showroom 改用自由跟隨）；`00b` §1 §3 更新
+
+## 階段 24：時間軸（W1 補充）
+
+> 講師決定：要一個方便擴增事件的計時器，像時間軸一樣「第 10 秒觸發某個事件」。
+> 結構沿用 KeySettings＋KeyTrigger：`Timeline` 父節點底下放 `TimelineEvent` 子節點，一個子節點一列（`time` 拉桿＋`triggered` 訊號），
+> 加一列就複製一個子節點。開始／死亡行為用欄位讓學員選，時間可勾選顯示在畫面上。
+
+- [x] U118 `blocks/Timeline` ＋ `blocks/TimelineEvent`：`start_on`（開場就跑）、`on_death`（從 0 重來／繼續跑）、`loop`（跑完最後一個事件從頭再來）、
+      `show_time`（畫面右上角顯示秒數）；Receiver：`activate`（開始／繼續）、`deactivate`（暫停）、`toggle`、`restart`（從 0 重來）；
+      TimelineEvent 沒放在 Timeline 底下、Timeline 底下沒有事件、事件的 triggered 沒連線時有黃色驚嘆號／中文警告；
+      編輯器裡在 Timeline 旁列出「第幾秒｜事件名稱」並畫訊號虛線
+      　　→ 講師決定：秒數是「從時間軸開始算起的時間點」，不做「等上一列之後幾秒」的間隔模式；欄位說明與清單文字寫清楚
