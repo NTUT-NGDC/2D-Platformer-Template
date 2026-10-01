@@ -1,0 +1,74 @@
+[gd_resource type="Resource" script_class="MechanicCardList" format=3]
+
+[ext_resource type="Script" path="res://data/MechanicCard.gd" id="1"]
+[ext_resource type="Script" path="res://data/MechanicCardList.gd" id="2"]
+
+[sub_resource type="Resource" id="Rule_StickyBody"]
+script = ExtResource("1")
+card_name = "黏黏身體"
+file_name = "Mechanic_StickyBody"
+category = "規則"
+rule_text = "碰到牆壁、地板、天花板就會黏住不動，按跳躍才會往外彈開。"
+difficulty_technical = 2
+difficulty_design = 2
+conflicts_with = Array[String](["Mechanic_AutoRun", "Mechanic_BouncyWorld"])
+
+[sub_resource type="Resource" id="Rule_Stamina"]
+script = ExtResource("1")
+card_name = "移動會扣血"
+file_name = "Mechanic_Stamina"
+category = "規則"
+rule_text = "移動會消耗體力，停下來才會慢慢回復；體力用完就走不動或變很慢。"
+
+[sub_resource type="Resource" id="Rule_TouchDeath"]
+script = ExtResource("1")
+card_name = "碰觸即死"
+file_name = "Mechanic_TouchDeath"
+category = "規則"
+rule_text = "碰到敵人、箱子或危險物就直接死掉，連一滴血的機會都沒有。"
+difficulty_technical = 2
+
+[sub_resource type="Resource" id="Rule_SurvivalTimer"]
+script = ExtResource("1")
+card_name = "存活計時"
+file_name = "Mechanic_SurvivalTimer"
+category = "規則"
+rule_text = "不用走到終點，只要撐過指定的秒數沒死就算過關。"
+difficulty_design = 2
+
+[sub_resource type="Resource" id="Rule_StopDeath"]
+script = ExtResource("1")
+card_name = "停下即死"
+file_name = "Mechanic_StopDeath"
+category = "規則"
+rule_text = "不能停下來，靜止不動太久就會死掉（快到時間角色會閃紅）。"
+difficulty_technical = 2
+conflicts_with = Array[String](["Mechanic_AutoRun"])
+
+[sub_resource type="Resource" id="Rule_HealthDrain"]
+script = ExtResource("1")
+card_name = "血量流失"
+file_name = "Mechanic_HealthDrain"
+category = "規則"
+rule_text = "血量會一直自己往下掉，要一路撿金幣補血才活得下去。"
+difficulty_design = 2
+
+[sub_resource type="Resource" id="Rule_FloorIsLava"]
+script = ExtResource("1")
+card_name = "地板是岩漿"
+file_name = "Mechanic_FloorIsLava"
+category = "規則"
+rule_text = "站在地板上會一直扣血，只有標記為安全的平台可以放心站。"
+difficulty_technical = 2
+
+[sub_resource type="Resource" id="Rule_SwitchWorld"]
+script = ExtResource("1")
+card_name = "開關世界"
+file_name = "Mechanic_SwitchWorld"
+category = "規則"
+rule_text = "紅色和藍色方塊會輪流出現、消失，要抓準時機踩上去。（關卡裡要擺 blocks/SwitchBlock.tscn）"
+difficulty_design = 2
+
+[resource]
+script = ExtResource("2")
+cards = Array[Resource]([SubResource("Rule_StickyBody"), SubResource("Rule_Stamina"), SubResource("Rule_TouchDeath"), SubResource("Rule_SurvivalTimer"), SubResource("Rule_StopDeath"), SubResource("Rule_HealthDrain"), SubResource("Rule_FloorIsLava"), SubResource("Rule_SwitchWorld")])

@@ -411,6 +411,8 @@ group 定義）。
 | 彈珠台體質 × 碰觸即死 | 自動處理：`kill()` 繞過傷害歸零，碰觸即死生效 |
 
 線上抽卡工具請直接排除會印警告的組合。
+抽卡場景：主限制卡用 `levels/CardDraw.tscn`；規則卡用 `levels/RuleCardDraw.tscn`（先選主限制卡，衝突的規則卡不會抽到），
+衝突清單寫在 `data/rule_cards.tres` 每張卡的 `conflicts_with`。
 
 ---
 

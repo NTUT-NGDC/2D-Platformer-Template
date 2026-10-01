@@ -1,0 +1,83 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://levels/RuleCardDraw.gd" id="1"]
+
+[node name="RuleCardDraw" type="Window"]
+title = "抽規則卡"
+size = Vector2i(960, 540)
+visible = true
+script = ExtResource("1")
+
+[node name="Background" type="ColorRect" parent="."]
+anchor_right = 1.0
+anchor_bottom = 1.0
+color = Color(0.13, 0.1, 0.14, 1)
+
+[node name="CenterContainer" type="CenterContainer" parent="."]
+anchor_right = 1.0
+anchor_bottom = 1.0
+
+[node name="VBoxContainer" type="VBoxContainer" parent="CenterContainer"]
+custom_minimum_size = Vector2(760, 0)
+theme_override_constants/separation = 18
+
+[node name="MainCardRow" type="HBoxContainer" parent="CenterContainer/VBoxContainer"]
+alignment = 1
+theme_override_constants/separation = 12
+
+[node name="MainCardLabel" type="Label" parent="CenterContainer/VBoxContainer/MainCardRow"]
+theme_override_font_sizes/font_size = 20
+vertical_alignment = 1
+text = "我的主限制卡："
+
+[node name="MainCardOption" type="OptionButton" parent="CenterContainer/VBoxContainer/MainCardRow"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(260, 40)
+theme_override_font_sizes/font_size = 20
+
+[node name="ExcludedNote" type="Label" parent="CenterContainer/VBoxContainer"]
+unique_name_in_owner = true
+theme_override_font_sizes/font_size = 16
+theme_override_colors/font_color = Color(0.7, 0.7, 0.7, 1)
+horizontal_alignment = 1
+autowrap_mode = 3
+
+[node name="CardTitle" type="Label" parent="CenterContainer/VBoxContainer"]
+unique_name_in_owner = true
+theme_override_font_sizes/font_size = 40
+horizontal_alignment = 1
+
+[node name="CardRule" type="Label" parent="CenterContainer/VBoxContainer"]
+unique_name_in_owner = true
+theme_override_font_sizes/font_size = 22
+horizontal_alignment = 1
+autowrap_mode = 3
+
+[node name="CardDifficulty" type="Label" parent="CenterContainer/VBoxContainer"]
+unique_name_in_owner = true
+theme_override_font_sizes/font_size = 20
+horizontal_alignment = 1
+
+[node name="CardDragHint" type="Label" parent="CenterContainer/VBoxContainer"]
+unique_name_in_owner = true
+theme_override_font_sizes/font_size = 18
+horizontal_alignment = 1
+autowrap_mode = 3
+
+[node name="Spacer" type="Control" parent="CenterContainer/VBoxContainer"]
+custom_minimum_size = Vector2(0, 8)
+
+[node name="ButtonRow" type="HBoxContainer" parent="CenterContainer/VBoxContainer"]
+alignment = 1
+theme_override_constants/separation = 20
+
+[node name="DrawButton" type="Button" parent="CenterContainer/VBoxContainer/ButtonRow"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(200, 50)
+theme_override_font_sizes/font_size = 22
+text = "抽規則卡"
+
+[node name="RedrawHint" type="Label" parent="CenterContainer/VBoxContainer/ButtonRow"]
+theme_override_font_sizes/font_size = 16
+vertical_alignment = 1
+text = "抽到沒感覺的就重抽"

@@ -1,7 +1,7 @@
 extends Resource
 class_name MechanicCard
 
-# 一張主限制卡的顯示資料。抽卡場景 CardDraw.tscn 只讀這些欄位，
+# 一張機制卡的顯示資料（主限制卡給 CardDraw.tscn、規則卡給 RuleCardDraw.tscn），
 # 難度是我自己先評的一版（01b_mechanic_cards.md 沒有逐卡難度資料），覺得不準就直接在這裡改數字。
 
 ## 中文卡名
@@ -16,3 +16,5 @@ class_name MechanicCard
 @export_range(1, 2) var difficulty_technical: int = 1
 ## 設計難度：拿這張卡設計關卡難不難，1～2
 @export_range(1, 2) var difficulty_design: int = 1
+## 規則卡用：跟哪些主限制卡衝突（填 mechanics/ 底下的檔名），規則卡抽卡場景會排除這些組合
+@export var conflicts_with: Array[String] = []
