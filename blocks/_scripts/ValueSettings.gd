@@ -1,3 +1,4 @@
+@tool
 extends Node
 
 # 場景設定節點：一個場景可以放一個或多個，各自對應一個數值種類，
@@ -21,4 +22,10 @@ extends Node
 
 # 場景一進樹就套用設定，搶在同一個場景其他節點的 _ready() 用到這個數值之前生效；名稱先整理再套用
 func _enter_tree() -> void:
+	if Engine.is_editor_hint():
+		return
 	Stats.configure(NameCheck.clean(kind), start_value, max_value, show_in_hud, reset_on_death)
+
+# 回傳這一筆設定的數值種類名稱（整理過），道具、門檢查打錯字時用來對照
+func get_value_kind() -> String:
+	return NameCheck.clean(kind)

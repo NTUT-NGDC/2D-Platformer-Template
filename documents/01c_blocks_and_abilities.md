@@ -81,14 +81,17 @@
 | 零件 | 檔名 | 身體 | 欄位 | 訊號 |
 |---|---|---|---|---|
 | 箱子 | `Box.tscn` | 會動 | `weight`（輕／重）、`block_bullets`（會不會擋子彈，預設會） | 無 |
-| 道具 | `Pickup.tscn` | 感應 | `kind`（金幣／鑰匙／血包／分數）、`amount`（數量） | `collected` |
+| 道具 | `Pickup.tscn` | 感應 | `kind`（金幣／鑰匙／血包／分數／自訂）、`custom_kind`（自訂的數值種類名稱，選「自訂」才出現，可打字）、`amount`（數量） | `collected` |
 | 彈射台 | `Launcher.tscn` | 實心 | `mode`（彈簧／彈跳床）、`direction`（上／左／右）、`force`（力道） | `launched` |
 | 尖刺 | `Spike.tscn` | 感應 | `penalty`（扣血／即死）、`damage`（扣血量）、`knockback`（扣血時彈開玩家的力道，0 不彈開） | 無 |
 | 笨敵人 | `Enemy.tscn` | 會動 | `speed`（速度）、`health`（血量）、`damage`（傷害）、`knockback`（碰到玩家時彈開的力道，0 不彈開）、`turn_at_ledge`（走到邊緣會轉身） | `defeated` |
 | 敵人射擊 | `EnemyShooter.tscn` | 無（掛在 Enemy 底下） | 「射擊」組：`aim_type`（朝玩家／朝面向方向／固定往左右上下）、`cooldown`（射擊間隔）、`detect_range_tiles`（偵測格數，0 不限）、`stop_to_shoot`（開槍前停一下）；「子彈」組：`bullet_speed`、`use_gravity`、`damage`、`hit_objects`（會不會打壞物件） | `shot` |
 
 - 箱子實作受擊介面，被攻擊時只受擊退。
-- 道具：血包加血量，但不超過上限。
+- 道具：血包加血量，但不超過上限。種類選「自訂」時可以打數值種類名稱（`CLAUDE.md` 鐵律 4 的打字欄位，用 `NameCheck`）：
+  名稱空白、或跟場景裡現有名稱很像但不一樣（疑似打錯字）時，場景樹出現黃色驚嘆號、執行時印中文警告並建議近似名稱；
+  全新的名稱不算錯（撿到就出現在 HUD），執行時只印一行提示列出現有名稱。現有名稱 = 場景裡有 `get_value_kind()` 的節點
+  （ValueSettings、道具…，用 `NameCheck.collect_value_kinds()` 收集）＋道具下拉選單內建的幾種。
 - 彈射台：彈簧為固定力道；彈跳床為反彈落下速度，掉越高彈越高。
 - 笨敵人撞牆轉身，實作受擊介面，血量歸零後消失（重生時照常復活）。
 - 敵人射擊是笨敵人的攻擊組件：學員把它拖到關卡裡某個 Enemy 的底下（Enemy 實例的子節點，存在 `_my/` 的關卡場景，

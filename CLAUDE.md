@@ -87,7 +87,7 @@ Claude Code 在這個專案裡的所有對話回覆、進度回報、驗收結�
 
 名稱的整理與近似比對一律呼叫共用工具 `NameCheck`，不要在組件裡各寫一份。
 目前的打字欄位：`ValueSettings.kind`（數值種類，見 `documents/01a_shared_systems.md` §4.1）、
-`Button.tag`（見 `documents/01c_blocks_and_abilities.md`）。新增打字欄位時要補進這份清單。
+`Button.tag`、`Pickup.custom_kind`（種類選「自訂」才出現，見 `documents/01c_blocks_and_abilities.md`）。新增打字欄位時要補進這份清單。
 
 ### 5. 組件之間不准打架
 

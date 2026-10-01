@@ -407,7 +407,7 @@
       持續傷害（岩漿每秒扣血、血量流失、地板是岩漿）維持 `take_damage()`，不算「被打到」
       　　→ 講師決定：Enemy、Spike 各新增 `knockback` 拉桿（0 = 不擊退）；方向「從敵人／尖刺指向玩家再往上偏」；
       　　　Player.take_hit() 的擊退乘上 `ctx.knockback_scale`，彈珠台體質設成 0（只留自己的彈開，不疊加）
-- [ ] U113 `Pickup` 種類新增「自訂」，選了才出現打字欄位（數值種類名稱），照鐵律 4 四點防呆、用 `NameCheck`；
+- [x] U113 `Pickup` 種類新增「自訂」，選了才出現打字欄位（數值種類名稱），照鐵律 4 四點防呆、用 `NameCheck`；
       補進 `CLAUDE.md` 打字欄位清單
 - [ ] U114 `Door` 開門方式新增「自訂數值」，同 U113 的打字欄位與防呆
 - [ ] U115 可以用訊號開關的零件（Receiver）：EnemyShooter、Launcher 新增 `activate`／`deactivate`／`toggle`＋`start_on`

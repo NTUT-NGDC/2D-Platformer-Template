@@ -45,6 +45,20 @@ static func list_text(names: Array) -> String:
 		parts.append("「%s」" % str(n))
 	return "、".join(parts)
 
+# 找出場景裡所有用到的數值種類名稱（ValueSettings、道具、門…有 get_value_kind() 的節點），不重複；
+# exclude 的那個節點不算，拿來檢查「除了我自己，還有沒有別人用這個名字」
+static func collect_value_kinds(root: Node, exclude: Node = null) -> Array:
+	var kinds: Array = []
+	var stack: Array[Node] = [root]
+	while not stack.is_empty():
+		var node: Node = stack.pop_back()
+		if node != exclude and node.has_method("get_value_kind"):
+			var kind: String = node.get_value_kind()
+			if kind != "" and kind not in kinds:
+				kinds.append(kind)
+		stack.append_array(node.get_children())
+	return kinds
+
 # 計算兩個字串的編輯距離（改幾個字才會變成另一個）
 static func distance(a: String, b: String) -> int:
 	var len_a := a.length()

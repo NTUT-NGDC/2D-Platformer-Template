@@ -146,6 +146,9 @@ InputRouter.bind_input(owner: Node, input_type: int, key: Key, phase: int, callb
 執行——打錯字的那個名稱一樣會被當成一個新的獨立種類記錄下來。名稱整理（去頭尾空白、全形轉半形）
 與近似比對都透過共用工具 `NameCheck`。
 
+會用到數值種類名稱的零件（`ValueSettings`、`Pickup`…）實作 `get_value_kind() -> String`（回傳整理過的名稱），
+`NameCheck.collect_value_kinds(root, exclude)` 靠它收集場景裡現有的名稱，給打字欄位做編輯器檢查與近似建議。
+
 ### 4.2 程式介面
 
 ```gdscript
