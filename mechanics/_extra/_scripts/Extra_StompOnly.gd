@@ -16,7 +16,7 @@ extends MechanicBase
 ## 踩中敵人、要彈起來的那一刻發出，在彈起之前
 signal stomped
 
-const _SENSOR_MASK := 1 << 3  # 圖層4「敵人」
+const _SENSOR_MASK := Layers.ENEMY
 const _SENSOR_SIZE := Vector2(16, 32)
 
 var _sensor: Area2D = null

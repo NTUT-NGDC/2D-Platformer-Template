@@ -22,7 +22,7 @@ signal touched
 
 # normal 跟 up_direction 的內積絕對值小於這個值，才算「垂直面」（牆），不是地板或天花板
 const _WALL_NORMAL_LIMIT := 0.5
-const _SENSOR_MASK := (1 << 2) | (1 << 3)  # 圖層3「箱子」、圖層4「敵人」
+const _SENSOR_MASK := Layers.BOX | Layers.ENEMY
 const _SENSOR_SIZE := Vector2(16, 32)
 
 var _sensor: Area2D = null

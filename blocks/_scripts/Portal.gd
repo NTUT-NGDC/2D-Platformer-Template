@@ -39,8 +39,8 @@ func _ready() -> void:
 	if Engine.is_editor_hint():
 		return
 	add_to_group("signal_source")
-	collision_layer = 1 << 4  # 圖層 5「感應」
-	collision_mask = (1 << 0) | ((1 << 2) if allow_boxes else 0)  # 圖層 1「玩家」+ 圖層 3「箱子」（可選）
+	collision_layer = Layers.SENSOR
+	collision_mask = Layers.PLAYER | (Layers.BOX if allow_boxes else 0)
 	body_entered.connect(_on_body_entered)
 	if _pair_portal == null:
 		var message := "「%s」沒有設定配對的傳送門，不會傳送任何東西，請在 Inspector 指定 pair" % name

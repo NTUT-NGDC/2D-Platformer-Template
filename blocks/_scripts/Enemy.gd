@@ -93,10 +93,10 @@ func _ready() -> void:
 	add_to_group("enemy")
 	_health_left = health
 	_start_position = global_position
-	collision_layer = 1 << 3  # 圖層 4「敵人」
-	collision_mask = (1 << 0) | (1 << 1) | (1 << 2)  # 圖層 1「玩家」、圖層 2「地形」、圖層 3「箱子」
+	collision_layer = Layers.ENEMY
+	collision_mask = Layers.PLAYER | Layers.TERRAIN | Layers.BOX
 	_hurtbox.collision_layer = 0
-	_hurtbox.collision_mask = 1 << 0  # 圖層 1「玩家」
+	_hurtbox.collision_mask = Layers.PLAYER
 	_hurtbox.body_entered.connect(_on_hurtbox_entered)
 	for child in get_children():
 		_try_setup(child)

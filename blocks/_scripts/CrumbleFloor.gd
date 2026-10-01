@@ -36,7 +36,7 @@ func _ready() -> void:
 	add_to_group("signal_source")
 	_visual_origin = _visual.position
 	_detector.collision_layer = 0
-	_detector.collision_mask = (1 << 0) | (1 << 2)  # 圖層 1「玩家」、圖層 3「箱子」
+	_detector.collision_mask = Layers.PLAYER | Layers.BOX
 	_detector.body_entered.connect(_on_detector_entered)
 
 # 判斷這個 body 算不算踩得動，依 triggered_by 過濾

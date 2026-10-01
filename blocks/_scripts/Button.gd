@@ -55,10 +55,10 @@ func _ready() -> void:
 	if Engine.is_editor_hint():
 		return
 	add_to_group("signal_source")
-	collision_layer = 1 << 4          # 圖層 5「感應」
-	collision_mask = (1 << 0) | (1 << 2)  # 圖層 1「玩家」、圖層 3「箱子」
+	collision_layer = Layers.SENSOR
+	collision_mask = Layers.PLAYER | Layers.BOX
 	if pressed_by == _WHO_GROUP and mode != _MODE_HIT:
-		collision_mask |= 1 << 3          # 指定群組時敵人也可能踩得動：圖層 4「敵人」
+		collision_mask |= Layers.ENEMY  # 指定群組時敵人也可能踩得動
 		_tag = NameCheck.clean(tag)
 		_check_tag.call_deferred()
 	if mode != _MODE_HIT:

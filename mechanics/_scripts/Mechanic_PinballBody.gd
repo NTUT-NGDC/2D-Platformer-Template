@@ -27,7 +27,7 @@ var _invincible_left: float = 0.0
 func _on_setup() -> void:
 	_sensor = Area2D.new()
 	_sensor.collision_layer = 0
-	_sensor.collision_mask = (1 << 3) | (1 << 4)  # 圖層 4「敵人」、圖層 5「感應」
+	_sensor.collision_mask = Layers.ENEMY | Layers.SENSOR
 	var shape := CollisionShape2D.new()
 	var rect := RectangleShape2D.new()
 	rect.size = _SENSOR_SIZE

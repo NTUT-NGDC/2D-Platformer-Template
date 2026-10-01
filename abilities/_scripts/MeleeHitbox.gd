@@ -13,8 +13,8 @@ var _already_hit: Array = []
 
 # 設定碰撞層／遮罩，監聽撞到東西
 func _ready() -> void:
-	collision_layer = 1 << 5  # 圖層 6「攻擊」
-	collision_mask = (1 << 1) | (1 << 2) | (1 << 3) | (1 << 4)  # 地形、箱子、敵人、感應
+	collision_layer = Layers.ATTACK
+	collision_mask = Layers.TERRAIN | Layers.BOX | Layers.ENEMY | Layers.SENSOR
 	body_entered.connect(_on_body_entered)
 
 # 每個物理幀倒數存在時間，時間到就消失

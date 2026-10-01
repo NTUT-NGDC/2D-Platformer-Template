@@ -14,8 +14,8 @@ const _PENALTY_HEALTH := 0
 # 加入 hazard group，設定碰撞層／遮罩，只偵測玩家
 func _ready() -> void:
 	add_to_group("hazard")
-	collision_layer = 1 << 4  # 圖層 5「感應」
-	collision_mask = 1 << 0   # 圖層 1「玩家」
+	collision_layer = Layers.SENSOR
+	collision_mask = Layers.PLAYER
 	body_entered.connect(_on_body_entered)
 
 # 玩家碰到：依 penalty 扣血或直接死亡

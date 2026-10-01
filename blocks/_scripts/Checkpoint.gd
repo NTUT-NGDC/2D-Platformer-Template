@@ -20,8 +20,8 @@ func _ready() -> void:
 		return
 	add_to_group("signal_source")
 	add_to_group("checkpoint")
-	collision_layer = 1 << 4  # 圖層 5「感應」
-	collision_mask = 1 << 0   # 圖層 1「玩家」
+	collision_layer = Layers.SENSOR
+	collision_mask = Layers.PLAYER
 	body_entered.connect(_on_body_entered)
 
 # 玩家踩到時發出訊號，並轉發給重生記憶系統；不可重複觸發時，踩過一次之後就不再發出

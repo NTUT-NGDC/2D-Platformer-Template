@@ -38,12 +38,12 @@ static func spawn(from: Node2D, direction: Vector2, speed: float, bullet_team: i
 
 # 依陣營設定碰撞層／遮罩，監聽撞到東西；敵方子彈在玩家重生時自動消失，不會一重生就被舊子彈打到
 func _ready() -> void:
-	collision_layer = 1 << 5  # 圖層 6「攻擊」
+	collision_layer = Layers.ATTACK
 	if team == TEAM_ENEMY:
-		collision_mask = (1 << 0) | (1 << 1) | (1 << 2) | (1 << 4)  # 玩家、地形、箱子、感應
+		collision_mask = Layers.PLAYER | Layers.TERRAIN | Layers.BOX | Layers.SENSOR
 		Events.player_respawned.connect(func(_p): queue_free())
 	else:
-		collision_mask = (1 << 1) | (1 << 2) | (1 << 3) | (1 << 4)  # 地形、箱子、敵人、感應
+		collision_mask = Layers.TERRAIN | Layers.BOX | Layers.ENEMY | Layers.SENSOR
 	body_entered.connect(_on_body_entered)
 
 # 每個物理幀往飛行方向移動，開啟重力就持續往下加速，存在時間到了或飛太遠就消失

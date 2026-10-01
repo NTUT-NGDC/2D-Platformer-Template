@@ -25,8 +25,8 @@ func _ready() -> void:
 		return
 	add_to_group("signal_source")
 	_stats_kind = _resolve_stats_kind()
-	collision_layer = 1 << 4  # 圖層 5「感應」
-	collision_mask = 1 << 0   # 圖層 1「玩家」
+	collision_layer = Layers.SENSOR
+	collision_mask = Layers.PLAYER
 	body_entered.connect(_on_body_entered)
 
 # 把 Inspector 的種類選項換成 Stats 認得的字串，血包對應到內建的血量種類

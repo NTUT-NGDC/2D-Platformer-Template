@@ -104,7 +104,7 @@ func _would_overlap_terrain(target_factor: float) -> bool:
 	var query := PhysicsShapeQueryParameters2D.new()
 	query.shape = shape
 	query.transform = Transform2D(0.0, player.global_position)
-	query.collision_mask = 1 << 1  # 圖層 2「地形」
+	query.collision_mask = Layers.TERRAIN
 	var space_state: PhysicsDirectSpaceState2D = player.get_world_2d().direct_space_state
 	return not space_state.intersect_shape(query, 1).is_empty()
 

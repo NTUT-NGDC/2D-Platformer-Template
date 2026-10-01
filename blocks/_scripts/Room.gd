@@ -60,7 +60,7 @@ func _ready() -> void:
 		return
 	add_to_group("room")
 	collision_layer = 0       # 房間不需要被任何東西偵測到（子彈、近戰判定不會打到房間）
-	collision_mask = 1 << 0   # 圖層 1「玩家」
+	collision_mask = Layers.PLAYER
 	monitorable = false
 	body_entered.connect(_on_body_entered)
 	body_exited.connect(_on_body_exited)

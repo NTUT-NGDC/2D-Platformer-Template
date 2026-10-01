@@ -19,8 +19,8 @@ func _ready() -> void:
 	add_to_group("box")
 	mass = _LIGHT_MASS if weight == 0 else _HEAVY_MASS
 	lock_rotation = true
-	collision_layer = 1 << 2  # 圖層 3「箱子」
-	collision_mask = (1 << 0) | (1 << 1) | (1 << 2)  # 圖層 1「玩家」、圖層 2「地形」、圖層 3「箱子」
+	collision_layer = Layers.BOX
+	collision_mask = Layers.PLAYER | Layers.TERRAIN | Layers.BOX
 	_start_position = global_position
 
 # 把自己恢復到關卡開始時的狀態：回到原位、停止移動（重生處理者呼叫）

@@ -30,7 +30,7 @@ func _ready() -> void:
 		return
 	add_to_group("signal_source")
 	_detector.collision_layer = 0
-	_detector.collision_mask = (1 << 0) | (1 << 2)  # 圖層 1「玩家」、圖層 3「箱子」
+	_detector.collision_mask = Layers.PLAYER | Layers.BOX
 	_detector.body_entered.connect(_on_detector_entered)
 
 # 有東西碰到：依模式算出彈出速度，把對方在彈出方向上的速度直接設成這個值

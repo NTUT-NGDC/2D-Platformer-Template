@@ -402,7 +402,7 @@
       （驗證：`tests/systems/MoveContextStackTest.tscn` 照輸出面板步驟）
 - [x] U109 危險按鍵清單＋警告收進 InputRouter（`InputRouter.warn_if_dangerous_key()`），9 份重複的刪掉；行為不變
 - [x] U110 編輯器訊號連線虛線抽成共用工具 `SignalLines`，11 個零件改用（含 U107 的 EnemyShooter）；行為不變
-- [ ] U111 碰撞層常數 `Layers`（`Layers.PLAYER`、`Layers.TERRAIN`…），46 處位元運算改用；`01a` §2 對照；行為不變
+- [x] U111 碰撞層常數 `Layers`（`Layers.PLAYER`、`Layers.TERRAIN`…），56 處位元運算改用（21 個腳本）；`01a` §2 對照；行為不變
 - [ ] U112 瞬間傷害統一走 `take_hit()`：碰到敵人、尖刺扣血改成 `take_hit()`（有擊退、會發 `Events.hit`）；
       持續傷害（岩漿每秒扣血、血量流失、地板是岩漿）維持 `take_damage()`，不算「被打到」
 - [ ] U113 `Pickup` 種類新增「自訂」，選了才出現打字欄位（數值種類名稱），照鐵律 4 四點防呆、用 `NameCheck`；

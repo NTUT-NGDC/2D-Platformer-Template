@@ -42,8 +42,8 @@ func toggle() -> void:
 # 設定碰撞層／遮罩，依方向與範圍格數算出感應區域，套用一開始要不要開
 func _ready() -> void:
 	add_to_group("signal_source")
-	collision_layer = 1 << 4  # 圖層 5「感應」
-	collision_mask = 1 << 0   # 圖層 1「玩家」
+	collision_layer = Layers.SENSOR
+	collision_mask = Layers.PLAYER
 	body_entered.connect(_on_body_entered)
 	body_exited.connect(_on_body_exited)
 	_apply_zone_shape()

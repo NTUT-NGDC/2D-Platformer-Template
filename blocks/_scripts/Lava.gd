@@ -22,7 +22,7 @@ func _ready() -> void:
 	add_to_group("hazard")
 	add_to_group("lava")
 	_detector.collision_layer = 0
-	_detector.collision_mask = 1 << 0  # 圖層 1「玩家」
+	_detector.collision_mask = Layers.PLAYER
 	_detector.body_entered.connect(_on_detector_entered)
 	_detector.body_exited.connect(_on_detector_exited)
 
