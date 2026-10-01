@@ -8,8 +8,6 @@ extends Area2D
 ## 踩到終點時發出，給學員自己接效果用（例如接特效或音效）
 signal reached
 
-const _SIGNAL_LINE_COLOR := Color(1.0, 0.85, 0.2, 0.85)
-
 var _cleared: bool = false
 
 # 設定碰撞層／遮罩，只偵測玩家
@@ -38,13 +36,4 @@ func _process(_delta: float) -> void:
 func _draw() -> void:
 	if not Engine.is_editor_hint():
 		return
-	_draw_signal_lines(reached)
-
-# 畫某個訊號目前所有連接的虛線
-func _draw_signal_lines(sig: Signal) -> void:
-	for conn in sig.get_connections():
-		var callable: Callable = conn["callable"]
-		var target: Object = callable.get_object()
-		if target is Node2D:
-			var target_node: Node2D = target
-			draw_dashed_line(Vector2.ZERO, to_local(target_node.global_position), _SIGNAL_LINE_COLOR, 2.0, 6.0)
+	SignalLines.draw(self, reached)

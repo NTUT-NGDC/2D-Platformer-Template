@@ -14,7 +14,6 @@ extends Area2D
 signal collected
 
 const _KIND_HEALTH := 2
-const _SIGNAL_LINE_COLOR := Color(1.0, 0.85, 0.2, 0.85)
 
 var _collected: bool = false
 var _value_returned: bool = false
@@ -77,13 +76,4 @@ func _process(_delta: float) -> void:
 func _draw() -> void:
 	if not Engine.is_editor_hint():
 		return
-	_draw_signal_lines(collected)
-
-# 畫某個訊號目前所有連接的虛線
-func _draw_signal_lines(sig: Signal) -> void:
-	for conn in sig.get_connections():
-		var callable: Callable = conn["callable"]
-		var target: Object = callable.get_object()
-		if target is Node2D:
-			var target_node: Node2D = target
-			draw_dashed_line(Vector2.ZERO, to_local(target_node.global_position), _SIGNAL_LINE_COLOR, 2.0, 6.0)
+	SignalLines.draw(self, collected)

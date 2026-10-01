@@ -19,7 +19,6 @@ class_name Portal
 signal teleported(body: Node)
 
 const _COOLDOWN := 0.3
-const _SIGNAL_LINE_COLOR := Color(1.0, 0.85, 0.2, 0.85)
 
 var _pair_portal: Portal = null
 var _cooldown_until: Dictionary = {}  # body(Node) -> 時間戳，避免傳送過去立刻被傳回來
@@ -78,13 +77,4 @@ func _process(_delta: float) -> void:
 func _draw() -> void:
 	if not Engine.is_editor_hint():
 		return
-	_draw_signal_lines(teleported)
-
-# 畫某個訊號目前所有連接的虛線
-func _draw_signal_lines(sig: Signal) -> void:
-	for conn in sig.get_connections():
-		var callable: Callable = conn["callable"]
-		var target: Object = callable.get_object()
-		if target is Node2D:
-			var target_node: Node2D = target
-			draw_dashed_line(Vector2.ZERO, to_local(target_node.global_position), _SIGNAL_LINE_COLOR, 2.0, 6.0)
+	SignalLines.draw(self, teleported)

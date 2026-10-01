@@ -23,8 +23,6 @@ extends StaticBody2D
 ## 完全碎裂時發出，給學員自己接特效／音效用
 signal broken
 
-const _SIGNAL_LINE_COLOR := Color(1.0, 0.85, 0.2, 0.85)
-
 @onready var _shape: CollisionShape2D = $CollisionShape2D
 @onready var _visual: ColorRect = $Visual
 @onready var _detector: Area2D = $Detector
@@ -111,13 +109,4 @@ func _process(_delta: float) -> void:
 func _draw() -> void:
 	if not Engine.is_editor_hint():
 		return
-	_draw_signal_lines(broken)
-
-# 畫某個訊號目前所有連接的虛線
-func _draw_signal_lines(sig: Signal) -> void:
-	for conn in sig.get_connections():
-		var callable: Callable = conn["callable"]
-		var target: Object = callable.get_object()
-		if target is Node2D:
-			var target_node: Node2D = target
-			draw_dashed_line(Vector2.ZERO, to_local(target_node.global_position), _SIGNAL_LINE_COLOR, 2.0, 6.0)
+	SignalLines.draw(self, broken)

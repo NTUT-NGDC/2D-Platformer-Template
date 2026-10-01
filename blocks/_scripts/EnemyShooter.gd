@@ -41,7 +41,6 @@ const _ENEMY_SCRIPT_PATH := "res://blocks/_scripts/Enemy.gd"
 const _FIXED_DIRECTIONS := [Vector2.LEFT, Vector2.RIGHT, Vector2.UP, Vector2.DOWN]
 const _RANGE_COLOR := Color(1.0, 0.3, 0.3, 0.35)
 const _ARROW_COLOR := Color(1.0, 0.3, 0.3, 0.9)
-const _SIGNAL_LINE_COLOR := Color(1.0, 0.85, 0.2, 0.85)
 
 var enemy: Node2D = null
 var _cooldown_left: float = 0.0
@@ -147,7 +146,4 @@ func _draw() -> void:
 		draw_line(Vector2.ZERO, dir * 20.0, _ARROW_COLOR, 2.0)
 		draw_line(dir * 20.0, dir * 14.0 + dir.orthogonal() * 4.0, _ARROW_COLOR, 2.0)
 		draw_line(dir * 20.0, dir * 14.0 - dir.orthogonal() * 4.0, _ARROW_COLOR, 2.0)
-	for conn in shot.get_connections():
-		var target: Object = (conn["callable"] as Callable).get_object()
-		if target is Node2D:
-			draw_dashed_line(Vector2.ZERO, to_local((target as Node2D).global_position), _SIGNAL_LINE_COLOR, 2.0, 6.0)
+	SignalLines.draw(self, shot)

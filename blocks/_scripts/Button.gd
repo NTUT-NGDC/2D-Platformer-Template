@@ -41,8 +41,6 @@ const _BUILT_IN_GROUPS := ["player", "box", "enemy"]
 # 編輯器裡每隔幾秒重新檢查一次群組名稱，學員在別的物體加了群組之後黃色警告會跟著消失
 const _WARNING_REFRESH_SECONDS := 1.0
 
-const _SIGNAL_LINE_COLOR := Color(1.0, 0.85, 0.2, 0.85)
-
 @onready var _visual: ColorRect = $Visual
 
 var _overlapping: Array[Node] = []
@@ -208,14 +206,5 @@ func _missing_tag_message(clean_tag: String, groups: Array) -> String:
 func _draw() -> void:
 	if not Engine.is_editor_hint():
 		return
-	_draw_signal_lines(turned_on)
-	_draw_signal_lines(turned_off)
-
-# 畫某個訊號目前所有連接的虛線
-func _draw_signal_lines(sig: Signal) -> void:
-	for conn in sig.get_connections():
-		var callable: Callable = conn["callable"]
-		var target: Object = callable.get_object()
-		if target is Node2D:
-			var target_node: Node2D = target
-			draw_dashed_line(Vector2.ZERO, to_local(target_node.global_position), _SIGNAL_LINE_COLOR, 2.0, 6.0)
+	SignalLines.draw(self, turned_on)
+	SignalLines.draw(self, turned_off)

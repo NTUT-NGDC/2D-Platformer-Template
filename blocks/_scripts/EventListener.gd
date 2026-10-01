@@ -18,7 +18,6 @@ signal triggered
 
 const _EVENT_NAMES := ["玩家死亡時", "玩家重生時", "玩家受傷時", "玩家跳躍時", "進入房間時", "過關時", "撿到道具時", "敵人被打倒時"]
 const _COLOR := Color(0.75, 0.55, 1.0, 0.9)
-const _SIGNAL_LINE_COLOR := Color(1.0, 0.85, 0.2, 0.85)
 
 # 接上選的事件；沒連到任何東西時提醒學員，不然看起來像沒反應
 func _ready() -> void:
@@ -59,9 +58,4 @@ func _draw() -> void:
 		return
 	draw_circle(Vector2.ZERO, 6.0, _COLOR)
 	draw_string(ThemeDB.fallback_font, Vector2(9, 4), _EVENT_NAMES[event], HORIZONTAL_ALIGNMENT_LEFT, -1, 10, _COLOR)
-	for conn in triggered.get_connections():
-		var callable: Callable = conn["callable"]
-		var target: Object = callable.get_object()
-		if target is Node2D:
-			var target_node: Node2D = target
-			draw_dashed_line(Vector2.ZERO, to_local(target_node.global_position), _SIGNAL_LINE_COLOR, 2.0, 6.0)
+	SignalLines.draw(self, triggered)
