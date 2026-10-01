@@ -409,7 +409,8 @@
       　　　Player.take_hit() 的擊退乘上 `ctx.knockback_scale`，彈珠台體質設成 0（只留自己的彈開，不疊加）
 - [x] U113 `Pickup` 種類新增「自訂」，選了才出現打字欄位（數值種類名稱），照鐵律 4 四點防呆、用 `NameCheck`；
       補進 `CLAUDE.md` 打字欄位清單
-- [ ] U114 `Door` 開門方式新增「自訂數值」，同 U113 的打字欄位與防呆
+- [x] U114 `Door` 開門方式新增「自訂數值」，同 U113 的打字欄位與防呆
+      （跟道具不同：場景裡沒有別人用這個名稱也要警告，因為只有道具、ValueSettings 會給數值，找不到 = 門永遠打不開）
 - [ ] U115 可以用訊號開關的零件（Receiver）：EnemyShooter、Launcher 新增 `activate`／`deactivate`／`toggle`＋`start_on`
 - [ ] U116 可以用訊號開關的零件（Receiver）：Spike、Lava、Portal 新增 `activate`／`deactivate`／`toggle`＋`start_on`
 - [ ] U117 `CameraRig` 鏡頭模式下拉：瞬切（預設，現在的行為）／房間內跟隨（跟著玩家但不超出目前房間，房間比畫面小的那一軸

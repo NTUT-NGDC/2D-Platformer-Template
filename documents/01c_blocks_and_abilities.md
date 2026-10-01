@@ -53,11 +53,12 @@
 
 | 零件 | 檔名 | 身體 | 欄位 | 可連接的函式 | 訊號 |
 |---|---|---|---|---|---|
-| 門 | `Door.tscn` | 實心 | `open_mode`（由訊號控制／鑰匙／金幣數量）、`required_amount`（需要數量）、`consume`（打開時消耗）、`start_open`（一開始是開的） | `activate`、`deactivate`、`toggle` | `opened`、`closed` |
+| 門 | `Door.tscn` | 實心 | `open_mode`（由訊號控制／鑰匙／金幣數量／自訂數值）、`custom_kind`（自訂的數值種類名稱，選「自訂數值」才出現，可打字）、`required_amount`（需要數量）、`consume`（打開時消耗）、`start_open`（一開始是開的） | `activate`、`deactivate`、`toggle` | `opened`、`closed` |
 | 移動平台 | `MovingPlatform.tscn` | 會動 | `direction`（水平／垂直）、`distance_tiles`（移動格數）、`speed`（速度）、`start_active`（一開始就在動） | `activate`、`deactivate`、`toggle` | 無 |
 | 風扇 | `Fan.tscn` | 感應 | `direction`（上／下／左／右）、`force`（力道）、`range_tiles`（範圍格數）、`start_on`（一開始就開） | `activate`、`deactivate`、`toggle` | 無 |
 
-- 門開啟時關閉碰撞、變半透明。鑰匙與金幣模式由玩家碰到門時檢查 `Stats`（見 `01a_shared_systems.md` §4）。
+- 門開啟時關閉碰撞、變半透明。鑰匙、金幣與自訂數值模式由玩家碰到門時檢查 `Stats`（見 `01a_shared_systems.md` §4）。
+  自訂數值的名稱檢查同道具，但多一條：場景裡沒有道具或 ValueSettings 用這個名稱時也要警告（門會永遠打不開）。
 - 移動平台 `activate` 為開始移動、`deactivate` 為停在原地；按鈕加移動平台即為電梯。
 
 ### 2.3 地形類
