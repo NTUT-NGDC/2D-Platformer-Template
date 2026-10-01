@@ -179,7 +179,7 @@ func reset() -> void:
 | Door | 只有鑰匙／金幣門關回去；數值設成死亡不退回且會消耗時不重置 |
 | Button | 預設不重置；勾了 `reset_on_death` 才回到關著的狀態，原本開著就發出 `turned_off`，連著的零件跟著關掉（學員自己選要不要） |
 
-Fan、Launcher、EnemyShooter、Checkpoint、Goal 等沒有 `reset()`（開關狀態交給控制它的按鈕決定）。
+Fan、Launcher、EnemyShooter、Spike、Lava、Portal、Checkpoint、Goal 等沒有 `reset()`（開關狀態交給控制它的按鈕決定）。
 
 ---
 

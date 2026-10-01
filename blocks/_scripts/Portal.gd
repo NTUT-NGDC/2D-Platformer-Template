@@ -4,6 +4,8 @@ class_name Portal
 
 # 傳送門：感應，站進去會被傳到配對的另一座。pair 是設定用的節點欄位，不是訊號連接，
 # 只要在其中一座指定另一座，另一座會自動連回來，學員只需要接一邊。
+# 也可以用 activate/deactivate/toggle 開關（例如踩按鈕才打開傳送門）；關掉時站進來不會傳送、外觀變暗，
+# 但從另一座傳過來還是會出現在這裡。開關狀態重生時不重置。
 # 見 documents/01c_blocks_and_abilities.md §1、§2.1。
 
 ## 另一座傳送門，只要指定其中一座，另一座會自動連回來
@@ -15,13 +17,38 @@ class_name Portal
 ## 箱子要不要也能被這座傳送門傳送
 @export var allow_boxes: bool = false
 
+## 一開始就是開著的（關著的話要靠別的零件的訊號 activate 才會傳送）
+@export var start_on: bool = true
+
 ## 傳送時發出，帶被傳送的物件，給學員自己接特效／音效用
 signal teleported(body: Node)
 
 const _COOLDOWN := 0.3
 
+@onready var _visual: ColorRect = $Visual
+
 var _pair_portal: Portal = null
 var _cooldown_until: Dictionary = {}  # body(Node) -> 時間戳，避免傳送過去立刻被傳回來
+var _active: bool = true
+
+## 開啟：開始傳送；開啟當下已經站在裡面的也會被傳走
+func activate() -> void:
+	if _active:
+		return
+	_set_active(true)
+	for body in get_overlapping_bodies():
+		_on_body_entered(body)
+
+## 關閉：站進來不會傳送
+func deactivate() -> void:
+	_set_active(false)
+
+## 切換
+func toggle() -> void:
+	if _active:
+		deactivate()
+	else:
+		activate()
 
 # 場景一進樹就解析 pair 節點路徑，並互相補上配對，搶在雙方的 _ready() 檢查之前完成
 func _enter_tree() -> void:
@@ -42,6 +69,7 @@ func _ready() -> void:
 	collision_layer = Layers.SENSOR
 	collision_mask = Layers.PLAYER | (Layers.BOX if allow_boxes else 0)
 	body_entered.connect(_on_body_entered)
+	_set_active(start_on)
 	if _pair_portal == null:
 		var message := "「%s」沒有設定配對的傳送門，不會傳送任何東西，請在 Inspector 指定 pair" % name
 		push_warning("[傳送門] %s" % message)
@@ -53,9 +81,14 @@ func _is_valid(body: Node) -> bool:
 		return true
 	return allow_boxes and body.is_in_group("box")
 
-# 有東西站進來：傳到配對的另一座，0.3 秒內不會再次觸發（不管是這座還是另一座）
+# 切換開關狀態，關掉時變暗讓學員看得出它沒在運作
+func _set_active(is_active: bool) -> void:
+	_active = is_active
+	_visual.modulate = Color.WHITE if _active else Color(0.45, 0.45, 0.45)
+
+# 有東西站進來：傳到配對的另一座，0.3 秒內不會再次觸發（不管是這座還是另一座）；關著時不傳
 func _on_body_entered(body: Node) -> void:
-	if _pair_portal == null or not _is_valid(body):
+	if not _active or _pair_portal == null or not _is_valid(body):
 		return
 	var now := Time.get_ticks_msec() / 1000.0
 	if _cooldown_until.get(body, 0.0) > now:
