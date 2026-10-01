@@ -310,11 +310,10 @@ func _connect_trigger(callback: Callable) -> void:
 - `Player`（`player/Player.tscn` 的實例），底下附好 `Visual/Sprite2D`、`Mechanics`、`Juice`
   三個容器節點（見 3.1 節）。
 - `Camera2D`，掛 `CameraRig.gd`：接 `Events.shake_requested`，執行螢幕震動；接 `Events.room_entered`，
-  瞬間切到房間中心（見 `00b_rooms_and_soft_respawn.md` §3）。
-  - **不做平滑跟隨。** `Camera2D` 是關卡場景根節點底下的獨立節點，**不掛在
-    Player 實例底下**，跟 Player 之間沒有父子關係。
-  - 場景裡有 `Room` 時，鏡頭一律以房間為準；沒有 `Room` 時維持節點擺放的位置，或在 `follow_player`
-    打開時跟著玩家（只當沒有房間時的備用，例如 Showroom）。
+  依鏡頭模式處理換房間（見 `00b_rooms_and_soft_respawn.md` §3）。
+  - **預設不做平滑跟隨**（「瞬切」：每個房間一個固定畫面）。`Camera2D` 是關卡場景根節點底下的獨立節點，
+    **不掛在 Player 實例底下**，跟 Player 之間沒有父子關係。
+  - 鏡頭模式下拉選單：瞬切（預設）／房間內跟隨（跟著玩家但不超出目前房間）／自由跟隨（忽略房間，例如 Showroom）。
   - 螢幕震動照樣透過 `Events.shake_requested` 接收，是疊加在鏡頭位置上的偏移，不影響零連線設計。
 - `RespawnHandler`（`blocks/RespawnHandler.tscn` 的實例）：玩家死亡後等 `delay` 秒軟重生，不重新載入
   場景（見 `00b_rooms_and_soft_respawn.md` §4）。**兩個場景都要有地板**，否則學員重生後會直接掉出畫面外。

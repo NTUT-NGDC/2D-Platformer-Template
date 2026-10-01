@@ -9,7 +9,8 @@
 ## 為什麼要改
 
 1. **不使用多場景**。切換場景需要填場景路徑或名稱，那是打字，違反 `CLAUDE.md` 鐵律四。改用「同一場景內多個房間 + 鏡頭瞬間切換」。
-2. **鏡頭不做平滑跟隨**。玩家進入房間時鏡頭直接設到房間中心，無平滑、無預判、無阻尼。
+2. **鏡頭預設不做平滑跟隨**。預設「瞬切」：玩家進入房間時鏡頭直接設到房間中心，無平滑、無預判、無阻尼。
+   需要比一個畫面大的房間、或一路走到底的長場地時，學員可以在 CameraRig 的下拉選單改成「房間內跟隨」或「自由跟隨」（見 §3）。
 3. **死亡處理改成訊號驅動**。`Player` 不知道死掉之後會發生什麼事，處理者可以被替換（W2 可能改成回關卡起點、W5 可能改成顯示結算畫面）。
 4. **取消 `reload_current_scene()`**，改成軟重生。重載會把玩家丟回第一個房間，等同懲罰；Web 版也要重跑場景初始化。
 
@@ -20,7 +21,7 @@
 ```gdscript
 signal room_entered(room: Node)
 signal respawn_requested(player: Node)   # 由死亡處理者發出，表示「現在請重生」
-signal player_respawned(player: Node)    # Player.revive() 完成後發出
+signal player_respawned(player: Node)    # Player.revive() 完成後發出（跟隨模式的鏡頭也聽這個，重生時直接到位）
 ```
 
 死亡流程固定為：
@@ -61,7 +62,7 @@ Player **不得**自己呼叫重生、不得知道處理者是誰。場景裡沒
 - `use_room_start`（預設勾）：這個房間有沒有房間起點。不勾時在這個房間死掉，依序退回：房間裡踩過的 Checkpoint >
   最後踩到的 Checkpoint（可能在別的房間）> 玩家一開始的位置（講師決定：用來做「這段沒存檔，死了退回上一個重生點」）。
   編輯器裡黃點變灰、標「房間起點（不使用）」。Room 執行時加入 `room` group，重生處理者用它找座標落在哪個房間。
-- 提供 `get_center()`、`get_spawn_point()`、`uses_room_start()`、`has_point(global_point)`。
+- 提供 `get_center()`、`get_rect()`（鏡頭「房間內跟隨」用）、`get_spawn_point()`、`uses_room_start()`、`has_point(global_point)`。
 - 編輯器裡畫淺藍色邊框、房間名稱、黃色「房間起點」標記（不使用重生點時標註「不使用重生點」）。
   「重生點」這個名稱保留給 Checkpoint 零件，避免學員搞混。
 
@@ -69,10 +70,17 @@ Player **不得**自己呼叫重生、不得知道處理者是誰。場景裡沒
 
 ## 3. CameraRig 增補
 
-- 接 `Events.room_entered`，`global_position = room.get_center()`，無 tween、無 lerp，並 `reset_smoothing()`。
-- 震動是疊加在上面的 `offset`，不會改到房間中心。
-- `follow_player` **保留當備用**：只在場景裡沒有任何 Room 時生效（Showroom 用）。一有房間就關掉跟隨，
-  若 `follow_player` 有勾則印中文提示。
+鏡頭模式下拉選單 `mode`（`@export_enum("瞬切", "房間內跟隨", "自由跟隨")`，預設瞬切）：
+
+| 模式 | 行為 |
+|---|---|
+| 瞬切（預設） | 接 `Events.room_entered`，`global_position = room.get_center()`，無 tween、無 lerp，並 `reset_smoothing()`。沒有 Room 時維持節點擺放的位置 |
+| 房間內跟隨 | 平滑跟著玩家，但畫面不超出目前的房間（用 `Room.get_rect()` 限制）；房間比畫面小的那一軸固定在房間中心；換房間時瞬切（`reset_smoothing()`）。沒有 Room 時就是一般跟隨 |
+| 自由跟隨 | 忽略房間，一直平滑跟著玩家（Showroom 用） |
+
+- 兩種跟隨模式在 `Events.player_respawned` 時直接跳到玩家身上並 `reset_smoothing()`，不會從死掉的地方一路滑過去。
+- 震動是疊加在上面的 `offset`，不會改到鏡頭位置。
+- 原本的 `follow_player` 勾選框拿掉（講師決定，U117），Showroom 改用「自由跟隨」。
 
 ---
 

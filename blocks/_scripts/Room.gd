@@ -76,6 +76,10 @@ func _print_problems() -> void:
 func get_center() -> Vector2:
 	return global_position + _get_size() / 2.0
 
+# 回傳房間範圍（全域座標的矩形），鏡頭「房間內跟隨」用這個限制不超出房間
+func get_rect() -> Rect2:
+	return Rect2(global_position, _get_size())
+
 # 回傳玩家在這個房間死掉時要回到的全域座標（房間起點），重生處理者用這個
 func get_spawn_point() -> Vector2:
 	return to_global(_get_local_spawn_point())
