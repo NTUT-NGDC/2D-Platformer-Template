@@ -36,7 +36,7 @@
 |---|---|---|---|---|
 | 按鈕 | `Button.tscn` | 感應 | `mode`（踩住才開／踩一下切換／踩一下永久開／被攻擊觸發）、`pressed_by`（玩家與箱子／只有玩家／只有箱子／指定群組）、`tag`（群組名稱，只在選「指定群組」時顯示）、`reset_on_death`（死亡重生時回到關著，預設不勾） | `turned_on`、`turned_off` |
 | 按鍵觸發器 | `KeyTrigger.tscn` | 無 | `key_source`（自訂按鍵／滑鼠左鍵／滑鼠右鍵／滑鼠中鍵／跟基本操作同一顆鍵）、`key` 或 `same_key_as`（依來源顯示其一，選滑鼠按鍵時都不顯示）、`trigger`（按下時／放開時／按住時（每一幀）） | `triggered`（學員用）；進階：`pressed`、`released`、`hold_started`、`hold_ended`、`held(seconds)` |
-| 傳送門 | `Portal.tscn` | 感應 | `pair`（另一座傳送門）、`keep_velocity`（保留速度，預設開）、`allow_boxes`（箱子也能傳）、`start_on`（一開始就開；關著時站進來不傳，但另一座傳過來照樣會出現）；可連接 `activate`、`deactivate`、`toggle` | `teleported` |
+| 傳送門 | `Portal.tscn` | 感應 | `pair`（目的地：另一座傳送門，或其他東西＝單向＋警告）、`keep_velocity`（保留速度，預設開）、`allow_boxes`（箱子也能傳）、`start_on`（一開始就開；關著時站進來不傳，但另一座傳過來照樣會出現）；可連接 `activate`、`deactivate`、`toggle` | `teleported` |
 | 重生點 | `Checkpoint.tscn` | 感應 | 無 | `reached` |
 | 終點 | `Goal.tscn` | 感應 | 無 | `reached` |
 | 過關畫面 | `ClearScreen.tscn` | 無（畫面） | `show_time`（顯示用了幾秒）、`show_deaths`（顯示死了幾次）、`message`（最下面選填的一行字，可打字）；可連接 `activate`（顯示過關畫面） | 無 |
@@ -50,6 +50,8 @@
   列出場景中現有的群組、附近似名稱建議；比對前先整理名稱（`NameCheck`）。
 - 按鍵觸發器的 `same_key_as` 與 `key` 用 `_validate_property` 依 `key_source` 顯示其中一個；選滑鼠按鍵時兩個都隱藏，改用 `InputRouter.bind_student_mouse()`。
 - 傳送門：A 指定 B 後，B 自動連回 A；傳送後 0.3 秒內不會再次觸發，避免來回彈。
+  `pair` 指定傳送門以外的 2D 節點時照樣傳到它的位置，但只能單向，編輯器黃色驚嘆號＋執行時中文警告；
+  指定沒有位置的節點時不傳送並警告。編輯器裡從傳送門畫一條紫色細虛線到目的地。
 - 終點踩到時變綠並 emit `Events.level_cleared`，整關重來時恢復（`reset()`）。W1 玩具箱不使用。
 - 過關畫面拖進關卡就自動接 `Events.level_cleared`（終點、存活計時卡），不用連線；跳出時遊戲暫停，按 R（`restart` 動作）
   呼叫 `RespawnHandler.restart_level_now()` 整關重來（數值倒回、重生點清空），用了幾秒、死了幾次歸零。
