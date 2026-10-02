@@ -59,8 +59,9 @@ Player **不得**自己呼叫重生、不得知道處理者是誰。場景裡沒
   `spawn_y`（離底部幾格，預設 2）兩個拉桿，預設＝底部中央往上兩格。拉桿範圍固定，超出房間時夾回房間內，
   並顯示黃色警告。原本拖 `Marker2D` 的做法取消（講師決定：改用拉桿，避免兩種方法並存）；底下還有 `Marker2D`
   時黃色警告＋執行時中文提醒改用拉桿。
-- `use_room_start`（預設勾）：這個房間有沒有房間起點。不勾時在這個房間死掉，依序退回：房間裡踩過的 Checkpoint >
-  最後踩到的 Checkpoint（可能在別的房間）> 玩家一開始的位置（講師決定：用來做「這段沒存檔，死了退回上一個重生點」）。
+- `use_room_start`（預設勾）：走進這個房間時，要不要把重生位置改成房間起點。不勾時走進來不改，死掉回到之前記下的位置
+  （講師決定：用來做「這段沒存檔，死了退回上一個重生點」）。
+- `start_trigger`（`use_room_start` 勾選時才顯示）：每次進入（預設）／只有第一次進入。只有第一次的房間，走回頭路不會改重生位置。
   編輯器裡黃點變灰、標「房間起點（不使用）」。Room 執行時加入 `room` group，重生處理者用它找座標落在哪個房間。
 - 提供 `get_center()`、`get_rect()`（鏡頭「房間內跟隨」用）、`get_spawn_point()`、`uses_room_start()`、`has_point(global_point)`。
 - 編輯器裡畫淺藍色邊框、房間名稱、黃色「房間起點」標記（不使用重生點時標註「不使用重生點」）。
@@ -116,8 +117,10 @@ Player **不得**自己呼叫重生、不得知道處理者是誰。場景裡沒
    的分組下次死掉不會再扣）。`reset_on_death` 關掉的種類不倒回。血量由 `revive()` 補滿。
    物件跟數值永遠一起動，不會出現同一枚金幣撿兩次。**之後新增會改數值的零件，都要實作 `rewind_values()`。**
    `reset_room_objects` 不勾時什麼都不放回、數值也不倒回。
-4. 重生位置：同房間內踩過的 Checkpoint > 房間起點（房間勾了 `use_room_start` 才算）> 最後踩到的 Checkpoint（可能在
-   別的房間）> 玩家一開始的位置。沒有房間時：踩過的 Checkpoint > 玩家一開始的位置。
+4. 重生位置：全關卡只記一個「重生位置」（講師決定，U124 取代原本的「同房間重生點 > 房間起點 > 最後重生點」順序）。
+   走進房間記房間起點（看 `use_room_start`／`start_trigger`）、踩到 Checkpoint 記重生點（看 `save_trigger`），
+   後記的蓋過先記的；死掉回到最後記下的位置，一個都沒記過就回玩家一開始的位置。重生造成的「進房間」不算存檔
+   （不然會蓋掉剛用來重生的重生點）。每次記下時輸出面板印「重生位置改成 …」。
    重生到別的房間時，死掉的房間跟重生的房間都放回、倒回；退回玩家一開始的位置時不清空踩過的 Checkpoint。
    沒有房間時第一次死亡印中文提示。
 5. 發 `Events.respawn_requested`，呼叫 `player.revive(位置)`；勾了 `send_restart_signal` 再發 `Events.level_restarted`。
@@ -134,9 +137,9 @@ Room 會重新發 `room_entered` 讓鏡頭切回第一個房間。
 不再跨場景載入，只記「踩過的 Checkpoint 位置」。數值不記：由放回去的物件自己倒回（§4 步驟 3）。
 
 - `restart_level()`：清空所有記錄。
-- 踩過的 Checkpoint **每個房間各記一個**（那個房間最後踩到的），另外記「全關卡最後踩到的」一個。
-  重生時「同一個房間裡踩過的 Checkpoint」查的是該房間自己的記錄，不會被別的房間後來踩的蓋掉。
-- `clear()`（整關重來、過關）時 `call_group("checkpoint", "forget")`，所有 Checkpoint 變回沒踩過，可以再踩一次。
+- 全關卡只記**一個重生位置**（U124）：走進房間、踩到 Checkpoint 都會覆蓋它（見 §4 步驟 4）。
+  「只有第一次進入」的房間記在 `_rooms_saved`，記過就不再記。查詢用 `has_respawn_point()`／`get_respawn_point()`。
+- `clear()`（整關重來、過關）時清空重生位置與 `_rooms_saved`，並 `call_group("checkpoint", "forget")`，所有 Checkpoint 變回沒踩過，可以再踩、再記一次。
 - `ValueSettings` 把 `reset_on_death` 關掉的種類，死亡完全不影響（Pickup／Door 不放回也不倒回）。
 - 拿掉 `remember()` / `recall()` 與 `persistent` group（不重載場景就不需要）。
 - 拿掉數值快照（進房間／踩 Checkpoint 當下的數值）：數值只會因為物件被放回而倒回。沒有 Room 的關卡整個場景一起

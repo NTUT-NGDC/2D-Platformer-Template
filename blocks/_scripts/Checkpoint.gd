@@ -1,10 +1,13 @@
 @tool
 extends Area2D
 
-# 重生點：感應，玩家踩到時發出 reached，同步轉發 Events.checkpoint_reached(self)
-# 給重生記憶系統用。拖進場景就能用，不用連任何線。
+# 重生點：感應，玩家踩到時把重生位置改成這裡（轉發 Events.checkpoint_reached(self) 給重生記憶），並發出 reached。
+# 什麼時候改重生位置看 save_trigger，reached 要不要再發看 repeatable，兩個分開。拖進場景就能用，不用連任何線。
 
-## 踩過一次之後，再踩還會不會再發出 reached；關閉的話只有第一次踩到才算數
+## 什麼時候把重生位置改成這個重生點：每次踩到都改，或只有第一次踩到才改（走回頭路再踩不會改）
+@export_enum("每次踩到", "只有第一次踩到") var save_trigger: int = 1
+
+## 踩過一次之後，再踩還會不會再發出 reached 訊號（只管訊號，重生位置看 save_trigger）
 @export var repeatable: bool = false
 
 ## 踩到時發出，給學員自己接效果用（例如接特效或音效）
@@ -12,7 +15,10 @@ signal reached
 
 @onready var _visual: ColorRect = $Visual
 
+const _SAVE_EVERY_TIME := 0
+
 var _touched: bool = false
+var _saved: bool = false
 
 # 設定碰撞層／遮罩，只偵測玩家
 func _ready() -> void:
@@ -24,20 +30,23 @@ func _ready() -> void:
 	collision_mask = Layers.PLAYER
 	body_entered.connect(_on_body_entered)
 
-# 玩家踩到時發出訊號，並轉發給重生記憶系統；不可重複觸發時，踩過一次之後就不再發出
+# 玩家踩到：依 save_trigger 把重生位置改成這裡；依 repeatable 決定要不要再發出 reached
 func _on_body_entered(body: Node) -> void:
 	if not body.is_in_group("player"):
 		return
+	if save_trigger == _SAVE_EVERY_TIME or not _saved:
+		_saved = true
+		Events.checkpoint_reached.emit(self)
 	if _touched and not repeatable:
 		return
 	_touched = true
 	_update_visual()
 	reached.emit()
-	Events.checkpoint_reached.emit(self)
 
-# 變回沒踩過的樣子，重生記憶被清空（整關重來、過關）時呼叫，之後可以再踩一次
+# 變回沒踩過的樣子，重生記憶被清空（整關重來、過關）時呼叫，之後可以再踩一次、再記一次
 func forget() -> void:
 	_touched = false
+	_saved = false
 	_update_visual()
 
 # 踩過一次之後外觀保持「已啟用」的顏色，之後再踩也不會變回去

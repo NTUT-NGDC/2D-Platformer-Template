@@ -3,9 +3,9 @@ extends Area2D
 
 # 房間：同一個場景裡切出一塊塊畫面大小的區域，玩家走進來時發出 Events.room_entered，
 # 鏡頭與重生處理者訂閱它。碰撞框依格數自動產生，學員不用拉；節點原點 = 房間左上角。
-# 玩家在這個房間死掉時回到「房間起點」，用 spawn_x／spawn_y 拉桿調位置（黃點會跟著動）。
-# 房間裡踩過的重生點（Checkpoint）優先。use_room_start 取消勾選時這個房間沒有起點，
-# 死掉會退回最後踩到的重生點（可能在別的房間），都沒踩過就回到玩家一開始的位置。
+# 玩家走進這個房間時，重生位置改成「房間起點」（用 spawn_x／spawn_y 拉桿調位置，黃點會跟著動）；
+# 之後踩到重生點（Checkpoint）會再改成重生點，死掉一律回到最後記下的那個（見 autoload/RespawnMemory.gd）。
+# start_trigger 決定每次走進來都改，還是只有第一次；use_room_start 取消勾選時走進來不改。
 # 金幣、箱子、敵人這類會放回去的東西要拖到 Room 底下，玩家在這個房間死掉時才會放回去；
 # 範圍內有沒掛在任何 Room 底下的，場景樹會顯示黃色驚嘆號。
 
@@ -41,8 +41,14 @@ const _MAX_LISTED_OBJECTS := 3
 	set(value):
 		spawn_y = value
 		_update_shape()
-## 勾選：在這個房間死掉可以回到房間起點；不勾：這個房間沒有起點，死掉會退回最後踩到的重生點（可能在別的房間）
-@export var use_room_start: bool = true
+## 勾選：走進這個房間時，重生位置改成房間起點；不勾：走進來不改，死掉回到之前記下的位置（例如上一個重生點）
+@export var use_room_start: bool = true:
+	set(value):
+		use_room_start = value
+		notify_property_list_changed()
+		queue_redraw()
+## 什麼時候把重生位置改成房間起點：每次走進來都改，或只有第一次走進來才改（走回頭路不會改）
+@export_enum("每次進入", "只有第一次進入") var start_trigger: int = 0
 
 # 目前玩家所在房間的 instance id；所有 Room 共用，用來避免重複發出 room_entered
 static var _current_room_id: int = 0
@@ -84,9 +90,18 @@ func get_rect() -> Rect2:
 func get_spawn_point() -> Vector2:
 	return to_global(_get_local_spawn_point())
 
-# 回傳這個房間有沒有啟用房間起點，重生處理者用這個
+# 回傳這個房間有沒有啟用房間起點，重生記憶用這個
 func uses_room_start() -> bool:
 	return use_room_start
+
+# 回傳是不是每次走進來都要把重生位置改成房間起點（false＝只有第一次），重生記憶用這個
+func start_saves_every_time() -> bool:
+	return start_trigger == 0
+
+# 沒有使用房間起點時，隱藏「什麼時候改」的下拉選單
+func _validate_property(property: Dictionary) -> void:
+	if property.name == "start_trigger" and not use_room_start:
+		property.usage = PROPERTY_USAGE_NONE
 
 # 回傳某個全域座標在不在這個房間範圍內，重生處理者找「房間裡的零件」用這個
 func has_point(global_point: Vector2) -> bool:
@@ -221,6 +236,8 @@ func _draw() -> void:
 	draw_string(ThemeDB.fallback_font, Vector2(4, 14), name, HORIZONTAL_ALIGNMENT_LEFT, -1, 12, _BORDER_COLOR)
 	var spawn := _get_local_spawn_point()
 	var color := _SPAWN_COLOR if use_room_start else _SPAWN_OFF_COLOR
-	var label := "房間起點" if use_room_start else "房間起點（不使用）"
+	var label := "房間起點（不使用）"
+	if use_room_start:
+		label = "房間起點" if start_trigger == 0 else "房間起點（只有第一次）"
 	draw_circle(spawn, 4.0, color)
 	draw_string(ThemeDB.fallback_font, spawn + Vector2(6, -6), label, HORIZONTAL_ALIGNMENT_LEFT, -1, 10, color)

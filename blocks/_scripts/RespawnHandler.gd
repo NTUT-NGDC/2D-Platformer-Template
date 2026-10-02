@@ -3,8 +3,8 @@ extends Node
 # 重生處理者：聽到玩家死亡後，等一下再把玩家復活，不重新載入場景。
 # 放在關卡場景裡，學員看得到、刪得掉、換得掉；刪掉的話玩家死了就不會回來（遊戲不會壞）。
 # 重生時放回去的是掛在房間底下的東西（沒有 Room 的關卡是整個場景），數值由那些東西自己倒回（金幣扣回、門還鑰匙）。
-# 重生位置：同一個房間裡踩過的重生點 > 房間起點（房間有勾 use_room_start 才算）> 最後踩到的重生點（可能在別的房間）
-# > 玩家一開始的位置。重生到別的房間時，死掉的房間跟重生的房間都會復位。
+# 重生位置：最後記下的重生位置（走進房間記房間起點、踩到重生點記重生點，見 RespawnMemory），
+# 一個都沒記過就回到玩家一開始的位置。重生到別的房間時，死掉的房間跟重生的房間都會復位。
 
 @export_group("重生設定")
 ## 死亡後隔多久重生（秒）
@@ -109,24 +109,14 @@ func _revive(player: Node, at_position: Vector2) -> void:
 	Events.respawn_requested.emit(player)
 	player.revive(at_position)
 
-# 決定「回到目前房間」模式要重生在哪裡，回傳位置與那個位置所在的房間
+# 決定「回到目前房間」模式要重生在哪裡：最後記下的重生位置，沒有就回玩家一開始的位置；回傳位置與那個位置所在的房間
 func _pick_respawn() -> Dictionary:
-	var has_checkpoint: bool = RespawnMemory.has_checkpoint()
-	var checkpoint_position: Vector2 = RespawnMemory.get_checkpoint_position()
-	var room: Node2D = _current_room if _current_room != null and is_instance_valid(_current_room) else null
-	if room == null:
+	if get_tree().get_first_node_in_group("room") == null:
 		_warn_no_room()
-		if has_checkpoint:
-			return {"position": checkpoint_position, "room": null}
-		return {"position": _start_position, "room": null}
-	if RespawnMemory.has_checkpoint_in(room):
-		return {"position": RespawnMemory.get_checkpoint_position_in(room), "room": room}
-	if room.uses_room_start():
-		return {"position": room.get_spawn_point(), "room": room}
-	if has_checkpoint:
-		print("[重生] %s 沒有使用房間起點，退回最後踩到的重生點" % room.name)
-		return {"position": checkpoint_position, "room": _find_room_at(checkpoint_position)}
-	print("[重生] %s 沒有使用房間起點，也還沒踩過任何重生點，回到玩家一開始的位置" % room.name)
+	if RespawnMemory.has_respawn_point():
+		var point: Vector2 = RespawnMemory.get_respawn_point()
+		return {"position": point, "room": _find_room_at(point)}
+	print("[重生] 還沒記下任何重生位置（沒踩過重生點、也沒進過有起點的房間），回到玩家一開始的位置")
 	return {"position": _start_position, "room": _find_room_at(_start_position)}
 
 # 找出某個全域座標落在哪一個房間，沒有就回傳 null

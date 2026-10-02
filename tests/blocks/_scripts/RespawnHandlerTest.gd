@@ -16,7 +16,7 @@ func _ready() -> void:
 	print("[測試]    應該：重生在 Room2 小平台上（房間起點），Coin_Room2_A 回到地上，金幣 2，鏡頭留在 Room2")
 	print("[測試] ② 撿 Coin_Room2_A（3）→ 踩 Checkpoint（變綠）→ 撿 Coin_Room2_B（4）→ 按 K")
 	print("[測試]    應該：重生在 Checkpoint，Room2 兩枚金幣都回到地上，金幣 2")
-	print("[測試] ③ 走回 Room1 → 按 K：重生在 Room1 底部中央（Checkpoint 在別的房間，不算），Room1 兩枚金幣回來，金幣 0")
+	print("[測試] ③ 走回 Room1 → 按 K：重生在 Room1 底部中央（走進 Room1 時重生位置就改成 Room1 房間起點，蓋過 Room2 的 Checkpoint），Room1 兩枚金幣回來，金幣 0")
 	print("[測試] ④ 停止，把 RespawnHandler 的 mode 改成「整關重來」再跑：撿幾枚金幣後在 Room2 按 K，應該回到 Room1 起點、所有金幣回來、金幣 0")
 	print("[測試] ⑤ 停止，刪掉 RespawnHandler 再跑：按 K 後玩家停住不重生，輸出面板印出中文提示，沒有紅字錯誤")
 	print("[測試] ⑥ 停止，把 Room1 的 use_room_start 取消勾選（黃點變灰）再跑：撿 Room1 一枚金幣（1）→ 按 K")

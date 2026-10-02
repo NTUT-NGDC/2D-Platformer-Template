@@ -2,6 +2,7 @@ extends Node2D
 
 # 手動驗證用：Checkpoint 踩到時 emit reached，同步轉發 Events.checkpoint_reached，
 # 以及 repeatable 欄位（預設關閉＝只算第一次踩到，開啟＝每次踩到都算）。
+# Events.checkpoint_reached（改重生位置）另外看 save_trigger，兩個都預設「只有第一次」，所以只在第一次踩到時轉發。
 
 @onready var _once: Area2D = $Checkpoint_Once
 @onready var _repeatable: Area2D = $Checkpoint_Repeatable
