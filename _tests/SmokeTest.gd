@@ -48,7 +48,7 @@ func _setup_player() -> void:
 func _run_all_steps() -> void:
 	await get_tree().process_frame
 
-	var mechanic_scenes := _scan_scenes("res://mechanics")
+	var mechanic_scenes := _only_mechanic_cards(_scan_scenes("res://mechanics"))
 	var juice_scenes := _scan_scenes("res://juice")
 
 	# 1. 逐一實例化每一張機制卡
@@ -114,6 +114,17 @@ func _scan_dir(path: String, result: Array[String]) -> void:
 				result.append(full_path)
 		entry = dir.get_next()
 	dir.list_dir_end()
+
+# 只留下根節點是機制卡的場景（mechanics/ 底下也放了殼、殼的特性這類不是卡的零件）
+func _only_mechanic_cards(paths: Array[String]) -> Array[String]:
+	var result: Array[String] = []
+	for path in paths:
+		var scene: PackedScene = load(path)
+		var inst: Node = scene.instantiate()
+		if inst is MechanicBase:
+			result.append(path)
+		inst.free()
+	return result
 
 func _wait_frames(n: int) -> void:
 	for i in n:

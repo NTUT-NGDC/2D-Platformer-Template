@@ -380,7 +380,7 @@ build/
 
 `_tests/SmokeTest.tscn` + `SmokeTest.gd`，用 `--headless` 執行，要求：
 
-1. 載入 Player，逐一實例化 `mechanics/` 底下**每一個** `.tscn`，各自掛上跑 60 幀
+1. 載入 Player，逐一實例化 `mechanics/` 底下**每一個**機制卡 `.tscn`（根節點是 `MechanicBase` 的；殼、殼的特性這類放在 `mechanics/` 底下但不是卡的場景跳過），各自掛上跑 60 幀
 2. 隨機組合 3 個機制卡同時掛載，跑 60 幀
 3. 逐一實例化 `juice/` 底下每一個組件，跑 60 幀
 4. 同時掛 6 個 Juice 組件，跑 60 幀
