@@ -92,6 +92,9 @@ Claude Code 在這個專案裡的所有對話回覆、進度回報、驗收結�
 **顯示文字例外（講師決定）**：`ClearScreen.message`（過關畫面最下面製作者選填的一行字）是純顯示用的文字，不拿去比對任何東西，
 所以只需要做到「不打字也能用（空白就不顯示）」和「去掉頭尾空白」，不需要編輯器檢查與近似建議。
 
+**資源欄位例外（講師決定）**：`Juice_Sound.custom_sound`（`AudioStream`）讓學員把自己的音檔從檔案系統拖進欄位，屬於「拖」而不是打字。
+只在下拉選「自訂」時出現；空白時編輯器黃色驚嘆號＋執行時中文警告，並改用預設值照常運作（見 `documents/03_game_feel_juice.md` §3.1）。
+
 ### 5. 組件之間不准打架
 
 任意組合、任意數量的機制卡與 Juice 組件同時存在時，遊戲不得崩潰或卡死。
@@ -170,7 +173,8 @@ godot --headless --path . res://_tests/SmokeTest.tscn
    - `documents/01b_mechanic_cards.md` — 18 張機制卡（10 張主限制卡 + 8 張規則卡）+ 備品庫
    - `documents/01c_blocks_and_abilities.md` — 零件（`blocks/`）與攻擊能力（`abilities/`）
    - `documents/01d_showroom_and_toybox.md` — 展示間與玩具箱
-3. 之後的週次規格會在該週開課前才提供
+3. W3：`documents/03_game_feel_juice.md` — 手感果汁（Juice 組件、表現層 API、音效素材）
+4. 之後的週次規格會在該週開課前才提供
 
 ---
 
@@ -181,7 +185,7 @@ godot --headless --path . res://_tests/SmokeTest.tscn
 - **一次只做一個單元**，做完就停，等使用者說「繼續」才做下一個。只改這個單元需要的檔案，不順手重構別的地方。
 - **規格不清楚、或需要做決定時，停下來問**，不要自己猜。講師的決定寫進 progress.md 該單元底下（`　　→ 講師決定：…`）。
 - 系統層級的單元（自動載入、跨組件機制）要附一個 `tests/` 底下的測試場景，讓使用者按 F6 手動驗證。
-  `tests/` 依類別分資料夾（`systems/`、`mechanics/`、`mechanics/_extra/`、`blocks/`、`abilities/`），
+  `tests/` 依類別分資料夾（`systems/`、`mechanics/`、`mechanics/_extra/`、`blocks/`、`abilities/`、`juice/`、`juice/_extra/`），
   `.tscn` 放在類別資料夾，`.gd` 放在同層 `_scripts/`；場景腳本用 `print("[測試] …")` 印出操作步驟與預期結果。
 - **做完回報**：做了什麼（1～2 句）、改了哪些檔案、怎麼驗證（哪個場景、做什麼、應該看到什麼）、已知限制。
 - **使用者在編輯器驗收通過才 commit**，同一批把 progress.md 該單元打勾（`- [ ]` → `- [x]`）。

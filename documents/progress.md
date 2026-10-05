@@ -521,3 +521,39 @@
 - [x] U128 內建三種殼：蟬殼（什麼都不加）、塑膠殼（`Trait_Bouncy`：玩家、箱子、其他殼碰到會自動彈起，比一般跳躍高）、
 	  蜘蛛殼（不受重力、推不動）
 - [x] U129 文件：`01b` §5 備品庫新增脫殼卡與「自己做一種殼」的步驟、訊號表、零件手冊、速查表
+
+---
+
+# W3：手感果汁（`03_game_feel_juice.md`）
+
+> 講師決定：規格放 `documents/03_game_feel_juice.md`；音效先由 Claude 找 CC0 素材；學員可以把自己的音檔拖進 `Juice_Sound` 的欄位（資源欄位例外，見 `CLAUDE.md`）；
+> 機制卡、零件的事件不做成觸發時機下拉，一律用訊號連到 Juice 的 `play()`；核心組件加上「咕嚕眼」。
+
+## 階段 32：果汁地基
+
+- [ ] U130 Player 表現層 API：`set_juice_squash`／`set_juice_tint`／`set_juice_tilt`／`clear_juice`（`player/JuiceLayer.gd`，依 source 相乘合成，
+      作用在 `Visual` 的子節點、腳底為中心、全部撤掉時還原）（驗證：`tests/systems/JuiceLayerTest.tscn`，跟忽大忽小、重力翻轉、自動奔跑一起作用不互蓋）
+- [ ] U131 `JuiceBase` 擴充：觸發時機 13 種、`follow_impact`、`play()` 接受任意參數（連線驗證器不誤報）、事件位置、0.05 秒連發保護、
+      重生 `_on_reset()`、`_exit_tree()` 還原；持續型隱藏 `timing`（驗證：`tests/systems/JuiceBaseTest.tscn`，每種時機印出一行）
+- [ ] U132 `JuiceSwitch` 自動載入：`F1` 切換全部 Juice、右上角顯示兩秒（驗證：`tests/systems/JuiceSwitchTest.tscn`）
+- [ ] U133 `CameraRig` 震動改成取比較強的、`Events.zoom_requested` 鏡頭推近（含房間內跟隨的範圍計算）；`00_foundation` §2、`01a` §7 事件表補上
+
+## 階段 33：核心組件
+
+- [ ] U134 `Juice_ScreenShake` 螢幕震動
+- [ ] U135 `Juice_HitStop` 頓幀
+- [ ] U136 `Juice_SquashStretch` 擠壓拉伸
+- [ ] U137 `Juice_Flash` 閃色
+- [ ] U138 `Juice_Particles` 粒子噴發（`CPUParticles2D`，四種樣式）
+- [ ] U139 音效素材：找 CC0 音效（或 sfxr 生成）至少 8 種放 `sfx/`，`sfx/CREDITS.md` 寫出處與授權
+- [ ] U140 `Juice_Sound` 音效（內建下拉＋「自訂」資源欄位四點防呆中適用的部分）
+- [ ] U141 `Juice_CameraZoom` 鏡頭推近
+- [ ] U142 `Juice_Trail` 殘影
+- [ ] U143 `Juice_GooglyEyes` 咕嚕眼（`@tool` 編輯器預覽、拖節點決定眼睛位置、彈簧眼珠、跟著翻轉／體型）
+
+## 階段 34：備品與收尾
+
+- [ ] U144 備品 `Juice_TextPopup` 跳字、`Juice_ScreenFlash` 全螢幕閃光
+- [ ] U145 備品 `Juice_Tilt` 傾斜、`Juice_DeathBurst` 死亡爆散
+- [ ] U146 `levels/_starts/W3_JuiceBox.tscn` 起始場景、`Gym.tscn` 示範佈置
+- [ ] U147 煙霧測試補上 §6 的項目、零件手冊／速查表／README 補 W3，跑一次煙霧測試
