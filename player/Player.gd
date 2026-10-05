@@ -40,6 +40,9 @@ var _cached_jump_scale: float = 1.0
 var _cached_input_locked: bool = false
 var _impulse_grace_left: float = 0.0
 var _frozen: bool = false
+var _juice_layer = null
+
+const _JuiceLayer := preload("res://player/JuiceLayer.gd")
 
 # 自己的跳躍用最低優先權掛在 InputRouter，讓蓄力青蛙跳這類卡可以用更高優先權攔截跳躍鍵，
 # 攔截成功時這裡的跳躍完全不會被呼叫（見 InputRouter 的優先權機制）
@@ -53,6 +56,7 @@ func _ready() -> void:
 	add_to_group("player")
 	_find_visual()
 	_remember_base_collision_size()
+	_create_juice_layer()
 	InputRouter.bind(self, "jump", InputRouter.PRESSED, _on_jump_pressed, _JUMP_PRIORITY)
 	if has_node("Mechanics"):
 		_register_children($Mechanics, true)
@@ -76,6 +80,19 @@ func _remember_base_collision_size() -> void:
 		return
 	col.shape = col.shape.duplicate()
 	_base_collision_size = (col.shape as RectangleShape2D).size
+
+# 建立表現層：算出腳底在 Visual 座標裡的位置，讓 Juice 的擠壓、傾斜以腳底為中心
+func _create_juice_layer() -> void:
+	if visual == null:
+		return
+	var foot_y := 0.0
+	var col := get_node_or_null("CollisionShape2D") as CollisionShape2D
+	if col and _base_collision_size != Vector2.ZERO:
+		foot_y = col.position.y + _base_collision_size.y * 0.5
+	foot_y -= visual.position.y
+	if not is_zero_approx(visual.scale.y):
+		foot_y /= absf(visual.scale.y)
+	_juice_layer = _JuiceLayer.new(visual, foot_y)
 
 # 尋找視覺節點：先找 player_visual 群組，找不到就退而找 Visual 子節點，都沒有就發警告
 func _find_visual() -> void:
@@ -276,6 +293,28 @@ func force_jump(power_scale: float = 1.0) -> void:
 	velocity += up_direction * jump_force * power_scale
 	jumped.emit()
 	Events.player_jumped.emit()
+
+# ---- 提供給 Juice 組件的表現層 API（作用在 Visual 的子節點上，不碰 Visual 本身，跟機制卡疊加） ----
+
+# 讓角色外觀暫時壓扁或拉長，(1, 1) 是原本的樣子，擠壓拉伸這類 Juice 用這個
+func set_juice_squash(source: Node, amount: Vector2) -> void:
+	if _juice_layer:
+		_juice_layer.set_squash(source, amount)
+
+# 讓角色外觀暫時疊上一層顏色，亮度超過 1 會變亮（閃白），閃色這類 Juice 用這個
+func set_juice_tint(source: Node, color: Color) -> void:
+	if _juice_layer:
+		_juice_layer.set_tint(source, color)
+
+# 讓角色外觀暫時傾斜（弧度），傾斜這類 Juice 用這個
+func set_juice_tilt(source: Node, angle: float) -> void:
+	if _juice_layer:
+		_juice_layer.set_tilt(source, angle)
+
+# 撤掉這個組件對外觀的所有影響，Juice 移除或重生時用這個
+func clear_juice(source: Node) -> void:
+	if _juice_layer:
+		_juice_layer.clear(source)
 
 # ---- 給學員用訊號連線的動作（都不帶參數，在「節點」面板把卡片或零件的訊號連到 Player 就能用） ----
 
