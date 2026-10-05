@@ -498,7 +498,7 @@
 > - 「縮小時脫殼」聽 `Events.mechanic_event("Mechanic_SizeShift", "shrank")` 廣播，不直接引用忽大忽小卡；
 >   也可以選「按下按鍵」脫殼，沒有忽大忽小卡也能用。選「縮小時」但場景裡沒有忽大忽小卡要有中文警告。
 
-- [ ] U125 殼本體 `Shell`（RigidBody2D，跟箱子同一圖層）：`use_gravity`、`can_push` 勾選框（蜘蛛殼＝兩個都關）、
+- [x] U125 殼本體 `Shell`（RigidBody2D，跟箱子同一圖層）：`use_gravity`、`can_push` 勾選框（蜘蛛殼＝兩個都關）、
       數量上限／計算範圍／滿了怎麼辦／可脫次數欄位；`break_shell()` 碎掉；特性組件基底 `ShellTrait`（殼找自己底下的子節點呼叫 `setup(shell)`，
       跟 Player 找機制卡同一個模式）；殼模板與特性放 `mechanics/_extra/_molt/`，冒煙測試掃 `mechanics/` 時跳過根節點不是機制卡的場景
       （驗證：`tests/mechanics/_extra/ShellTest.tscn` 直接擺幾顆不同設定的殼）
