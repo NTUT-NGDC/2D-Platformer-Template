@@ -1,7 +1,7 @@
 extends MechanicBase
 
-# 忽大忽小：在小、大兩種體型之間切換，一開始是小的。變大時如果會卡進地形，
-# 會先延後，等空間夠了才真的套用，不會把玩家卡進牆裡。
+# 忽大忽小：在小、大兩種體型之間切換，一開始是小的。變大、變小都是腳底不動、往頭頂伸縮，
+# 站在地上也能直接變大；變大時如果頭頂或兩旁會卡進地形，會先延後，等空間夠了才真的套用，不會把玩家卡進牆裡。
 # 拖進 Player → Mechanics 底下就能用，不用連任何線。
 
 ## 什麼時候切換大小
@@ -26,9 +26,13 @@ extends MechanicBase
 signal grew
 ## 變小之後發出
 signal shrank
+## 還在等空間變大時又按一次、取消了變大之後發出（可以接「無效」提示）
+signal grow_canceled
 
 const _TRIGGER_KEY := 0
 const _AUTO_INTERVAL := 3.0
+# 檢查變大後會不會卡進地形時，形狀每邊縮一點，避免剛好貼著地板、牆壁也被當成重疊
+const _OVERLAP_MARGIN := 1.0
 
 var _is_big: bool = false
 var _pending_factor: float = 0.0
@@ -70,20 +74,29 @@ func on_respawn() -> void:
 	_auto_time_left = _AUTO_INTERVAL
 	player.set_size_factor(small_scale)
 
-# 在小、大兩種體型之間切換；新的請求會蓋掉還沒套用的舊請求
+# 在小、大兩種體型之間切換；還在等空間變大時又切換，就當作取消變大（不算變小）
 func _toggle() -> void:
+	if _pending_factor != 0.0:
+		_pending_factor = 0.0
+		_is_big = false
+		grow_canceled.emit()
+		Events.mechanic_event.emit("Mechanic_SizeShift", "grow_canceled")
+		return
 	var target := small_scale if _is_big else big_scale
 	_is_big = not _is_big
-	_pending_factor = 0.0
 	if target > player.size_factor:
-		_pending_factor = target
+		if not _try_apply_size(target):
+			_pending_factor = target
 	else:
 		_try_apply_size(target)
 
-# 嘗試套用體型：變大時若會跟地形重疊就先不套用，等空間足夠再套；回傳有沒有真的套用
+# 嘗試套用體型（腳底不動）：變大時若會跟地形重疊就先不套用，等空間足夠再套；回傳有沒有真的套用
 func _try_apply_size(target: float) -> bool:
+	if is_equal_approx(target, player.size_factor):
+		return true
 	if target > player.size_factor and _would_overlap_terrain(target):
 		return false
+	player.global_position += _feet_anchor_offset(target)
 	player.set_size_factor(target)
 	if target > 1.0:
 		grew.emit()
@@ -92,18 +105,27 @@ func _try_apply_size(target: float) -> bool:
 	Events.mechanic_event.emit("Mechanic_SizeShift", "grew" if target > 1.0 else "shrank")
 	return true
 
-# 用縮放後的碰撞形狀在目前位置查一次，看看會不會卡進地形
+# 換成目標體型時，玩家要往頭頂方向移多少，腳底才會留在原地（碰撞形狀高度變化的一半）
+func _feet_anchor_offset(target_factor: float) -> Vector2:
+	var col := player.get_node_or_null("CollisionShape2D") as CollisionShape2D
+	if col == null or not (col.shape is RectangleShape2D):
+		return Vector2.ZERO
+	var height: float = (col.shape as RectangleShape2D).size.y
+	var height_change: float = height * (target_factor / player.size_factor - 1.0)
+	return player.up_direction * height_change * 0.5
+
+# 用縮放後的碰撞形狀在腳底不動的位置查一次，看看會不會卡進地形
 func _would_overlap_terrain(target_factor: float) -> bool:
-	var col := player.get_node("CollisionShape2D") as CollisionShape2D
+	var col := player.get_node_or_null("CollisionShape2D") as CollisionShape2D
 	if col == null or not (col.shape is RectangleShape2D):
 		return false
 	var current_size: Vector2 = (col.shape as RectangleShape2D).size
 	var ratio: float = target_factor / player.size_factor
 	var shape := RectangleShape2D.new()
-	shape.size = current_size * ratio
+	shape.size = (current_size * ratio - Vector2.ONE * _OVERLAP_MARGIN * 2.0).max(Vector2.ONE)
 	var query := PhysicsShapeQueryParameters2D.new()
 	query.shape = shape
-	query.transform = Transform2D(0.0, player.global_position)
+	query.transform = Transform2D(0.0, col.global_position + _feet_anchor_offset(target_factor))
 	query.collision_mask = Layers.TERRAIN
 	var space_state: PhysicsDirectSpaceState2D = player.get_world_2d().direct_space_state
 	return not space_state.intersect_shape(query, 1).is_empty()

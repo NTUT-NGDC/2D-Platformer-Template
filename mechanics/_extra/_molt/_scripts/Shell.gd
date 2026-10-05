@@ -23,10 +23,17 @@ extends RigidBody2D
 @export_range(0, 20) var max_uses: int = 0
 
 @export_group("外觀")
-## 預設方框的顏色（殼底下有自己的圖片時不會用到）
-@export_enum("琥珀", "藍", "綠", "灰", "紅", "紫") var color: int = 0:
+## 預設方框的顏色（殼底下有自己的圖片時不會用到）；選「自訂」可以用調色盤挑顏色或貼色碼
+@export_enum("琥珀", "藍", "綠", "灰", "紅", "紫", "自訂") var color: int = 0:
 	set(value):
 		color = value
+		notify_property_list_changed()
+		queue_redraw()
+
+## 自訂的顏色，點色塊開調色盤，可以直接貼色碼（例如 ff8800）（「顏色」選自訂時才會顯示這一欄）
+@export var custom_color: Color = Color(0.85, 0.65, 0.3):
+	set(value):
+		custom_color = value
 		queue_redraw()
 
 ## 殼碎掉時發出，給學員自己接特效／音效用
@@ -40,6 +47,7 @@ const _COLORS := [
 	Color(0.9, 0.35, 0.35),
 	Color(0.7, 0.45, 0.9),
 ]
+const _CUSTOM_COLOR := 6
 const _DEFAULT_SIZE := Vector2(16, 32)
 const _MASS := 1.0
 # 不受重力時推完會慢慢停下，不會一直飄走
@@ -51,6 +59,12 @@ const _TOP_THICKNESS := 2.0
 var _size: Vector2 = _DEFAULT_SIZE
 var _is_broken: bool = false
 var _top: AnimatableBody2D = null
+var _ignored: Array[PhysicsBody2D] = []
+
+# 「顏色」沒選自訂時隱藏自訂顏色欄位
+func _validate_property(property: Dictionary) -> void:
+	if property.name == "custom_color" and color != _CUSTOM_COLOR:
+		property.usage = PROPERTY_USAGE_NONE
 
 # 套用物理設定、加入群組，讓底下的特性組件生效
 func _ready() -> void:
@@ -102,6 +116,49 @@ func break_shell() -> void:
 # 殼是不是已經碎掉了
 func is_broken() -> bool:
 	return _is_broken
+
+# 暫時不跟某個東西互撞，等兩邊分開了才恢復；脫殼卡用這個讓剛脫下的殼不會把玩家擠開
+func ignore_until_apart(body: PhysicsBody2D) -> void:
+	if body == null or body in _ignored:
+		return
+	_ignored.append(body)
+	add_collision_exception_with(body)
+	body.add_collision_exception_with(self)
+	if _top != null:
+		_top.add_collision_exception_with(body)
+		body.add_collision_exception_with(_top)
+
+# 檢查暫時不互撞的東西是不是已經離開殼了，離開的就恢復碰撞
+func _update_ignored() -> void:
+	if _ignored.is_empty():
+		return
+	var touching := _overlapping_bodies()
+	for body in _ignored.duplicate():
+		if is_instance_valid(body) and body in touching:
+			continue
+		_ignored.erase(body)
+		if not is_instance_valid(body):
+			continue
+		remove_collision_exception_with(body)
+		body.remove_collision_exception_with(self)
+		if _top != null:
+			_top.remove_collision_exception_with(body)
+			body.remove_collision_exception_with(_top)
+
+# 用殼本體的範圍查一次現在跟哪些東西重疊（稍微縮小一點，只是貼著邊、站在上面不算重疊）
+func _overlapping_bodies() -> Array[Node]:
+	var result: Array[Node] = []
+	var shape := RectangleShape2D.new()
+	shape.size = (_size - Vector2(2.0, 2.0)).max(Vector2.ONE)
+	var query := PhysicsShapeQueryParameters2D.new()
+	query.shape = shape
+	query.transform = Transform2D(0.0, global_position)
+	query.collision_mask = 0xFFFFFFFF
+	query.exclude = [get_rid()] if _top == null else [get_rid(), _top.get_rid()]
+	for hit in get_world_2d().direct_space_state.intersect_shape(query, 16):
+		if hit.collider is Node:
+			result.append(hit.collider)
+	return result
 
 # 每顆殼用自己的碰撞形狀，複製出來的殼改大小時才不會互相影響
 func _make_own_shape() -> void:
@@ -158,17 +215,22 @@ func _update_top() -> void:
 func _move_top() -> void:
 	_top.global_position = global_position + Vector2(0.0, -_size.y / 2.0 - _TOP_THICKNESS / 2.0)
 
-# 每幀讓頂端平台跟著殼走（平台會算出自己的速度，站在上面的玩家會被帶著走）
+# 每幀讓頂端平台跟著殼走（平台會算出自己的速度，站在上面的玩家會被帶著走），
+# 並檢查暫時不互撞的東西離開了沒
 func _physics_process(_delta: float) -> void:
+	if Engine.is_editor_hint():
+		return
 	if _top != null:
 		_move_top()
+	_update_ignored()
 
 # 沒有自己的圖片時，畫一個預設顏色的方框
 func _draw() -> void:
 	if _has_custom_visual():
 		return
 	var rect := Rect2(-_size / 2.0, _size)
-	var c: Color = _COLORS[clampi(color, 0, _COLORS.size() - 1)]
+	var c: Color = custom_color if color == _CUSTOM_COLOR else _COLORS[clampi(color, 0, _COLORS.size() - 1)]
+	c.a = 1.0
 	draw_rect(rect, Color(c, 0.75))
 	draw_rect(rect, c.darkened(0.4), false, 2.0)
 

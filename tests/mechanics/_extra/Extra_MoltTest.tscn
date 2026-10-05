@@ -1,0 +1,61 @@
+[gd_scene format=3 uid="uid://bqi7ru0abbjmk"]
+
+[ext_resource type="Script" uid="uid://chs5gptorvany" path="res://tests/mechanics/_extra/_scripts/Extra_MoltTest.gd" id="1"]
+[ext_resource type="PackedScene" path="res://player/Player.tscn" id="2"]
+[ext_resource type="Texture2D" uid="uid://cm8ymciwkvttp" path="res://art/white_block.png" id="3"]
+[ext_resource type="PackedScene" path="res://mechanics/Mechanic_SizeShift.tscn" id="4"]
+[ext_resource type="PackedScene" path="res://mechanics/_extra/Extra_Molt.tscn" id="5"]
+[ext_resource type="PackedScene" path="res://mechanics/_extra/_molt/Shell.tscn" id="6"]
+[ext_resource type="Script" uid="uid://biai0c13divjh" path="res://tests/mechanics/_scripts/MechanicSignalPrinter.gd" id="signal_printer"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_floor"]
+size = Vector2(800, 16)
+
+[node name="Extra_MoltTest" type="Node2D" unique_id=15014266]
+script = ExtResource("1")
+
+[node name="Floor" type="StaticBody2D" parent="." unique_id=2087148347]
+position = Vector2(0, 103)
+collision_layer = 2
+collision_mask = 0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Floor" unique_id=157305842]
+shape = SubResource("RectangleShape2D_floor")
+
+[node name="Visual" type="ColorRect" parent="Floor" unique_id=1819895191]
+offset_left = -400.0
+offset_top = -8.0
+offset_right = 400.0
+offset_bottom = 8.0
+color = Color(0.4, 0.35, 0.3, 1)
+
+[node name="Player" parent="." unique_id=1065413643 instance=ExtResource("2")]
+position = Vector2(0, 75)
+
+[node name="Visual" type="Node2D" parent="Player" unique_id=679815292]
+
+[node name="Sprite2D" type="Sprite2D" parent="Player/Visual" unique_id=856620967]
+texture = ExtResource("3")
+region_enabled = true
+region_rect = Rect2(0, 0, 16, 32)
+
+[node name="Mechanics" type="Node2D" parent="Player" unique_id=2140551206]
+
+[node name="Mechanic_SizeShift" parent="Player/Mechanics" unique_id=1616740912 instance=ExtResource("4")]
+
+[node name="Extra_Molt" parent="Player/Mechanics" unique_id=603677883 instance=ExtResource("5")]
+start_inside = false
+
+[node name="Shell_Blue" parent="Player/Mechanics/Extra_Molt" unique_id=1743892594 instance=ExtResource("6")]
+color = 1
+
+[node name="NotAShell" type="Node2D" parent="Player/Mechanics/Extra_Molt" unique_id=1403590536]
+
+[node name="Juice" type="Node2D" parent="Player" unique_id=186701546]
+
+[node name="Camera2D" type="Camera2D" parent="Player" unique_id=533432666]
+position = Vector2(0, -30)
+zoom = Vector2(0.6, 0.6)
+
+[node name="MechanicSignalPrinter" type="Node" parent="." unique_id=1246292573]
+script = ExtResource("signal_printer")

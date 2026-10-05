@@ -100,7 +100,7 @@ W1 的課堂活動是：學員線上抽一張**主限制卡** → 把對應的 `
 | `Mechanic_GravityFlip` | `flipped` | 重力翻轉之後 |
 | `Mechanic_BouncyWorld` | `bounced` | 撞到表面反彈（推之前） |
 | `Mechanic_SpeedRamp` | `reached_max`、`speed_reset` | 加到最高速；倍率歸零 |
-| `Mechanic_SizeShift` | `grew`、`shrank` | 變大之後；變小之後 |
+| `Mechanic_SizeShift` | `grew`、`shrank`、`grow_canceled` | 變大之後；變小之後；還在等空間變大時又按一次、取消變大（可接「無效」提示） |
 | `Mechanic_Stamina` | `exhausted`、`recovered` | 體力歸零；解除懲罰 |
 | `Mechanic_FloorIsLava` | `burn_started`、`burn_stopped` | 開始站在會扣血的地板上；離開 |
 | `Mechanic_HealthDrain` | `healed` | 撿到金幣補血 |
@@ -278,14 +278,15 @@ group 定義）。
 自動切換，不顯示 `key`。**這張卡「按下按鍵」模式下同時顯示 5 個欄位（超出其餘卡片的 4 欄慣例）**，
 是本規格唯一的例外，因為要同時保留既有的雙觸發模式與可自訂按鍵，兩者都不宜拿掉。
 呼叫 `player.set_size_factor()`。**必須改 CollisionShape2D 的尺寸，不要縮放整個物理節點**；
-變大時若會與地形重疊，延後到空間足夠時才套用。
+變大、變小都是腳底不動、往頭頂伸縮（重力翻轉後一樣往頭頂），站在地上也能直接變大；
+變大時若會與地形重疊，延後到空間足夠時才套用；等待中再按一次＝取消變大（發 `grow_canceled`，不算變小、不發 `shrank`）。
 
 `size_affects_stats` 開啟時：
 
 - 大隻：`ctx.push_scale` 提高（推得動箱子）、`ctx.knockback_scale` 降低、`ctx.jump_scale` 降低
 - 小隻：`ctx.jump_scale` 提高、`ctx.knockback_scale` 提高（容易被敵人撞飛）
 
-事件：`grew`、`shrank`
+事件：`grew`、`shrank`、`grow_canceled`
 
 ### 規則卡
 

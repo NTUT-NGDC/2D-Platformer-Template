@@ -9,6 +9,8 @@ func _ready() -> void:
 	print("[測試] 按 Shift：因為頭上是低矮天花板，應該先維持小的狀態，不會卡進天花板")
 	print("[測試] 往右走出通道到開闊區域，應該看到角色自動變大（不用再按一次 Shift）")
 	print("[測試] 在開闊區域再按一次 Shift 縮小、跳一下，比較大跟小的跳躍高度差異")
+	print("[測試] 站在地上不跳、按 Shift：應該馬上變大，腳底留在地板上（不會浮起來或卡進地板）")
+	print("[測試] 回到低矮通道裡縮小，按 Shift（卡住沒變大）再按一次：應該印出 grow_canceled，不會印 shrank")
 
 func _on_mechanic_event(card: String, event: String) -> void:
 	print("[測試] Events.mechanic_event：%s / %s" % [card, event])
