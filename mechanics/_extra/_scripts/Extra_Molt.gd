@@ -71,9 +71,11 @@ const _ORDERS := [
 	[_DOWN, _SIDE, _UP],
 	[_SIDE, _DOWN, _UP],
 ]
-# 卡片底下沒有放殼時用的內建殼
+# 卡片底下沒有放殼時用的內建殼：蟬殼（什麼都不加）、塑膠殼（彈彈的）、蜘蛛殼（不受重力、推不動）
 const _BUILT_IN_SHELLS := [
-	"res://mechanics/_extra/_molt/Shell.tscn",
+	"res://mechanics/_extra/_molt/Shell_Cicada.tscn",
+	"res://mechanics/_extra/_molt/Shell_Plastic.tscn",
+	"res://mechanics/_extra/_molt/Shell_Spider.tscn",
 ]
 const _SIZE_SHIFT_CARD := "Mechanic_SizeShift"
 const _SHOW_HEAD := 0

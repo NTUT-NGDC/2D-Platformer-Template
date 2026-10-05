@@ -1,0 +1,5 @@
+[gd_scene format=3]
+
+[ext_resource type="PackedScene" path="res://mechanics/_extra/_molt/Shell.tscn" id="1"]
+
+[node name="Shell_Cicada" instance=ExtResource("1")]

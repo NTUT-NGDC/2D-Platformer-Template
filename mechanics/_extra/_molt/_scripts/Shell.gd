@@ -122,6 +122,10 @@ func ignore_until_apart(body: PhysicsBody2D) -> void:
 		_top.add_collision_exception_with(body)
 		body.add_collision_exception_with(_top)
 
+# 某個東西現在是不是暫時不跟殼互撞（剛脫殼、還沒鑽出來），特性組件用這個避免對它起作用
+func is_ignoring(body: Node) -> bool:
+	return body in _ignored
+
 # 檢查暫時不互撞的東西是不是已經離開殼了，離開的就恢復碰撞
 func _update_ignored() -> void:
 	if _ignored.is_empty():
