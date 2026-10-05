@@ -260,15 +260,16 @@ func _molt() -> void:
 	shell.ignore_until_apart(player)
 	if outside != null:
 		player.global_position += (outside as Vector2) - _body_center()
-	_push_player(dir)
 	_shells.append(shell)
 	_shell_template[shell] = index
 	_shell_room[shell] = room
 	shell.tree_exited.connect(_forget_shell.bind(shell))
 	_uses[index] = int(_uses.get(index, 0)) + 1
 	_refresh_display()
+	# 會推玩家的訊號在推之前發出（跟其他卡一樣，連到 stop_motion 是「先停住再推」）
 	shell_created.emit()
 	Events.mechanic_event.emit("Extra_Molt", "shell_created")
+	_push_player(dir)
 
 # 依殼的設定檢查能不能再脫一顆：次數用完、或數量滿了又不能再脫就回傳 false；
 # 數量滿了要碎掉最舊的，就在這裡碎掉
