@@ -52,7 +52,6 @@ const _DEFAULT_SIZE := Vector2(16, 32)
 const _MASS := 1.0
 # 不受重力時推完會慢慢停下，不會一直飄走
 const _FLOAT_DAMP := 3.0
-const _BREAK_DURATION := 0.2
 # 頂端平台的厚度，以及跟殼本體之間留的空隙（玩家站在平台上時碰不到殼本體，才不會把殼往下壓）
 const _TOP_THICKNESS := 2.0
 
@@ -94,24 +93,19 @@ func set_body_size(size: Vector2) -> void:
 func get_body_size() -> Vector2:
 	return _size
 
-# 讓殼碎掉：馬上不再擋東西，閃一下之後消失
+# 讓殼碎掉：直接消失（碎掉的特效之後由學員接 broken 訊號自己做）
 func break_shell() -> void:
 	if _is_broken:
 		return
 	_is_broken = true
-	var col := get_node_or_null("CollisionShape2D") as CollisionShape2D
-	if col != null:
-		col.set_deferred("disabled", true)
-	if _top != null:
-		_top.queue_free()
-		_top = null
-	set_deferred("freeze", true)
 	broken.emit()
-	var tween := create_tween()
-	tween.set_parallel(true)
-	tween.tween_property(self, "modulate:a", 0.0, _BREAK_DURATION)
-	tween.tween_property(self, "scale", Vector2(1.3, 1.3), _BREAK_DURATION)
-	tween.chain().tween_callback(queue_free)
+	queue_free()
+
+# 取得殼的顏色（下拉選的顏色或自訂顏色），脫殼卡顯示目前選中哪種殼用這個
+func get_color() -> Color:
+	var c: Color = custom_color if color == _CUSTOM_COLOR else _COLORS[clampi(color, 0, _COLORS.size() - 1)]
+	c.a = 1.0
+	return c
 
 # 殼是不是已經碎掉了
 func is_broken() -> bool:
@@ -229,8 +223,7 @@ func _draw() -> void:
 	if _has_custom_visual():
 		return
 	var rect := Rect2(-_size / 2.0, _size)
-	var c: Color = custom_color if color == _CUSTOM_COLOR else _COLORS[clampi(color, 0, _COLORS.size() - 1)]
-	c.a = 1.0
+	var c := get_color()
 	draw_rect(rect, Color(c, 0.75))
 	draw_rect(rect, c.darkened(0.4), false, 2.0)
 

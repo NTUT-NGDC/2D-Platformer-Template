@@ -3,6 +3,7 @@ extends MechanicBase
 
 # 脫殼：縮小（或按下按鍵）時在原地留下一顆殼，玩家依方向鍵往某個方向脫出去。備品庫卡，不在抽卡池裡。
 # 殼的種類＝卡片底下的殼（Shell）子節點，脫殼時複製一份放進關卡；底下沒有殼就用內建的殼。
+# 按 Q／E 切換要脫哪種殼；數量上限、可脫次數照每種殼自己的設定。
 # 「縮小時」聽忽大忽小卡的廣播，不用連線；拖進 Player → Mechanics 底下就能用。
 
 ## 什麼時候脫殼：跟著忽大忽小卡縮小的那一刻，或是自己按一個按鍵
@@ -36,6 +37,25 @@ extends MechanicBase
 ## 擠到殼外面時，什麼方向鍵都沒按的話往哪邊脫出（「start_inside」不勾時才會顯示這一欄）
 @export_enum("上", "面向的方向", "背對的方向", "下") var default_direction: int = 0
 
+@export_group("切換殼")
+## 切換到上一種殼的按鍵（殼的順序＝卡片底下殼的順序）
+@export var prev_key: Key = KEY_Q
+## 切換到下一種殼的按鍵
+@export var next_key: Key = KEY_E
+## 目前選中哪種殼要怎麼顯示在畫面上
+@export_enum("玩家頭上", "畫面右上角", "兩個都要", "不顯示") var show_selected: int = 0
+
+@export_group("玩家死掉時")
+## 玩家死掉時，已經脫下來的殼怎麼處理（清掉時，可以脫的次數也一起恢復）
+@export_enum("重生時清掉", "死掉時馬上清掉", "保留") var on_death: int = 0
+
+## 脫出一顆殼之後發出
+signal shell_created
+## 用切換鍵換了一種殼之後發出
+signal shell_changed
+## 想脫殼但脫不了（這種殼的次數用完了，或數量滿了又設定成不能再脫）時發出，可以接「無效」提示
+signal molt_blocked
+
 const _TRIGGER_SHRINK := 0
 const _TRIGGER_KEY := 1
 const _UP := "上"
@@ -56,6 +76,17 @@ const _BUILT_IN_SHELLS := [
 	"res://mechanics/_extra/_molt/Shell.tscn",
 ]
 const _SIZE_SHIFT_CARD := "Mechanic_SizeShift"
+const _SHOW_HEAD := 0
+const _SHOW_CORNER := 1
+const _SHOW_BOTH := 2
+const _CLEAR_ON_RESPAWN := 0
+const _CLEAR_ON_DEATH := 1
+# 殼設定裡「數量上限怎麼算」「滿了怎麼辦」的選項
+const _SCOPE_ROOM := 0
+const _FULL_BLOCK := 1
+# 頭上小方塊的大小、離頭頂多遠
+const _HEAD_ICON_SIZE := 8.0
+const _HEAD_ICON_GAP := 10.0
 # 往左右脫出時暫時鎖住方向鍵，不然按著方向鍵會馬上把彈出去的速度蓋掉
 const _SIDE_LOCK_DURATION := 0.2
 # 擠到殼外面時，玩家跟殼之間留一點空隙（殼頂端還有一片薄平台，要站在它上面）
@@ -78,6 +109,15 @@ var _last_position: Vector2 = Vector2.ZERO
 var _last_size: Vector2 = Vector2.ZERO
 var _side_lock_left: float = 0.0
 var _warning_timer: float = 0.0
+# 場景裡還在的殼（照脫出的順序，最舊的在前面），以及每顆殼是哪種、在哪個房間脫的
+var _shells: Array[Shell] = []
+var _shell_template: Dictionary = {}   # Shell -> 模板編號
+var _shell_room: Dictionary = {}       # Shell -> 房間（沒有房間的關卡是 null）
+var _uses: Dictionary = {}             # 模板編號 -> 已經脫了幾次
+var _head_icon: Node2D = null
+var _head_label: Label = null
+var _corner_icon: ColorRect = null
+var _corner_label: Label = null
 
 # 只在「觸發時機」選按下按鍵時顯示按鍵欄位；選滑鼠按鍵時也隱藏 key 欄位；窩在殼裡時隱藏預設方向
 func _validate_property(property: Dictionary) -> void:
@@ -129,6 +169,13 @@ func _on_setup() -> void:
 		if input_type == 0:
 			InputRouter.warn_if_dangerous_key(key, "[脫殼]")
 		InputRouter.bind_input(self, input_type, key, InputRouter.PRESSED, _on_key_pressed)
+	InputRouter.warn_if_dangerous_key(prev_key, "[脫殼]")
+	InputRouter.warn_if_dangerous_key(next_key, "[脫殼]")
+	InputRouter.bind_key(self, prev_key, InputRouter.PRESSED, func(): return _switch(-1))
+	InputRouter.bind_key(self, next_key, InputRouter.PRESSED, func(): return _switch(1))
+	if on_death == _CLEAR_ON_DEATH:
+		Events.player_died.connect(clear_shells)
+	_make_display()
 	InputRouter.bind(self, "move_up", InputRouter.HELD, func(_t: float): _up_held = true)
 	InputRouter.bind(self, "move_down", InputRouter.HELD, func(_t: float): _down_held = true)
 	player.direction_changed.connect(func(dir: int): _facing = dir)
@@ -145,12 +192,26 @@ func apply(ctx: MoveContext) -> void:
 	_up_held = false
 	_down_held = false
 	_remember_body()
+	_update_head_icon()
 
-# 重生時取消還沒處理的脫殼、解除方向鎖
+# 重生時取消還沒處理的脫殼、解除方向鎖；死亡處理選「重生時清掉」就把殼清掉
 func on_respawn() -> void:
 	_pending = false
 	_side_lock_left = 0.0
 	_remember_body()
+	if on_death == _CLEAR_ON_RESPAWN:
+		clear_shells()
+
+# 把脫下來的殼全部碎掉，可以脫的次數也全部恢復；可以接其他零件的訊號來呼叫（例如按鈕被踩下）
+func clear_shells() -> void:
+	for shell in _shells.duplicate():
+		if is_instance_valid(shell):
+			shell.break_shell()
+	_shells.clear()
+	_shell_template.clear()
+	_shell_room.clear()
+	_uses.clear()
+	_refresh_display()
 
 # 忽大忽小卡縮小的那一刻：用縮小前的大小準備脫殼
 func _on_mechanic_event(card: String, event: String) -> void:
@@ -177,7 +238,13 @@ func _request_molt(at_position: Vector2, size: Vector2) -> void:
 func _molt() -> void:
 	if _templates.is_empty():
 		return
-	var template := _templates[clampi(_selected, 0, _templates.size() - 1)]
+	var index := clampi(_selected, 0, _templates.size() - 1)
+	var template := _templates[index]
+	var room := _room_at(_pending_position)
+	if not _make_room_for(index, template, room):
+		molt_blocked.emit()
+		Events.mechanic_event.emit("Extra_Molt", "molt_blocked")
+		return
 	var shell := template.duplicate() as Shell
 	shell.name = template.name
 	var dir := _pick_direction()
@@ -185,14 +252,145 @@ func _molt() -> void:
 	var outside: Variant = null if start_inside else _find_outside_position(dir)
 	var parent: Node = get_tree().current_scene if get_tree().current_scene != null else get_tree().root
 	shell.position = (parent as Node2D).to_local(_pending_position) if parent is Node2D else _pending_position
-	parent.add_child(shell)
+	parent.add_child(shell, true)
 	shell.set_body_size(_pending_size)
 	# 擠到殼外面的話，玩家是瞬間移過去的，物理引擎這一步還會以為玩家穿過殼、把殼推開，所以也先不互撞
 	shell.ignore_until_apart(player)
 	if outside != null:
 		player.global_position += (outside as Vector2) - _body_center()
 	_push_player(dir)
-	Events.mechanic_event.emit("Extra_Molt", "molted")
+	_shells.append(shell)
+	_shell_template[shell] = index
+	_shell_room[shell] = room
+	shell.tree_exited.connect(_forget_shell.bind(shell))
+	_uses[index] = int(_uses.get(index, 0)) + 1
+	_refresh_display()
+	shell_created.emit()
+	Events.mechanic_event.emit("Extra_Molt", "shell_created")
+
+# 依殼的設定檢查能不能再脫一顆：次數用完、或數量滿了又不能再脫就回傳 false；
+# 數量滿了要碎掉最舊的，就在這裡碎掉
+func _make_room_for(index: int, template: Shell, room: Node) -> bool:
+	if template.max_uses > 0 and int(_uses.get(index, 0)) >= template.max_uses:
+		print("[脫殼] 「%s」可以脫的次數用完了" % template.name)
+		return false
+	var same: Array[Shell] = []
+	for shell in _shells:
+		if not is_instance_valid(shell) or shell.is_broken() or _shell_template.get(shell, -1) != index:
+			continue
+		if template.count_scope == _SCOPE_ROOM and _shell_room.get(shell) != room:
+			continue
+		same.append(shell)
+	if same.size() < template.max_count:
+		return true
+	if template.when_full == _FULL_BLOCK:
+		print("[脫殼] 「%s」的數量滿了（最多 %d 顆），不能再脫" % [template.name, template.max_count])
+		return false
+	for i in same.size() - template.max_count + 1:
+		_forget_shell(same[i])
+		same[i].break_shell()
+	return true
+
+# 殼離開場景（碎掉、被刪掉）時不再記它
+func _forget_shell(shell: Shell) -> void:
+	_shells.erase(shell)
+	_shell_template.erase(shell)
+	_shell_room.erase(shell)
+
+# 找某個位置在哪個房間裡，沒有房間的關卡回傳 null（整個關卡當成同一個房間）
+func _room_at(global_point: Vector2) -> Node:
+	for room in get_tree().get_nodes_in_group("room"):
+		if room.has_method("has_point") and room.has_point(global_point):
+			return room
+	return null
+
+# 切換到上一種（-1）或下一種（1）殼；只有一種殼時不用切換
+func _switch(step: int) -> bool:
+	if not enabled or player == null or player.is_dead() or _templates.size() <= 1:
+		return false
+	_selected = posmod(_selected + step, _templates.size())
+	_refresh_display()
+	shell_changed.emit()
+	Events.mechanic_event.emit("Extra_Molt", "shell_changed")
+	return true
+
+# 依「顯示方式」建立頭上小方塊和畫面右上角那一列（學員不用擺任何 UI 節點）
+func _make_display() -> void:
+	if show_selected == _SHOW_HEAD or show_selected == _SHOW_BOTH:
+		_head_icon = Node2D.new()
+		_head_icon.name = "SelectedShellIcon"
+		_head_icon.top_level = true
+		_head_icon.draw.connect(_draw_head_icon)
+		add_child(_head_icon)
+		_head_label = Label.new()
+		_head_label.add_theme_font_size_override("font_size", 12)
+		_head_label.position = Vector2(_HEAD_ICON_SIZE / 2.0 + 2.0, -9.0)
+		_head_icon.add_child(_head_label)
+	if show_selected == _SHOW_CORNER or show_selected == _SHOW_BOTH:
+		var layer := CanvasLayer.new()
+		layer.name = "SelectedShellHud"
+		add_child(layer)
+		var row := HBoxContainer.new()
+		row.anchor_left = 1.0
+		row.anchor_right = 1.0
+		row.offset_left = -240.0
+		row.offset_right = -4.0
+		row.offset_top = 4.0
+		row.alignment = BoxContainer.ALIGNMENT_END
+		layer.add_child(row)
+		_corner_icon = ColorRect.new()
+		_corner_icon.custom_minimum_size = Vector2(10, 10)
+		_corner_icon.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+		row.add_child(_corner_icon)
+		_corner_label = Label.new()
+		row.add_child(_corner_label)
+	_refresh_display()
+
+# 把頭上小方塊和右上角那一列更新成目前選中的殼、剩下的次數
+func _refresh_display() -> void:
+	if _templates.is_empty():
+		return
+	var template := _templates[clampi(_selected, 0, _templates.size() - 1)]
+	var left_text := _uses_left_text(template)
+	if _head_icon != null:
+		# 只有一種殼又不限次數時，頭上不用顯示
+		_head_icon.visible = _templates.size() > 1 or template.max_uses > 0
+		_head_label.text = left_text
+		_head_icon.queue_redraw()
+	if _corner_label != null:
+		_corner_icon.color = template.get_color()
+		_corner_label.text = "殼：%s" % template.name
+		if left_text != "":
+			_corner_label.text += "（剩 %s 次）" % left_text
+
+# 這種殼還能脫幾次，不限次數回傳空字串
+func _uses_left_text(template: Shell) -> String:
+	if template.max_uses <= 0:
+		return ""
+	var index := _templates.find(template)
+	return str(maxi(template.max_uses - int(_uses.get(index, 0)), 0))
+
+# 每幀把頭上小方塊擺到玩家頭頂（重力翻轉時也是頭頂那一邊）
+func _update_head_icon() -> void:
+	if _head_icon == null:
+		return
+	var col := player.get_node_or_null("CollisionShape2D") as CollisionShape2D
+	var half_height: float = 16.0
+	var center: Vector2 = player.global_position
+	if col != null and col.shape is RectangleShape2D:
+		half_height = (col.shape as RectangleShape2D).size.y / 2.0
+		center = col.global_position
+	_head_icon.global_position = center + player.up_direction * (half_height + _HEAD_ICON_GAP)
+
+# 畫頭上的小方塊（目前選中那種殼的顏色）
+func _draw_head_icon() -> void:
+	if _templates.is_empty():
+		return
+	var template := _templates[clampi(_selected, 0, _templates.size() - 1)]
+	var c := template.get_color()
+	var rect := Rect2(-Vector2.ONE * _HEAD_ICON_SIZE / 2.0, Vector2.ONE * _HEAD_ICON_SIZE)
+	_head_icon.draw_rect(rect, c)
+	_head_icon.draw_rect(rect, c.darkened(0.4), false, 1.0)
 
 # 找玩家擠到殼外面（往脫出方向、緊貼著殼）的碰撞形狀中心位置；那裡被地形擋住就回傳 null
 func _find_outside_position(dir: Vector2) -> Variant:
