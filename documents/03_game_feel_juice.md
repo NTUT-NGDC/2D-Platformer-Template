@@ -91,7 +91,7 @@ func clear_juice(source: Node) -> void:
 | `Juice_HitStop` | 頓幀 | 一次 | 打中東西時 | `duration`（0.03～0.3） |
 | `Juice_SquashStretch` | 擠壓拉伸 | 一次 | 落地時 | `shape`（壓扁／拉長）、`strength`、`duration` |
 | `Juice_Flash` | 閃色 | 一次 | 受傷時 | `color`（白／紅／黃／黑）、`duration`、`count`（閃幾次） |
-| `Juice_Particles` | 粒子噴發 | 一次 | 落地時 | `style`（塵土／火花／星星／碎片）、`amount`、`color`（跟著樣式／白／黃／紅／藍／綠）、`spawn_at`（腳底／身體中心／事件發生處） |
+| `Juice_Particles` | 粒子噴發 | 一次 | 落地時 | `style`（塵土／火花／星星／碎片／煙霧／自訂場景）、`amount`、`color`（跟著樣式／白／黃／紅／藍／綠）、`custom_particles`（選「自訂場景」才出現，此時 `amount`／`color` 隱藏）、`spawn_at`（腳底／身體中心／事件發生處） |
 | `Juice_Sound` | 音效 | 一次 | 跳躍時 | `sound`（內建音效下拉＋「自訂」）、`custom_sound`（選「自訂」才出現）、`volume`、`pitch_random` |
 | `Juice_CameraZoom` | 鏡頭推近 | 一次 | 打倒敵人時 | `strength`、`duration` |
 | `Juice_Trail` | 殘影 | 持續 | — | `min_speed`（超過才出現）、`spacing`（間隔）、`duration`（殘留時間）、`color` |
@@ -99,7 +99,14 @@ func clear_juice(source: Node) -> void:
 
 補充：
 
-- **粒子**生成在關卡場景裡（不跟著玩家走），噴完自己刪掉。
+- **粒子**生成在關卡場景裡（不跟著玩家走），噴完自己刪掉。三種用法（講師決定）：
+  - 下拉選內建樣式：`juice/particles/` 底下的五個粒子場景，也是給學員複製來改的範例。四種是一次噴完（塵土、火花、碎片往外噴；
+    星星在原地一閃一閃，適合金幣），煙霧是陸續冒出（`explosiveness` 調低）、慢慢往上飄、越飄越大越淡，示範不同的噴法。
+  - 選「自訂場景」：學員把自己做的粒子場景（根節點 `CPUParticles2D`，可以放自己的圖）拖進 `custom_particles`，屬於資源欄位
+    （見 `CLAUDE.md` 鐵律 4 的資源欄位例外）。空白或根節點不對：編輯器黃色驚嘆號＋執行時中文警告，改噴塵土。
+  - 進階：在 `Juice_Particles` 底下放一個 `CPUParticles2D` 子節點，就改用它當樣板（Inspector 只剩 `spawn_at`）；
+    樣板本身執行時不噴、不顯示。用 `GPUParticles2D` 會出現黃色驚嘆號。
+  - 不管哪種用法都由組件強制一次噴完、噴完刪掉、跟著重力翻轉上下顛倒，單次上限 64 顆（超過自動減到 64 並警告）。
 - **殘影**複製 `Visual` 底下圖片當下的樣子（含朝向、體型），淡出後刪掉；同時最多 12 個。
 - **音效**用 `AudioStreamPlayer`，不受頓幀影響。`custom_sound` 是**資源欄位**：學員把音檔從檔案系統拖進欄位，
   不需要打字（講師決定，見 `CLAUDE.md` 鐵律 4 的資源欄位例外）。選「自訂」但沒放音檔：編輯器黃色驚嘆號＋

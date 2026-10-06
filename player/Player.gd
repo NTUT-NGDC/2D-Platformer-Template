@@ -318,6 +318,11 @@ func clear_juice(source: Node) -> void:
 	if _juice_layer:
 		_juice_layer.clear(source)
 
+# 回傳角色腳底的位置（重力翻轉後是貼著天花板那一側，會跟著體型變），粒子這類 Juice 用這個
+func get_feet_position() -> Vector2:
+	var half_height := _base_collision_size.y * 0.5 * size_factor
+	return global_position - up_direction * half_height
+
 # ---- 給學員用訊號連線的動作（都不帶參數，在「節點」面板把卡片或零件的訊號連到 Player 就能用） ----
 
 # 動能歸零一次：當下的速度全部清掉，之後照常受重力、照常能移動

@@ -1,0 +1,23 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="Texture2D" path="res://icon.svg" id="1"]
+
+[sub_resource type="Gradient" id="Gradient_fade"]
+offsets = PackedFloat32Array(0, 1)
+colors = PackedColorArray(1, 1, 1, 1, 1, 1, 1, 0)
+
+[node name="Particles_TestIcon" type="CPUParticles2D"]
+amount = 6
+lifetime = 0.8
+explosiveness = 1.0
+texture = ExtResource("1")
+direction = Vector2(0, -1)
+spread = 60.0
+gravity = Vector2(0, 200)
+initial_velocity_min = 80.0
+initial_velocity_max = 140.0
+angular_velocity_min = -180.0
+angular_velocity_max = 180.0
+scale_amount_min = 0.08
+scale_amount_max = 0.12
+color_ramp = SubResource("Gradient_fade")

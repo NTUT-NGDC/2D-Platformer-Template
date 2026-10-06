@@ -49,7 +49,7 @@ func _run_all_steps() -> void:
 	await get_tree().process_frame
 
 	var mechanic_scenes := _only_mechanic_cards(_scan_scenes("res://mechanics"))
-	var juice_scenes := _scan_scenes("res://juice")
+	var juice_scenes := _only_juice(_scan_scenes("res://juice"))
 
 	# 1. 逐一實例化每一張機制卡
 	for path in mechanic_scenes:
@@ -114,6 +114,17 @@ func _scan_dir(path: String, result: Array[String]) -> void:
 				result.append(full_path)
 		entry = dir.get_next()
 	dir.list_dir_end()
+
+# 只留下根節點是 Juice 組件的場景（juice/particles/ 底下的粒子範例不是組件）
+func _only_juice(paths: Array[String]) -> Array[String]:
+	var result: Array[String] = []
+	for path in paths:
+		var scene: PackedScene = load(path)
+		var inst: Node = scene.instantiate()
+		if inst is JuiceBase:
+			result.append(path)
+		inst.free()
+	return result
 
 # 只留下根節點是機制卡的場景（mechanics/ 底下也放了殼、殼的特性這類不是卡的零件）
 func _only_mechanic_cards(paths: Array[String]) -> Array[String]:

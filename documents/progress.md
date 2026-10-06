@@ -545,7 +545,10 @@
 - [x] U135 `Juice_HitStop` 頓幀
 - [x] U136 `Juice_SquashStretch` 擠壓拉伸
 - [x] U137 `Juice_Flash` 閃色
-- [ ] U138 `Juice_Particles` 粒子噴發（`CPUParticles2D`，四種樣式）
+- [x] U138 `Juice_Particles` 粒子噴發（`CPUParticles2D`，四種樣式）
+　　→ 講師決定：學員可以自己改粒子。①內建樣式（塵土、火花、星星、碎片、煙霧；星星改成原地閃爍給金幣用）做成 `juice/particles/` 底下的粒子場景，下拉直接套用，也當範例給學員複製；
+　　　②樣式加「自訂場景」，學員把自己做的粒子場景（可以放自己的圖）拖進 `custom_particles`（資源欄位例外，見 `CLAUDE.md`）；
+　　　③在 `Juice_Particles` 底下放一個 `CPUParticles2D` 子節點就改用它當樣板（拖節點，進階玩法，靠說明書）
 - [ ] U139 音效素材：找 CC0 音效（或 sfxr 生成）至少 8 種放 `sfx/`，`sfx/CREDITS.md` 寫出處與授權
 - [ ] U140 `Juice_Sound` 音效（內建下拉＋「自訂」資源欄位四點防呆中適用的部分）
 - [ ] U141 `Juice_CameraZoom` 鏡頭推近
