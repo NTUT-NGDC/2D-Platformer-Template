@@ -542,7 +542,7 @@
 ## 階段 33：核心組件
 
 - [x] U134 `Juice_ScreenShake` 螢幕震動
-- [ ] U135 `Juice_HitStop` 頓幀
+- [x] U135 `Juice_HitStop` 頓幀
 - [ ] U136 `Juice_SquashStretch` 擠壓拉伸
 - [ ] U137 `Juice_Flash` 閃色
 - [ ] U138 `Juice_Particles` 粒子噴發（`CPUParticles2D`，四種樣式）
