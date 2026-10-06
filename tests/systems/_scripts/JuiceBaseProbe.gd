@@ -11,7 +11,7 @@ func _on_play() -> void:
 	print("[測試] %s：「%s」觸發　位置 (%.0f, %.0f)　強度 %.2f" % [
 		name, _TIMING_NAMES[timing], _trigger_position.x, _trigger_position.y, _trigger_power])
 
-# 印出重生歸零
+# 印出 _on_reset() 被呼叫（重生或 Juice 總開關關掉時）
 func _on_reset() -> void:
 	if timing == TIMING_MANUAL:
-		print("[測試] %s：重生，_on_reset() 被呼叫" % name)
+		print("[測試] %s：_on_reset() 被呼叫（重生或總開關關掉）" % name)

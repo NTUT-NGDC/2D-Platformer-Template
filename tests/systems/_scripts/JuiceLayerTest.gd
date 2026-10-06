@@ -22,14 +22,14 @@ func _ready() -> void:
 	var sprite: Node2D = _player.visual.get_child(0)
 	_original = {"position": sprite.position, "scale": sprite.scale, "rotation": sprite.rotation, "modulate": sprite.modulate}
 	print("[測試] 1＝A 壓扁　2＝B 拉長　5＝C 傾斜（再按一次就撤掉那一項）　3＝A 閃白　4＝B 閃紅（閃 0.3 秒自己恢復）")
-	print("[測試] 6＝撤掉 A 的全部　0＝撤掉全部　P＝印出狀態　Q 翻轉重力　E 切換大小　R 開關自動奔跑")
+	print("[測試] 6＝撤掉 A 的全部　9＝撤掉全部　P＝印出狀態　Q 翻轉重力　E 切換大小　R 開關自動奔跑")
 	print("[測試] ① 按 1：角色壓扁，腳底仍貼著地板（不會浮起來或陷進去）")
 	print("[測試] ② 再按 2：壓扁和拉長相乘，大約是 (1.12, 0.78)")
 	print("[測試] ③ 按 Q 翻到天花板：還是貼著天花板那一側壓扁；按 E 變大：壓扁跟著一起放大")
 	print("[測試] ④ 按 3 或 4：閃一下就自己恢復；兩個連續快按會疊成偏亮的紅；一直跑變紅（越跑越快）時再按，閃完還是紅的")
 	print("[測試] ⑤ 按 5 傾斜，按 R 自動奔跑會往左右跑：傾斜方向跟著角色朝向鏡像")
 	print("[測試] ⑥ 1、2 都開著時按 6：只拿掉 A 的壓扁，B 的拉長還在")
-	print("[測試] ⑦ 按 0：角色圖完全還原，狀態會印「已還原：是」")
+	print("[測試] ⑦ 按 9：角色圖完全還原，狀態會印「已還原：是」")
 
 # 數字鍵切換各個請求
 func _unhandled_input(event: InputEvent) -> void:
@@ -46,7 +46,7 @@ func _unhandled_input(event: InputEvent) -> void:
 			_on.erase("a_squash")
 			print("[測試] 撤掉 A")
 			_print_state()
-		KEY_0:
+		KEY_9:
 			for n in [_a, _b, _c]:
 				_player.clear_juice(n)
 			_on.clear()

@@ -535,7 +535,8 @@
 	  作用在 `Visual` 的子節點、腳底為中心、全部撤掉時還原）（驗證：`tests/systems/JuiceLayerTest.tscn`，跟忽大忽小、重力翻轉、自動奔跑一起作用不互蓋）
 - [x] U131 `JuiceBase` 擴充：觸發時機 13 種、`follow_impact`、`play()` 接受任意參數（連線驗證器不誤報）、事件位置、0.05 秒連發保護、
 	  重生 `_on_reset()`、`_exit_tree()` 還原；持續型隱藏 `timing`（驗證：`tests/systems/JuiceBaseTest.tscn`，每種時機印出一行）
-- [ ] U132 `JuiceSwitch` 自動載入：`F1` 切換全部 Juice、右上角顯示兩秒（驗證：`tests/systems/JuiceSwitchTest.tscn`）
+- [x] U132 `JuiceSwitch` 自動載入：`0` 切換全部 Juice、右上角顯示兩秒（驗證：`tests/systems/JuiceSwitchTest.tscn`）
+　　→ 講師決定：總開關改用 `0` 鍵，不用 F1（F 鍵在網頁版會被瀏覽器攔截，InputRouter 也列為危險按鍵）
 - [ ] U133 `CameraRig` 震動改成取比較強的、`Events.zoom_requested` 鏡頭推近（含房間內跟隨的範圍計算）；`00_foundation` §2、`01a` §7 事件表補上
 
 ## 階段 33：核心組件

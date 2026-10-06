@@ -56,7 +56,10 @@ func setup(p: Node) -> void:
 	player = p
 	_last_dir = 0
 	_listen(Events.player_respawned, _on_player_respawned)
-	if not _is_continuous():
+	_listen(JuiceSwitch.toggled, _on_juice_switch_toggled)
+	if _is_continuous():
+		visible = JuiceSwitch.is_on()
+	else:
 		_connect_timing()
 	_on_setup()
 	print("[%s] 已啟用" % name)
@@ -82,6 +85,10 @@ func _on_reset() -> void:
 # 持續型 Juice 組件（拖進來就一直作用，例如殘影）覆寫成回傳 true
 func _is_continuous() -> bool:
 	return false
+
+# 回傳現在能不能作用（組件自己開著、Juice 總開關也開著），持續型組件每幀作用前用這個檢查
+func _is_juice_on() -> bool:
+	return enabled and JuiceSwitch.is_on()
 
 # 依「觸發時機」接上對應的玩家或世界事件
 func _connect_timing() -> void:
@@ -124,9 +131,9 @@ func _on_hit(target: Node, _source: Node) -> void:
 	var pos: Vector2 = target.global_position if target is Node2D else player.global_position
 	_trigger(pos, 1.0)
 
-# 檢查開關與連發保護，記下觸發位置與強度，交給子類別播放
+# 檢查開關（組件自己的、總開關）與連發保護，記下觸發位置與強度，交給子類別播放
 func _trigger(pos: Vector2, power: float) -> void:
-	if not enabled:
+	if not _is_juice_on():
 		return
 	var now := Time.get_ticks_msec()
 	if now - _last_play_ms < _REPEAT_GUARD_MS:
@@ -142,6 +149,15 @@ func _on_player_respawned(_p: Node) -> void:
 	_on_reset()
 	if is_instance_valid(player):
 		player.clear_juice(self)
+
+# Juice 總開關切換：關掉時停掉進行中的效果、撤掉對外觀的影響；持續型跟著隱藏／顯示
+func _on_juice_switch_toggled(on: bool) -> void:
+	if not on:
+		_on_reset()
+		if is_instance_valid(player):
+			player.clear_juice(self)
+	if _is_continuous():
+		visible = on
 
 # 接上一個訊號並記下來，之後可以一次拔掉
 func _listen(sig: Signal, callable: Callable) -> void:

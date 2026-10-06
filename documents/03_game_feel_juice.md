@@ -75,7 +75,7 @@ func clear_juice(source: Node) -> void:
 
 ### 2.4 Juice 總開關
 
-自動載入 `JuiceSwitch`：按 `F1`（`InputRouter.bind_key`，低優先、只聽不搶）切換全部 Juice 開／關，
+自動載入 `JuiceSwitch`：按 `0`（`InputRouter.bind_key`，低優先、只聽不搶；不用 F1：F 鍵在網頁版會被瀏覽器攔截）切換全部 Juice 開／關，
 畫面右上角顯示「Juice：開」／「Juice：關」兩秒。關掉時一次型不播、持續型隱藏，並撤掉所有外觀影響。
 這是教學用的前後對照工具：讓學員自己按按看差多少。
 
@@ -134,7 +134,7 @@ func clear_juice(source: Node) -> void:
 ## 5. 展示與起始場景
 
 - `levels/_starts/W3_JuiceBox.tscn`：W3 中途加入者的起始場景。一小段有跳台、敵人、金幣、尖刺的路線，
-  Player 底下已經掛好全部核心 Juice，按 `F1` 對照有／沒有 Juice 的差別。
+  Player 底下已經掛好全部核心 Juice，按 `0` 對照有／沒有 Juice 的差別。
 - `levels/Gym.tscn`：Player 的 Juice 底下示範掛 2～3 個（落地震動＋落地塵土＋跳躍音效）。
 
 ---
@@ -158,6 +158,6 @@ func clear_juice(source: Node) -> void:
 - [ ] 拖到錯誤位置有中文警告，遊戲不崩潰
 - [ ] 擠壓拉伸＋閃色＋忽大忽小＋重力翻轉同時作用，外觀正確疊加，沒有誰蓋掉誰
 - [ ] 把任一卡片的訊號連到 Juice 的 `play()`，連線驗證器不報錯，觸發時播放效果
-- [ ] `F1` 總開關可以一鍵關掉／開啟全部 Juice
+- [ ] `0` 總開關可以一鍵關掉／開啟全部 Juice
 - [ ] 煙霧測試通過
 - [ ] Web 匯出後，弱電腦上全部 Juice 同時開啟仍然順暢
