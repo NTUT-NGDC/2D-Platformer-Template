@@ -551,7 +551,7 @@
 　　　③在 `Juice_Particles` 底下放一個 `CPUParticles2D` 子節點就改用它當樣板（拖節點，進階玩法，靠說明書）
 - [x] U139 音效素材：找 CC0 音效（或 sfxr 生成）至少 8 種放 `sfx/`，`sfx/CREDITS.md` 寫出處與授權
 - [x] U140 `Juice_Sound` 音效（內建下拉＋「自訂」資源欄位四點防呆中適用的部分）
-- [ ] U141 `Juice_CameraZoom` 鏡頭推近
+- [x] U141 `Juice_CameraZoom` 鏡頭推近
 - [ ] U142 `Juice_Trail` 殘影
 - [ ] U143 `Juice_GooglyEyes` 咕嚕眼（`@tool` 編輯器預覽、拖節點決定眼睛位置、彈簧眼珠、跟著翻轉／體型）
 
