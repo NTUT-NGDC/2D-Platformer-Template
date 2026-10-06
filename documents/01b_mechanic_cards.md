@@ -109,7 +109,7 @@ W1 的課堂活動是：學員線上抽一張**主限制卡** → 把對應的 `
 | `Mechanic_SurvivalTimer` | `cleared` | 存活時間到 |
 | `Mechanic_SwitchWorld` | `switched` | 紅藍方塊互換之後 |
 | `Mechanic_TouchDeath` | `touched` | 碰到會死的東西（死亡之前） |
-| `Extra_Dash` | `dashed` | 衝出去（推之前） |
+| `Extra_Dash` | `dashed`、`dash_ended` | 衝出去（推之前）；衝刺時間到、恢復一般移動 |
 | `Extra_DoubleJump` | `air_jumped` | 空中再跳（推之前） |
 | `Extra_StompOnly` | `stomped` | 踩中敵人反彈（推之前） |
 | `Extra_TimeSlow` | `started`、`ended` | 世界變慢；恢復 |

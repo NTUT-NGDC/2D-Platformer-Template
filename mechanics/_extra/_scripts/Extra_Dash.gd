@@ -21,6 +21,8 @@ extends MechanicBase
 
 ## 衝刺出去的那一刻發出，在衝刺開始之前
 signal dashed
+## 衝刺時間到、恢復一般移動的那一刻發出（例如連到拖尾線的 stop_trail）
+signal dash_ended
 
 var _dash_time_left: float = 0.0
 var _cooldown_left: float = 0.0
@@ -39,13 +41,15 @@ func _on_setup() -> void:
 	InputRouter.bind_input(self, input_type, key, InputRouter.PRESSED, _on_key_pressed)
 	player.direction_changed.connect(func(dir: int): _facing = dir)
 
-# 衝刺中：固定速度往 _dash_dir 方向移動、重力歸零，不受摩擦力影響
+# 衝刺中：固定速度往 _dash_dir 方向移動、重力歸零，不受摩擦力影響；這一幀衝刺時間用完就發出 dash_ended
 func apply(ctx: MoveContext) -> void:
 	if _cooldown_left > 0.0:
 		_cooldown_left -= ctx.delta
 	if _dash_time_left <= 0.0:
 		return
 	_dash_time_left -= ctx.delta
+	if _dash_time_left <= 0.0:
+		dash_ended.emit()
 	ctx.auto_run_dir = _dash_dir
 	ctx.speed_scale *= dash_speed / player.move_speed
 	ctx.gravity_scale *= 0.0

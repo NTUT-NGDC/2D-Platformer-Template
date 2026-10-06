@@ -1,0 +1,93 @@
+[gd_scene format=4 uid="uid://s83p2fhf5t70"]
+
+[ext_resource type="Script" uid="uid://ctfqsb883e33x" path="res://tests/juice/_scripts/Juice_TrailLineTest.gd" id="1"]
+[ext_resource type="PackedScene" path="res://player/Player.tscn" id="2"]
+[ext_resource type="TileSet" uid="uid://6xyxoqkb30in" path="res://art/default_tile.tres" id="3"]
+[ext_resource type="Texture2D" uid="uid://cm8ymciwkvttp" path="res://art/white_block.png" id="4"]
+[ext_resource type="PackedScene" path="res://mechanics/Mechanic_GravityFlip.tscn" id="5"]
+[ext_resource type="PackedScene" path="res://mechanics/_extra/Extra_Dash.tscn" id="6"]
+[ext_resource type="PackedScene" path="res://juice/Juice_TrailLine.tscn" id="7"]
+[ext_resource type="PackedScene" path="res://blocks/Room.tscn" id="10"]
+[ext_resource type="PackedScene" path="res://blocks/RespawnHandler.tscn" id="11"]
+[ext_resource type="Script" uid="uid://ddmv38ww06tgv" path="res://levels/_shared/CameraRig.gd" id="12"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_wall"]
+size = Vector2(16, 240)
+
+[sub_resource type="Curve" id="Curve_bulge"]
+_data = [Vector2(0, 0.3), 0.0, 0.0, 0, 0, Vector2(0.19666666, 0.6417113), -43.31542, -43.31542, 0, 0, Vector2(0.34, 0.8181819), 0.0, 0.0, 0, 0, Vector2(0.7066667, 0.4812835), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
+point_count = 5
+
+[sub_resource type="Gradient" id="Gradient_rainbow"]
+offsets = PackedFloat32Array(0, 0.33, 0.66, 1)
+colors = PackedColorArray(0.59686065, 0.87047243, 0.9999998, 1, 0.4633593, 0.71326274, 0.98160154, 0.9, 0.35, 0.9, 0.4, 0.7, 0.35, 0.6, 1, 0)
+
+[node name="Juice_TrailLineTest" type="Node2D" unique_id=913045270]
+script = ExtResource("1")
+
+[node name="TileMapLayer" type="TileMapLayer" parent="." unique_id=569798323]
+tile_map_data = PackedByteArray("AADx//7/AAADAAEAAADy//7/AAADAAEAAADz//7/AAADAAEAAAD0//7/AAADAAEAAAD1//7/AAADAAEAAAD2//7/AAADAAEAAAD3//7/AAADAAEAAAD4//7/AAADAAEAAAD5//7/AAADAAEAAAD6//7/AAADAAEAAAD7//7/AAADAAEAAAD8//7/AAADAAEAAAD9//7/AAADAAEAAAD+//7/AAADAAEAAAD///7/AAADAAEAAAAAAP7/AAADAAEAAAABAP7/AAADAAEAAAACAP7/AAADAAEAAAADAP7/AAADAAEAAAAEAP7/AAADAAEAAAAFAP7/AAADAAEAAAAGAP7/AAADAAEAAAAHAP7/AAADAAEAAAAIAP7/AAADAAEAAAAJAP7/AAADAAEAAAAKAP7/AAADAAEAAAALAP7/AAADAAEAAAAMAP7/AAADAAEAAAANAP7/AAADAAEAAAAOAP7/AAADAAEAAADx/wsAAAADAAEAAADy/wsAAAADAAEAAADz/wsAAAADAAEAAAD0/wsAAAADAAEAAAD1/wsAAAADAAEAAAD2/wsAAAADAAEAAAD3/wsAAAADAAEAAAD4/wsAAAADAAEAAAD5/wsAAAADAAEAAAD6/wsAAAADAAEAAAD7/wsAAAADAAEAAAD8/wsAAAADAAEAAAD9/wsAAAADAAEAAAD+/wsAAAADAAEAAAD//wsAAAADAAEAAAAAAAsAAAADAAEAAAABAAsAAAADAAEAAAACAAsAAAADAAEAAAADAAsAAAADAAEAAAAEAAsAAAADAAEAAAAFAAsAAAADAAEAAAAGAAsAAAADAAEAAAAHAAsAAAADAAEAAAAIAAsAAAADAAEAAAAJAAsAAAADAAEAAAAKAAsAAAADAAEAAAALAAsAAAADAAEAAAAMAAsAAAADAAEAAAANAAsAAAADAAEAAAAOAAsAAAADAAEAAAA=")
+tile_set = ExtResource("3")
+
+[node name="Wall_Left" type="StaticBody2D" parent="." unique_id=1950022099]
+position = Vector2(-232, 72)
+collision_layer = 2
+collision_mask = 0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Wall_Left" unique_id=1763813574]
+shape = SubResource("RectangleShape2D_wall")
+
+[node name="Wall_Right" type="StaticBody2D" parent="." unique_id=1104817316]
+position = Vector2(232, 72)
+collision_layer = 2
+collision_mask = 0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Wall_Right" unique_id=1460673178]
+shape = SubResource("RectangleShape2D_wall")
+
+[node name="Room" parent="." unique_id=714182690 instance=ExtResource("10")]
+position = Vector2(-240, -80)
+
+[node name="Player" parent="." unique_id=186608534 instance=ExtResource("2")]
+position = Vector2(-150, 95)
+
+[node name="Visual" type="Node2D" parent="Player" unique_id=1390976578]
+
+[node name="Sprite2D" type="Sprite2D" parent="Player/Visual" unique_id=1494438298]
+texture = ExtResource("4")
+region_enabled = true
+region_rect = Rect2(0, 0, 16, 32)
+
+[node name="Mechanics" type="Node2D" parent="Player" unique_id=1762271145]
+
+[node name="Mechanic_GravityFlip" parent="Player/Mechanics" unique_id=1788970596 instance=ExtResource("5")]
+key = 81
+
+[node name="Extra_Dash" parent="Player/Mechanics" unique_id=818479652 instance=ExtResource("6")]
+cooldown = 0.3
+
+[node name="Juice" type="Node2D" parent="Player" unique_id=1312215384]
+
+[node name="Juice_TrailLine" parent="Player/Juice" unique_id=2079725127 instance=ExtResource("7")]
+
+[node name="Juice_TrailLine_Dash" parent="Player/Juice" unique_id=965509186 instance=ExtResource("7")]
+mode = 1
+enabled = false
+
+[node name="Line2D" type="Line2D" parent="Player/Juice/Juice_TrailLine_Dash" unique_id=561718334]
+points = PackedVector2Array(0, 0, -8, 0, -16, 0, -24, 0, -32, 0, -40, 0, -48, 0, -56, 0, -64, 0)
+width_curve = SubResource("Curve_bulge")
+gradient = SubResource("Gradient_rainbow")
+joint_mode = 2
+begin_cap_mode = 2
+
+[node name="Abilities" type="Node2D" parent="Player" unique_id=796983766]
+
+[node name="Camera2D" type="Camera2D" parent="." unique_id=1790850235]
+position = Vector2(0, 56)
+script = ExtResource("12")
+
+[node name="RespawnHandler" parent="." unique_id=856758266 instance=ExtResource("11")]
+
+[connection signal="dash_ended" from="Player/Mechanics/Extra_Dash" to="Player/Juice/Juice_TrailLine_Dash" method="stop_trail"]
+[connection signal="dashed" from="Player/Mechanics/Extra_Dash" to="Player/Juice/Juice_TrailLine_Dash" method="start_trail"]

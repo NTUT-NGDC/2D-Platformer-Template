@@ -95,7 +95,7 @@ func clear_juice(source: Node) -> void:
 | `Juice_Sound` | 音效 | 一次 | 跳躍時 | `sound`（內建音效下拉＋「自訂」）、`custom_sound`（選「自訂」才出現）、`volume`、`pitch_random` |
 | `Juice_CameraZoom` | 鏡頭推近 | 一次 | 打倒敵人時 | `strength`、`duration` |
 | `Juice_Trail` | 殘影 | 持續 | — | `min_speed`（超過才出現）、`spacing`（間隔）、`duration`（殘留時間）、`color` |
-| `Juice_TrailLine` | 拖尾線 | 持續 | — | `min_speed`（超過才出現，預設比殘影高，衝刺這類很快的移動才拖出來）、`width`、`duration`（拖尾長度，用時間算）、`color` |
+| `Juice_TrailLine` | 拖尾線 | 持續 | — | `mode`（速度夠快時／用訊號開關）、`min_speed`（速度模式才出現，預設 450，衝刺這類很快的移動才拖出來）、`duration`（拖尾長度，用時間算）、`color`（有 `Line2D` 樣板時隱藏） |
 | `Juice_GooglyEyes` | 咕嚕眼 | 持續 | — | `eye_count`（一隻／兩隻）、`eye_size`、`pupil_size`、`wobble`（晃動程度） |
 
 補充：
@@ -110,7 +110,11 @@ func clear_juice(source: Node) -> void:
   - 不管哪種用法都由組件強制一次噴完、噴完刪掉、跟著重力翻轉上下顛倒，單次上限 64 顆（超過自動減到 64 並警告）。
 - **殘影**複製 `Visual` 底下圖片當下的樣子（含朝向、體型），淡出後刪掉；同時最多 12 個。
 - **拖尾線**（講師決定新增）：像 Unity 的 TrailRenderer。`Line2D` 記下角色身體中心最近 `duration` 秒走過的位置，
-  頭粗尾細、頭實尾透明；速度掉到 `min_speed` 以下時線會跟著縮短消失。線畫在關卡座標裡，不跟著角色的翻轉、體型變化。
+  頭粗尾細、頭實尾透明；不拖線之後線的頭仍接在角色身上，從尾巴縮回去。線畫在關卡座標裡，不跟著角色的翻轉、體型變化。
+  - 用訊號開關：把訊號連到 `start_trail()`／`stop_trail()`（接受任意參數），例如 `Extra_Dash` 的 `dashed`／`dash_ended`；
+    開了 2 秒沒收到 `stop_trail()` 自動停。
+  - 粗細固定 6；想調寬度曲線、漸層、貼圖：在組件底下放一個 `Line2D` 子節點當樣板（像 Unity TrailRenderer 的 Width 曲線與 Color 漸層，
+    橫軸 0＝靠角色那頭、1＝尾巴）。編輯器裡會自動幫空白的樣板放一條示範線。
 - **音效**用 `AudioStreamPlayer`，不受頓幀影響。`custom_sound` 是**資源欄位**：學員把音檔從檔案系統拖進欄位，
   不需要打字（講師決定，見 `CLAUDE.md` 鐵律 4 的資源欄位例外）。選「自訂」但沒放音檔：編輯器黃色驚嘆號＋
   執行時中文警告，改播預設音效。

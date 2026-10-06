@@ -553,9 +553,11 @@
 - [x] U140 `Juice_Sound` 音效（內建下拉＋「自訂」資源欄位四點防呆中適用的部分）
 - [x] U141 `Juice_CameraZoom` 鏡頭推近
 - [x] U142 `Juice_Trail` 殘影
-- [ ] U142b `Juice_TrailLine` 拖尾線（持續型，像 Unity 的 TrailRenderer：用 `Line2D` 記下最近走過的位置，尾巴變細變淡；
-      `min_speed`、`width`、`duration`、`color`）
+- [x] U142b `Juice_TrailLine` 拖尾線（持續型，像 Unity 的 TrailRenderer：用 `Line2D` 記下最近走過的位置，尾巴變細變淡；
+	  `mode`（速度夠快時／用訊號開關 `start_trail()`／`stop_trail()`）、`min_speed`、`duration`、`color`；`Line2D` 子節點樣板調寬度曲線與漸層；
+	  `Extra_Dash` 加 `dash_ended` 訊號）
 　　→ 講師決定：規格外新增，跟分身殘影分開成兩個組件（欄位不同，合在一起會超過 4 個）；不用 `GPUParticles2D` 的拖尾（網頁版、弱電腦會卡）
+　　→ 講師決定：加「用訊號開關」模式；拿掉 `width` 欄位（固定 6），粗細、寬度曲線、漸層改用 `Line2D` 子節點樣板調
 - [ ] U143 `Juice_GooglyEyes` 咕嚕眼（`@tool` 編輯器預覽、拖節點決定眼睛位置、彈簧眼珠、跟著翻轉／體型）
 
 ## 階段 34：備品與收尾
