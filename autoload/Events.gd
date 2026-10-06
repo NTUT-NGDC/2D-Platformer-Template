@@ -32,3 +32,4 @@ signal mechanic_event(card: String, event: String)
 # 表現層請求（W3 Juice 用，讓組件不必知道攝影機在哪）
 signal shake_requested(strength: float, duration: float)
 signal hitstop_requested(duration: float)
+signal zoom_requested(strength: float, duration: float)   # 鏡頭放大到 1 + strength 倍再回到原本大小

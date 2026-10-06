@@ -79,6 +79,7 @@ signal level_restarted
 # 表現層請求（W3 Juice 用，讓組件不必知道攝影機在哪）
 signal shake_requested(strength: float, duration: float)
 signal hitstop_requested(duration: float)
+signal zoom_requested(strength: float, duration: float)   # W3 加入：鏡頭放大到 1 + strength 倍再回到原本大小
 ```
 
 **設計理由**：ScreenShake 組件掛在 Player 底下，但攝影機在關卡場景裡。透過匯流排，組件只負責 emit，實際執行由關卡裡的接收器負責，學員完全不需要連線。
@@ -318,6 +319,9 @@ func _connect_trigger(callback: Callable) -> void:
     **不掛在 Player 實例底下**，跟 Player 之間沒有父子關係。
   - 鏡頭模式下拉選單：瞬切（預設）／房間內跟隨（跟著玩家但不超出目前房間）／自由跟隨（忽略房間，例如 Showroom）。
   - 螢幕震動照樣透過 `Events.shake_requested` 接收，是疊加在鏡頭位置上的偏移，不影響零連線設計。
+    同時有好幾個震動請求時取比較強的那個（剩餘強度 vs 新強度），不直接覆蓋。
+  - 鏡頭推近（W3）透過 `Events.zoom_requested` 接收：放大到 `1 + strength` 倍再回到原本大小，放大時畫面往玩家偏一點；
+    房間內跟隨模式用放大後的畫面大小計算限制範圍。Juice 總開關關掉、玩家重生時，進行中的震動與推近立刻停止。
 - `RespawnHandler`（`blocks/RespawnHandler.tscn` 的實例）：玩家死亡後等 `delay` 秒軟重生，不重新載入
   場景（見 `00b_rooms_and_soft_respawn.md` §4）。**兩個場景都要有地板**，否則學員重生後會直接掉出畫面外。
 
