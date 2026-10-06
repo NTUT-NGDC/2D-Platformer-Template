@@ -74,14 +74,15 @@ func _check_connection(source: Node, signal_name: String, arg_count: int, callab
 	if arg_count < arity["min"] or arg_count > arity["max"]:
 		_warn("「%s」的 %s 訊號帶 %d 個參數，但「%s」的 %s() 需要 %d 個，數量對不上" % [source.name, signal_name, arg_count, target_name, method_name, arity["min"]])
 
-# 查詢某個方法需要幾個參數（含預設值的算進 max，min 是扣掉預設值後最少要給幾個），
-# 找不到這個方法就回傳 found = false
+# 查詢某個方法需要幾個參數（含預設值的算進 max，min 是扣掉預設值後最少要給幾個；
+# 可以接任意數量參數的方法，例如 Juice 的 play()，max 沒有上限），找不到這個方法就回傳 found = false
 func _method_arity(target: Object, method_name: String) -> Dictionary:
 	for m in target.get_method_list():
 		if m["name"] == method_name:
 			var total: int = m["args"].size()
 			var optional: int = m["default_args"].size()
-			return {"found": true, "min": total - optional, "max": total}
+			var max_count: int = 1 << 30 if m["flags"] & METHOD_FLAG_VARARG else total
+			return {"found": true, "min": total - optional, "max": max_count}
 	return {"found": false, "min": 0, "max": 0}
 
 # 取得一個物件用來顯示在警告訊息裡的名字。連接的目標不一定是 Node
