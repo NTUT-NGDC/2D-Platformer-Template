@@ -544,7 +544,7 @@
 - [x] U134 `Juice_ScreenShake` 螢幕震動
 - [x] U135 `Juice_HitStop` 頓幀
 - [x] U136 `Juice_SquashStretch` 擠壓拉伸
-- [ ] U137 `Juice_Flash` 閃色
+- [x] U137 `Juice_Flash` 閃色
 - [ ] U138 `Juice_Particles` 粒子噴發（`CPUParticles2D`，四種樣式）
 - [ ] U139 音效素材：找 CC0 音效（或 sfxr 生成）至少 8 種放 `sfx/`，`sfx/CREDITS.md` 寫出處與授權
 - [ ] U140 `Juice_Sound` 音效（內建下拉＋「自訂」資源欄位四點防呆中適用的部分）
