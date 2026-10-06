@@ -51,7 +51,7 @@ func _turn_around() -> void:
 	turned_around.emit()
 	Events.mechanic_event.emit("Mechanic_AutoRun", "wall_turned")
 
-# 依目前方向翻轉角色視覺
+# 依目前方向翻轉角色視覺，保留忽大忽小這類卡設定的體型
 func _sync_visual() -> void:
 	if player.visual:
-		player.visual.scale.x = _dir
+		player.visual.scale.x = absf(player.visual.scale.x) * _dir
