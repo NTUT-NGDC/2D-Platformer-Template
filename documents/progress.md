@@ -568,5 +568,9 @@
 - [x] U144 備品 `Juice_TextPopup` 跳字、`Juice_ScreenFlash` 全螢幕閃光
 　　→ 講師決定：跳字的種類用下拉（全部數值／只有血量／自訂）＋選「自訂」才出現的打字欄位 `custom_kind`；全螢幕閃光預設受傷時閃紅
 - [x] U145 備品 `Juice_Tilt` 傾斜、`Juice_DeathBurst` 死亡爆散
-- [ ] U146 `levels/_starts/W3_JuiceBox.tscn` 起始場景、`Gym.tscn` 示範佈置
+- [x] U146 `levels/_starts/W3_JuiceBox.tscn` 起始場景、`Gym.tscn` 示範佈置
+　　→ 講師決定：W3_JuiceBox 打中東西時噴紅色碎片（血）、頓幀改成打倒敵人時（0.12 秒）、打倒敵人不推近鏡頭（鏡頭推近改成過關時）；
+　　　加音效：打中（落地聲）、打倒敵人（爆炸）、撿到東西（金幣，由低到高）、受傷、過關（撿東西）
+- [x] U146b `Juice_Sound` 音高模式：`pitch_mode`（隨機／固定／由低到高），由低到高時 `notes`（五聲音階／大調音階／半音／琶音）、`steps`、`at_top`、`reset_delay`
+　　→ 講師決定：隨機音高之外要能「由低到高」聽起來比較和諧，音階用內建下拉（不做自訂曲線）
 - [ ] U147 煙霧測試補上 §6 的項目、零件手冊／速查表／README 補 W3，跑一次煙霧測試

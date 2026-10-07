@@ -92,7 +92,7 @@ func clear_juice(source: Node) -> void:
 | `Juice_SquashStretch` | 擠壓拉伸 | 一次 | 落地時 | `shape`（壓扁／拉長）、`strength`、`duration` |
 | `Juice_Flash` | 閃色 | 一次 | 受傷時 | `color`（白／紅／黃／黑）、`duration`、`count`（閃幾次） |
 | `Juice_Particles` | 粒子噴發 | 一次 | 落地時 | `style`（塵土／火花／星星／碎片／煙霧／自訂場景）、`amount`、`color`（跟著樣式／白／黃／紅／藍／綠）、`custom_particles`（選「自訂場景」才出現，此時 `amount`／`color` 隱藏）、`spawn_at`（腳底／身體中心／事件發生處） |
-| `Juice_Sound` | 音效 | 一次 | 跳躍時 | `sound`（內建音效下拉＋「自訂」）、`custom_sound`（選「自訂」才出現）、`volume`、`pitch_random` |
+| `Juice_Sound` | 音效 | 一次 | 跳躍時 | `sound`（內建音效下拉＋「自訂」）、`custom_sound`（選「自訂」才出現）、`volume`、`pitch_mode`（隨機／固定／由低到高）、`pitch_random`（隨機才出現）、`notes`（五聲音階／大調音階／半音／琶音）、`steps`、`at_top`（停在最高／從頭再來）、`reset_delay`（後四個由低到高才出現） |
 | `Juice_CameraZoom` | 鏡頭推近 | 一次 | 打倒敵人時 | `strength`、`duration` |
 | `Juice_Trail` | 殘影 | 持續 | — | `min_speed`（超過才出現）、`spacing`（間隔）、`duration`（殘留時間）、`color` |
 | `Juice_TrailLine` | 拖尾線 | 持續 | — | `mode`（速度夠快時／用訊號開關）、`min_speed`（速度模式才出現，預設 450，衝刺這類很快的移動才拖出來）、`duration`（拖尾長度，用時間算）、`color`（有 `Line2D` 樣板時隱藏） |
@@ -115,6 +115,7 @@ func clear_juice(source: Node) -> void:
     開了 2 秒沒收到 `stop_trail()` 自動停。
   - 粗細固定 6；想調寬度曲線、漸層、貼圖：在組件底下放一個 `Line2D` 子節點當樣板（像 Unity TrailRenderer 的 Width 曲線與 Color 漸層，
     橫軸 0＝靠角色那頭、1＝尾巴）。編輯器裡會自動幫空白的樣板放一條示範線。
+- **音效的由低到高**（講師決定）：連續觸發時照音階一聲比一聲高（像連續吃金幣），`reset_delay` 秒沒觸發就回到原本的音高；最高只爬到高兩個八度。
 - **音效**用 `AudioStreamPlayer`，不受頓幀影響。`custom_sound` 是**資源欄位**：學員把音檔從檔案系統拖進欄位，
   不需要打字（講師決定，見 `CLAUDE.md` 鐵律 4 的資源欄位例外）。選「自訂」但沒放音檔：編輯器黃色驚嘆號＋
   執行時中文警告，改播預設音效。
