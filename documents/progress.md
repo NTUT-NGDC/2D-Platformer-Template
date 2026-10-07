@@ -567,6 +567,6 @@
 
 - [x] U144 備品 `Juice_TextPopup` 跳字、`Juice_ScreenFlash` 全螢幕閃光
 　　→ 講師決定：跳字的種類用下拉（全部數值／只有血量／自訂）＋選「自訂」才出現的打字欄位 `custom_kind`；全螢幕閃光預設受傷時閃紅
-- [ ] U145 備品 `Juice_Tilt` 傾斜、`Juice_DeathBurst` 死亡爆散
+- [x] U145 備品 `Juice_Tilt` 傾斜、`Juice_DeathBurst` 死亡爆散
 - [ ] U146 `levels/_starts/W3_JuiceBox.tscn` 起始場景、`Gym.tscn` 示範佈置
 - [ ] U147 煙霧測試補上 §6 的項目、零件手冊／速查表／README 補 W3，跑一次煙霧測試
