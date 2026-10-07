@@ -574,3 +574,17 @@
 - [x] U146b `Juice_Sound` 音高模式：`pitch_mode`（隨機／固定／由低到高），由低到高時 `notes`（五聲音階／大調音階／半音／琶音）、`steps`、`at_top`、`reset_delay`
 　　→ 講師決定：隨機音高之外要能「由低到高」聽起來比較和諧，音階用內建下拉（不做自訂曲線）
 - [x] U147 煙霧測試補上 §6 的項目、零件手冊／速查表／README 補 W3，跑一次煙霧測試
+
+## 階段 35：按鍵手感（W3 增補）
+
+> 講師決定：W3 做完後追加「按鍵手感」。做進 Player 的 Inspector（「按鍵手感」分組），每一項都有勾選框可以開關、拉桿調時間或強度，
+> 預設開著（「起跑加速」預設關，避免改到 W1 已經調好的手感）。這是玩法層，不是 Juice：按 0 關 Juice 不影響它。
+> 跳躍相關的卡片（二段跳、蹬牆跳、蓄力青蛙跳…）要一起確認不打架。
+
+- [x] U148 晚一點按也能跳（土狼時間）`late_jump_enabled`／`late_jump_time`、早一點按也能跳（預輸入）`early_jump_enabled`／`early_jump_time`；
+	  Player 新增 `can_ground_jump()`（站在地上或還在土狼時間內），二段跳、蹬牆跳改用它判斷；預輸入落地時透過 `InputRouter.replay_press()`
+	  重播一次按鍵，讓蓄力青蛙跳這類攔截跳躍的卡照樣先收到（驗證：`tests/systems/InputFeelTest.tscn`）
+- [x] U149 短按小跳、長按大跳 `short_jump_enabled`／`short_jump_strength`（放開跳躍鍵時往上的速度砍掉一截，二段跳也適用）
+- [x] U150 頂頭修正 `corner_fix_enabled`／`corner_fix_size`（往上跳時頭差幾個像素撞到天花板邊角，自動往旁邊推開）
+- [x] U151 起跑加速 `smooth_start_enabled`／`speed_up_time`（從停下到全速要一小段時間，預設關）
+- [x] U152 文件（README、零件手冊、速查表、`03` 規格）＋煙霧測試補上按鍵手感，跑一次煙霧測試

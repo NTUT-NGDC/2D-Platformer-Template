@@ -110,6 +110,9 @@ InputRouter.bind_key(owner: Node, key: Key, phase: int, callback: Callable, prio
 InputRouter.bind_mouse(owner: Node, button: MouseButton, phase: int, callback: Callable, priority: int = 0)
 ## 依「按鍵種類」下拉選單綁定：input_type 0 用 key，1~3 是滑鼠左鍵／右鍵／中鍵
 InputRouter.bind_input(owner: Node, input_type: int, key: Key, phase: int, callback: Callable, priority: int = 0)
+## 假裝這個動作現在被按了一下，依優先權重新派發一次按下（also_release 時接著派發一次放開）；學員綁定收不到。
+## Player 的「早一點按也能跳」落地時用這個，讓攔截跳躍鍵的卡（蓄力青蛙跳…）照樣先收到
+InputRouter.replay_press(action: StringName, also_release: bool)
 ```
 
 學員按鍵觸發器對應的只聽不搶版本是 `bind_student()`／`bind_student_key()`／`bind_student_mouse()`（見 §3.5）。

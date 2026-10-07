@@ -106,6 +106,10 @@ func _run_all_steps() -> void:
 	await _test_enemy_shooter()
 	await _assert_can_move("敵人射擊測試")
 
+	# 8. 按鍵手感全開（含起跑加速），跟二段跳、蹬牆跳、蓄力青蛙跳、黏黏身體一起掛，亂按跳躍、左右跑
+	await _test_input_feel()
+	await _assert_can_move("按鍵手感測試")
+
 	if _failed:
 		print("SMOKE TEST FAILED")
 		get_tree().quit(1)
@@ -391,6 +395,32 @@ func _test_juice_switch(paths: Array[String]) -> void:
 	await _clear_container(_juice_container)
 	await _wait_frames(2)
 	_check_visual_restored(before, "Juice 總開關測試拔掉所有 Juice 後", false)
+
+# 按鍵手感全部打開，跟所有會攔截跳躍鍵的卡一起掛，連續點跳、按住跳、左右跑、中途死亡重生，不崩潰、還能移動
+func _test_input_feel() -> void:
+	_player.smooth_start_enabled = true
+	var cards := ["res://mechanics/_extra/Extra_DoubleJump.tscn", "res://mechanics/_extra/Extra_WallJump.tscn",
+		"res://mechanics/Mechanic_ChargeJump.tscn", "res://mechanics/Mechanic_StickyBody.tscn"]
+	for path in cards:
+		_mechanics_container.add_child(load(path).instantiate())
+	await _wait_frames(5)
+	for i in 12:
+		Input.action_press("move_right" if i % 4 < 2 else "move_left")
+		Input.action_press("jump")
+		await _wait_frames(2 + i % 5)
+		Input.action_release("jump")
+		await _wait_frames(6)
+		Input.action_release("move_right")
+		Input.action_release("move_left")
+		if i == 6:
+			_player.kill()
+			await _wait_frames(2)
+			_player.revive(Vector2(0, 150))
+	if not is_instance_valid(_player):
+		_fail("按鍵手感測試時 Player 消失了")
+	await _clear_container(_mechanics_container)
+	_player.smooth_start_enabled = false
+	_player.set_size_factor(1.0)
 
 func _clear_container(container: Node) -> void:
 	for child in container.get_children():

@@ -201,6 +201,7 @@ func take_damage(amount: float = 1.0) -> void
 func kill() -> void
 func force_jump(power_scale: float = 1.0) -> void
 func is_on_ground() -> bool
+func can_ground_jump() -> bool       # 現在按跳躍能不能從地面起跳（含「晚一點按也能跳」的時間），跟跳躍有關的卡判斷「在不在地上」用這個
 func get_move_input() -> float       # -1 ~ 1
 ```
 

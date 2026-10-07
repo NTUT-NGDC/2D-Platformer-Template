@@ -79,6 +79,22 @@ func clear_juice(source: Node) -> void:
 畫面右上角顯示「Juice：開」／「Juice：關」兩秒。關掉時一次型不播、持續型隱藏，並撤掉所有外觀影響。
 這是教學用的前後對照工具：讓學員自己按按看差多少。
 
+### 2.5 按鍵手感（講師決定增補）
+
+做在 **Player** 的 Inspector「按鍵手感」分組裡，不是 Juice（屬於玩法層，按 `0` 關 Juice 不影響）。
+每一項一個勾選框開關＋一個拉桿：
+
+| 欄位 | 做什麼 | 預設 |
+|---|---|---|
+| `late_jump_enabled`／`late_jump_time` | 晚一點按也能跳（土狼時間）：走出平台邊緣後還能跳；往上飛的時候不算 | 開、0.1 秒 |
+| `early_jump_enabled`／`early_jump_time` | 早一點按也能跳（預輸入）：落地前按的跳躍，落地瞬間自動跳；透過 `InputRouter.replay_press()` 重播跳躍鍵，攔截跳躍的卡照樣先收到 | 開、0.1 秒 |
+| `short_jump_enabled`／`short_jump_strength` | 短按小跳：按著跳躍鍵跳起來、還在往上時放開，往上的速度砍掉一截（二段跳也適用；蓄力青蛙跳放開才跳，不受影響） | 開、0.5 |
+| `corner_fix_enabled`／`corner_fix_size` | 頂頭修正：往上飛時頭差幾個像素撞到天花板邊角，自動往旁邊推開 | 開、4 像素 |
+| `smooth_start_enabled`／`speed_up_time` | 起跑加速：從停下（或轉向）到全速要一小段時間；已經比全速快（被推出去）時照舊 | **關**、0.1 秒 |
+
+- Player 新增公開 API `can_ground_jump()`：二段跳、蹬牆跳判斷「在不在地上」改用它，土狼時間裡的跳躍不會被當成空中跳。
+- 驗證場景：`tests/systems/InputFeelTest.tscn`。
+
 ---
 
 ## 3. 組件清單 `juice/`
@@ -164,6 +180,7 @@ func clear_juice(source: Node) -> void:
     `scale`／`modulate`／`rotation` 要回到原本的樣子
   - 總開關切換 10 次不崩潰
   - 拔掉所有 Juice 後 `Visual` 子節點外觀完全還原
+  - 按鍵手感全開（含起跑加速），跟二段跳、蹬牆跳、蓄力青蛙跳、黏黏身體一起掛，亂按跳躍、左右跑、中途死亡重生
 
 ---
 
