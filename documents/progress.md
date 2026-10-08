@@ -610,3 +610,13 @@
 - [x] U155 `Events` 新增 `level_started`（開場等所有節點準備好後發一次，換場景再發）與 `whole_level_restarted`
 	  （`RespawnHandler` 整關重來時發：選「整關重來」的重生、過關畫面按再玩一次）；EventListener 下拉加上「遊戲開始時」
 	  「整關重來時」（排在最後，原本的選項編號不變）（驗證：`tests/blocks/EventListenerFlowTest.tscn`）
+- [x] U156 遊戲流程 `blocks/GameFlow.tscn`：把 Events 的事件（遊戲開始、整關重來、玩家死亡／重生／受傷／跳躍、進入房間、
+	  撿到道具、敵人被打倒、過關）全部變成自己不帶參數的訊號，學員選它在「節點」面板挑事件連到任何零件；一條都沒連時印中文提醒；
+	  編輯器畫橘色方塊＋連線虛線（驗證：`tests/blocks/GameFlowTest.tscn`）
+	  　　→ 講師決定：學員自己拖，範本不預放；放兩個以上也能用、不警告
+
+## 之後再做（構想，還沒排進單元）
+
+- GameFlow 加上狀態：管理「開始 → 進行中 → 過關／Game Over」，學員可以聽狀態變化的訊號；
+  可能一起做命數、Game Over 條件（命用完或某個數值歸零）與 Game Over 畫面，會牽涉 RespawnHandler、ClearScreen。
+  U156 的訊號名稱不用變，學員已經連好的線不用重連。
