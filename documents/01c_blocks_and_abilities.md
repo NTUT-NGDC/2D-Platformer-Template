@@ -71,9 +71,13 @@
 | 門 | `Door.tscn` | 實心 | `open_mode`（由訊號控制／鑰匙／金幣數量／自訂數值）、`custom_kind`（自訂的數值種類名稱，選「自訂數值」才出現，可打字）、`required_amount`（需要數量）、`consume`（打開時消耗）、`start_open`（一開始是開的） | `activate`、`deactivate`、`toggle` | `opened`、`closed` |
 | 移動平台 | `MovingPlatform.tscn` | 會動 | `direction`（水平／垂直）、`distance_tiles`（移動格數）、`speed`（速度）、`start_active`（一開始就在動） | `activate`、`deactivate`、`toggle` | 無 |
 | 風扇 | `Fan.tscn` | 感應 | `direction`（上／下／左／右）、`force`（力道）、`range_tiles`（範圍格數）、`start_on`（一開始就開） | `activate`、`deactivate`、`toggle` | 無 |
+| 推力器（講師決定 U162） | `Pusher.tscn` | 無（範圍模式用感應區） | `target`（玩家／範圍內全部／範圍內的玩家／範圍內的箱子／範圍內的敵人）、`range_width`／`range_height`（範圍格數，選範圍才出現）、`direction`（八方向＋自訂）、`custom_x`／`custom_y`（-1～1 拉桿，選自訂才出現）、`strength`、`push_mode`（疊加在原本的速度上／先停住再推）、`on_gravity_flip`（跟著翻轉／不翻轉，只影響玩家） | `activate`（接任意參數） | `pushed(body)` |
 
 - 門開啟時關閉碰撞、變半透明。鑰匙、金幣與自訂數值模式由玩家碰到門時檢查 `Stats`（見 `01a_shared_systems.md` §4）。
   自訂數值的名稱檢查同道具，但多一條：場景裡沒有道具或 ValueSettings 用這個名稱時也要警告（門會永遠打不開）。
+- 推力器：玩家、敵人用 `add_impulse()`（敵人新增公開的 `add_impulse()`，推的 0.25 秒內不巡邏、不扣血），箱子這類 `RigidBody2D` 改
+  `linear_velocity`，固定住的（蜘蛛殼）跳過。「先停住再推」＝把速度設成方向×力道。自訂方向兩個都是 0 時黃色驚嘆號＋中文警告、不推。
+  不用「進階」的額外參數傳 Vector2：要打字、驗證器看不懂，違反鐵律 4。
 - 移動平台 `activate` 為開始移動、`deactivate` 為停在原地；按鈕加移動平台即為電梯。
 
 ### 2.3 地形類

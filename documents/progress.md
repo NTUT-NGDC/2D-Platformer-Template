@@ -649,6 +649,16 @@
 - [x] U161 `JuiceBase` 新增 `clear()`／`turn_off()`／`turn_on()`（接任意參數，可以連任何訊號）；`Juice_BGM` 覆寫成淡出淡入；
 	  煙霧測試總開關測試輪流呼叫；零件手冊、速查表、`03` §2.3b 補上（驗證：`tests/juice/Juice_ControlTest.tscn`）
 
+## 階段 42：推力器
+
+> 講師決定：學員想要「撿到道具就往左飛」。不用連線對話框的「進階」額外參數傳 Vector2（要打字、驗證器會誤報），
+> 做成零件用下拉選方向、拉桿調力道；推法、重力翻轉都做成選項；可以推玩家、箱子、敵人（通用）。
+
+- [x] U162 推力器 `blocks/Pusher.tscn`：`activate()` 把目標往指定方向推一下；`target`（玩家／範圍內全部／玩家／箱子／敵人）、
+	  範圍大小、八方向＋自訂（`custom_x`／`custom_y` 拉桿）、`strength`、`push_mode`（疊加／先停住再推）、`on_gravity_flip`
+	  （跟著翻轉／不翻轉）；`pushed(body)` 訊號；編輯器畫箭頭與範圍方框；Enemy 新增公開 `add_impulse()`；零件手冊、速查表、
+	  `01c` §2.2 補上（驗證：`tests/blocks/PusherTest.tscn`）
+
 ## 之後再做（構想，還沒排進單元）
 
 - GameFlow 加上狀態：管理「開始 → 進行中 → 過關／Game Over」，學員可以聽狀態變化的訊號；
