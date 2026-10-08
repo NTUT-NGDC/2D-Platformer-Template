@@ -594,3 +594,9 @@
 > 講師決定：音訊分成 Master／SFX／BGM 三條匯流排（SFX、BGM 都送進 Master），音效一律走 SFX，之後的背景音樂走 BGM。
 
 - [x] U153 `default_bus_layout.tres` 建立 SFX、BGM 匯流排；`Juice_Sound` 與 `SfxPreviewTest` 的播放器改走 SFX
+- [x] U154 背景音樂 Juice `juice/Juice_BGM.tscn`（掛在 Player → Juice 底下）：一個節點一首歌（`music` 拖音檔、`play_on_start`、`volume`、
+	  `fade_time`、`on_died`、`on_cleared`），走 BGM 匯流排；同一時間只播一首，`timing` 選的時機發生、或訊號連到 `play()` 時
+	  淡出淡入換成這一首，`stop()` 淡出停止；過關停掉後再玩一次會播回開場那首；Juice 總開關關掉時淡出靜音
+	  （驗證：`tests/juice/Juice_BGMTest.tscn`）
+	  　　→ 講師決定：沒有內建曲目，只能拖自己的音檔（空白時黃色驚嘆號＋中文警告、不播放）；換歌由學員用 timing 或訊號觸發；
+	  　　　死亡與過關時的反應做成下拉讓學員選；BGM 跟音效一樣歸類在 Juice，按 0 關總開關時跟著靜音

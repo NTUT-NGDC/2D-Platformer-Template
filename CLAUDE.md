@@ -96,6 +96,7 @@ Claude Code 在這個專案裡的所有對話回覆、進度回報、驗收結�
 只在下拉選「自訂」時出現；空白時編輯器黃色驚嘆號＋執行時中文警告，並改用預設值照常運作（見 `documents/03_game_feel_juice.md` §3.1）。
 `Juice_Particles.custom_particles`（`PackedScene`）同一套規則：學員把自己做的粒子場景拖進欄位，只在樣式選「自訂場景」時出現，
 空白或根節點不是 `CPUParticles2D` 時黃色驚嘆號＋中文警告，改用塵土照常運作。
+`Juice_BGM.music`（`AudioStream`）同屬資源欄位例外：學員把自己的音樂檔拖進來；沒有內建曲目，空白時黃色驚嘆號＋執行時中文警告、不播放（見 `documents/progress.md` U154）。
 
 ### 5. 組件之間不准打架
 
