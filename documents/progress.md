@@ -630,6 +630,16 @@
 	  Juice_BGM、音量）、速查表（Esc／P、GameFlow 訊號、Juice_BGM）、規格書（`00_foundation` Events 清單、`00b` §8.5 補選項／
 	  §8.6 GameFlow、`03` 組件表加 Juice_BGM、§4 音訊匯流排）
 
+## 階段 40：W3 練習關
+
+> 講師決定：練 W3 Juice；題目寫在關卡裡的告示牌上，按 F6 自動檢查、做對變綠；8 題由淺到深。
+> 沒有內建音樂檔，所以不出背景音樂題，最後一題改成「自訂音效」（可以先拖 `sfx/` 裡的音檔）。
+
+- [x] U159 `levels/_starts/W3_JuicePractice.tscn`（W3_JuiceBox 的路線、Player → Juice 清空、加一顆按鈕）＋告示牌
+	  `levels/_shared/PracticeSign.gd`（`task` 下拉選題目，執行時檢查 Player → Juice 的設定）：1 落地震動、2 跳躍音效、
+	  3 撿金幣噴星星（改 timing＋style）、4 撿金幣叮一聲（同一種拖第二個）、5 震得更用力（strength ≥ 8）、6 打倒敵人頓幀、
+	  7 按鈕 turned_on 連到「不自動觸發」的 CameraZoom 的 play、8 撞牆播自訂音檔；全部完成印恭喜；README §3.1 補練習關
+
 ## 之後再做（構想，還沒排進單元）
 
 - GameFlow 加上狀態：管理「開始 → 進行中 → 過關／Game Over」，學員可以聽狀態變化的訊號；
