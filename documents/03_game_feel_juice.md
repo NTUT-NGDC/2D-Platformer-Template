@@ -113,6 +113,7 @@ func clear_juice(source: Node) -> void:
 | `Juice_Trail` | 殘影 | 持續 | — | `min_speed`（超過才出現）、`spacing`（間隔）、`duration`（殘留時間）、`color` |
 | `Juice_TrailLine` | 拖尾線 | 持續 | — | `mode`（速度夠快時／用訊號開關）、`min_speed`（速度模式才出現，預設 450，衝刺這類很快的移動才拖出來）、`duration`（拖尾長度，用時間算）、`color`（有 `Line2D` 樣板時隱藏） |
 | `Juice_GooglyEyes` | 咕嚕眼 | 持續 | — | `look`（跟著移動方向轉頭／擺正中間）、`eye_count`（一隻／兩隻）、`eye_size`、`pupil_size`、`wobble`（晃動程度） |
+| `Juice_BGM` | 背景音樂 | 一次 | 不自動觸發 | `music`（資源欄位）、`play_on_start`、`volume`、`fade_time`、`on_died`（繼續播／暫停，重生後接著播／重生時從頭播）、`on_cleared`（繼續播／淡出／馬上停）；`follow_impact` 隱藏 |
 
 補充：
 
@@ -135,6 +136,10 @@ func clear_juice(source: Node) -> void:
 - **音效**用 `AudioStreamPlayer`，不受頓幀影響。`custom_sound` 是**資源欄位**：學員把音檔從檔案系統拖進欄位，
   不需要打字（講師決定，見 `CLAUDE.md` 鐵律 4 的資源欄位例外）。選「自訂」但沒放音檔：編輯器黃色驚嘆號＋
   執行時中文警告，改播預設音效。
+- **背景音樂**（講師決定 U154）：沒有內建曲目，`music` 是資源欄位（空白時黃色驚嘆號＋中文警告、不播放）。一個節點一首，
+  所有 `Juice_BGM` 共用「正在播哪首」，同時只播一首；`timing` 時機發生或 `play()` 時舊的淡出、這首淡入，`stop()` 淡出停止。
+  勾 `play_on_start` 的開場播（兩個以上只播第一個並警告）；過關停掉後重生（再玩一次）播回開場那首。
+  走 BGM 匯流排、`PROCESS_MODE_ALWAYS`、淡入淡出用真實時間，不受頓幀與過關畫面暫停影響；Juice 總開關關掉時淡出靜音、音樂照樣往下走。
 - **咕嚕眼**：眼白（白圓＋黑框）＋黑眼珠。眼珠有慣性（牛頓第一定律）：角色速度一變，眼珠相對眼眶往反方向跑（起跑往後甩、急停與落地往前衝），
   再由彈簧慢慢拉回中間、稍微往重力方向垂，碰到眼眶邊緣會反彈。`look` 選轉頭時，眼睛整組滑到臉朝最後移動方向的那一側。**眼睛的位置＝這個組件節點的位置**：學員在編輯器裡直接把節點拖到臉上
   （`@tool`，編輯器裡就畫得出眼睛）。執行時跟著 `Visual` 的朝向與體型（翻轉、變大變小）一起變。
@@ -159,6 +164,8 @@ func clear_juice(source: Node) -> void:
 - 出處與授權寫在 `sfx/CREDITS.md`。
 - 內建至少 8 種：跳躍、落地、受傷、爆炸、撿東西、金幣、雷射、嗶。格式 `.wav`（短音效 Web 匯出最穩），
   每個檔案 < 100 KB。
+- **音訊匯流排**（講師決定 U153）：`default_bus_layout.tres` 有 Master／SFX／BGM 三條（SFX、BGM 送進 Master）。
+  `Juice_Sound` 走 SFX、`Juice_BGM` 走 BGM；暫停選單（`autoload/PauseMenu.gd`，U157）分開調三條的音量，存在 `user://settings.cfg`。
 
 ---
 

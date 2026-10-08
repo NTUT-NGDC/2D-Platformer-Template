@@ -624,6 +624,12 @@
 	  `user://settings.cfg`；拉音效拉桿時播一下試聽音效）；繼續遊戲、整關重來（關卡裡沒有 RespawnHandler 就不顯示並印提醒）、離開遊戲（網頁版不顯示）；
 	  過關畫面這類別人造成的暫停中不會打開；P 被按鍵觸發器／按鍵設定用掉時讓給它、只用 Esc（驗證：`tests/systems/PauseMenuTest.tscn`）
 
+## 階段 39：文件補上音訊與遊戲流程
+
+- [x] U158 README（W3 背景音樂、拖到哪裡加 GameFlow、暫停選單、沒反應怎麼辦）、零件手冊（GameFlow、EventListener 新選項、
+	  Juice_BGM、音量）、速查表（Esc／P、GameFlow 訊號、Juice_BGM）、規格書（`00_foundation` Events 清單、`00b` §8.5 補選項／
+	  §8.6 GameFlow、`03` 組件表加 Juice_BGM、§4 音訊匯流排）
+
 ## 之後再做（構想，還沒排進單元）
 
 - GameFlow 加上狀態：管理「開始 → 進行中 → 過關／Game Over」，學員可以聽狀態變化的訊號；

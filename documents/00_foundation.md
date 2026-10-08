@@ -75,6 +75,8 @@ signal enemy_died(pos: Vector2)
 signal item_collected(pos: Vector2)
 signal level_cleared
 signal level_restarted
+signal level_started            # U155 加入：關卡開場發一次
+signal whole_level_restarted    # U155 加入：整關重來時才發
 
 # 表現層請求（W3 Juice 用，讓組件不必知道攝影機在哪）
 signal shake_requested(strength: float, duration: float)
