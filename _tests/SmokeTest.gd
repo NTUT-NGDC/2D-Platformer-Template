@@ -376,7 +376,7 @@ func _test_juice_kill_revive(paths: Array[String]) -> void:
 	await _wait_frames(2)
 	_check_visual_restored(before, "拔掉所有 Juice 後", false)
 
-# 掛著全部 Juice，總開關切換 10 次（中間發事件），最後打開、拔掉，不崩潰、外觀還原
+# 掛著全部 Juice，總開關切換 10 次（中間發事件、輪流呼叫 clear／turn_off／turn_on），最後打開、拔掉，不崩潰、外觀還原
 func _test_juice_switch(paths: Array[String]) -> void:
 	if paths.is_empty():
 		return
@@ -389,7 +389,15 @@ func _test_juice_switch(paths: Array[String]) -> void:
 		_player.landed.emit(600.0)
 		_player.hurt.emit()
 		await _wait_frames(4)
+		# 同時用訊號函式清掉／關掉／打開每個 Juice
+		for j in _juice_container.get_children():
+			match i % 3:
+				0: j.clear()
+				1: j.turn_off()
+				2: j.turn_on()
 	JuiceSwitch.set_on(true)
+	for j in _juice_container.get_children():
+		j.turn_on()
 	if not is_instance_valid(_player):
 		_fail("Juice 總開關測試時 Player 消失了")
 	await _clear_container(_juice_container)

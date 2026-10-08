@@ -73,6 +73,16 @@ func clear_juice(source: Node) -> void:
 
 「打中東西時」= `Events.hit` 裡被打的不是玩家自己（玩家被打是「受傷時」）。
 
+### 2.3b 用訊號控制單一 Juice（講師決定 U161）
+
+`JuiceBase` 提供三個可以連訊號的公開函式（`..._args` 接任意參數）：
+
+- `clear()`：呼叫 `_on_reset()` 並 `player.clear_juice(self)`，停掉進行中的效果、撤掉外觀影響，之後照常觸發。
+- `turn_off()`：`enabled = false` 並 `clear()`；持續型順便隱藏。
+- `turn_on()`：`enabled = true`；持續型跟著總開關恢復顯示。
+
+`Juice_BGM` 覆寫 `turn_off()`／`turn_on()`：淡出靜音／淡回來（音樂照樣往下走）。煙霧測試的總開關測試輪流呼叫這三個。
+
 ### 2.4 Juice 總開關
 
 自動載入 `JuiceSwitch`：按 `0`（`InputRouter.bind_key`，低優先、只聽不搶；不用 F1：F 鍵在網頁版會被瀏覽器攔截）切換全部 Juice 開／關，
@@ -106,7 +116,7 @@ func clear_juice(source: Node) -> void:
 | `Juice_ScreenShake` | 螢幕震動 | 一次 | 落地時 | `strength`、`duration` |
 | `Juice_HitStop` | 頓幀 | 一次 | 打中東西時 | `duration`（0.03～0.3） |
 | `Juice_SquashStretch` | 擠壓拉伸 | 一次 | 落地時 | `shape`（壓扁／拉長）、`strength`、`duration` |
-| `Juice_Flash` | 閃色 | 一次 | 受傷時 | `color`（白／紅／黃／黑）、`duration`、`count`（閃幾次） |
+| `Juice_Flash` | 閃色 | 一次 | 受傷時 | `color`（白／紅／黃／黑）、`duration`、`count`（閃幾次）、`stop_others`（開始閃時停掉同一個角色身上其他還在閃的閃色，預設勾；講師決定 U160） |
 | `Juice_Particles` | 粒子噴發 | 一次 | 落地時 | `style`（塵土／火花／星星／碎片／煙霧／自訂場景）、`amount`、`color`（跟著樣式／白／黃／紅／藍／綠）、`custom_particles`（選「自訂場景」才出現，此時 `amount`／`color` 隱藏）、`spawn_at`（腳底／身體中心／事件發生處） |
 | `Juice_Sound` | 音效 | 一次 | 跳躍時 | `sound`（內建音效下拉＋「自訂」）、`custom_sound`（選「自訂」才出現）、`volume`、`pitch_mode`（隨機／固定／由低到高）、`pitch_random`（隨機才出現）、`notes`（五聲音階／大調音階／半音／琶音）、`steps`、`at_top`（停在最高／從頭再來）、`reset_delay`（後四個由低到高才出現） |
 | `Juice_CameraZoom` | 鏡頭推近 | 一次 | 打倒敵人時 | `strength`、`duration` |

@@ -646,6 +646,8 @@
 > 另外所有 Juice 都可以用訊號清掉效果、關掉、打開。
 
 - [x] U160 `Juice_Flash` 新增 `stop_others`（預設勾）：開始閃時把同一個角色身上其他還在閃的 `Juice_Flash` 清掉
+- [x] U161 `JuiceBase` 新增 `clear()`／`turn_off()`／`turn_on()`（接任意參數，可以連任何訊號）；`Juice_BGM` 覆寫成淡出淡入；
+	  煙霧測試總開關測試輪流呼叫；零件手冊、速查表、`03` §2.3b 補上（驗證：`tests/juice/Juice_ControlTest.tscn`）
 
 ## 之後再做（構想，還沒排進單元）
 

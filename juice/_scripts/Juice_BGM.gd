@@ -91,6 +91,18 @@ func _start() -> void:
 	_fade_to(_target_fade(), false)
 	print("[%s] 開始播放背景音樂" % name)
 
+# 關掉這個 Juice：正在播的話淡出靜音（音樂照樣往下走），turn_on 時淡回來
+func turn_off(..._args: Array) -> void:
+	super()
+	if _current == self:
+		_fade_to(_target_fade(), false)
+
+# 打開這個 Juice：正在播的話淡回原本的音量
+func turn_on(..._args: Array) -> void:
+	super()
+	if _current == self:
+		_fade_to(_target_fade(), false)
+
 # 拔掉組件或離開場景時放掉「正在播的 BGM」的位置，換別首或下一個關卡才能播
 func _exit_tree() -> void:
 	super()
