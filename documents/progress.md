@@ -600,3 +600,13 @@
 	  （驗證：`tests/juice/Juice_BGMTest.tscn`）
 	  　　→ 講師決定：沒有內建曲目，只能拖自己的音檔（空白時黃色驚嘆號＋中文警告、不播放）；換歌由學員用 timing 或訊號觸發；
 	  　　　死亡與過關時的反應做成下拉讓學員選；BGM 跟音效一樣歸類在 Juice，按 0 關總開關時跟著靜音
+
+## 階段 37：遊戲流程事件
+
+> 講師決定：先不做有狀態的 GameManager，在 Events 補「遊戲開始」「整關重來」兩個事件，讓 EventListener 選得到；
+> 另外做一個 GameFlow 節點把所有事件一次變成自己的訊號，學員自己用訊號接。EventListener 保留（只聽一個事件、可以延遲）。
+> 原本的 `level_restarted` 每次重生都會發（不分回房間或整關重來），名不副實但維持原樣，另外新增 `whole_level_restarted`。
+
+- [x] U155 `Events` 新增 `level_started`（開場等所有節點準備好後發一次，換場景再發）與 `whole_level_restarted`
+	  （`RespawnHandler` 整關重來時發：選「整關重來」的重生、過關畫面按再玩一次）；EventListener 下拉加上「遊戲開始時」
+	  「整關重來時」（排在最後，原本的選項編號不變）（驗證：`tests/blocks/EventListenerFlowTest.tscn`）

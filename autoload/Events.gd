@@ -10,7 +10,9 @@ signal player_died
 signal enemy_died(pos: Vector2)
 signal item_collected(pos: Vector2)
 signal level_cleared
-signal level_restarted
+signal level_restarted                  # 每次重生都會發（RespawnHandler 勾了 send_restart_signal 時），不分回房間或整關重來
+signal level_started                    # 關卡開場時發一次（場景裡所有節點都準備好之後），換場景也會再發
+signal whole_level_restarted            # 整關從頭來時才發：RespawnHandler 選「整關重來」的重生、過關畫面按再玩一次
 signal checkpoint_reached(checkpoint: Node)
 
 # 房間事件（玩家走進某個 Room 時由 Room 發出，鏡頭與重生處理者訂閱）
@@ -33,3 +35,19 @@ signal mechanic_event(card: String, event: String)
 signal shake_requested(strength: float, duration: float)
 signal hitstop_requested(duration: float)
 signal zoom_requested(strength: float, duration: float)   # 鏡頭放大到 1 + strength 倍再回到原本大小
+
+var _started_scene_id: int = 0   # 已經發過 level_started 的場景，避免同一個場景發兩次
+
+# 開場等第一幀（所有節點的 _ready 都跑完、訊號都接好）再發 level_started；之後換場景也會發
+func _ready() -> void:
+	get_tree().scene_changed.connect(_emit_level_started)
+	await get_tree().process_frame
+	_emit_level_started()
+
+# 目前場景還沒發過 level_started 就發一次
+func _emit_level_started() -> void:
+	var scene := get_tree().current_scene
+	if scene == null or scene.get_instance_id() == _started_scene_id:
+		return
+	_started_scene_id = scene.get_instance_id()
+	level_started.emit()
