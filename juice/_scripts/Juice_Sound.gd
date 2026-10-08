@@ -69,6 +69,7 @@ func _on_setup() -> void:
 	if _audio == null:
 		_audio = AudioStreamPlayer.new()
 		_audio.max_polyphony = _MAX_OVERLAP
+		_audio.bus = &"SFX"
 		add_child(_audio)
 	if sound == _SOUND_CUSTOM and custom_sound == null:
 		push_warning("[%s] sound 選了「自訂」，但 custom_sound 是空的，請把音檔拖進來；先改播跳躍聲" % name)

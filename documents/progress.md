@@ -588,3 +588,9 @@
 - [x] U150 頂頭修正 `corner_fix_enabled`／`corner_fix_size`（往上跳時頭差幾個像素撞到天花板邊角，自動往旁邊推開）
 - [x] U151 起跑加速 `smooth_start_enabled`／`speed_up_time`（從停下到全速要一小段時間，預設關）
 - [x] U152 文件（README、零件手冊、速查表、`03` 規格）＋煙霧測試補上按鍵手感，跑一次煙霧測試
+
+## 階段 36：音訊匯流排
+
+> 講師決定：音訊分成 Master／SFX／BGM 三條匯流排（SFX、BGM 都送進 Master），音效一律走 SFX，之後的背景音樂走 BGM。
+
+- [x] U153 `default_bus_layout.tres` 建立 SFX、BGM 匯流排；`Juice_Sound` 與 `SfxPreviewTest` 的播放器改走 SFX
