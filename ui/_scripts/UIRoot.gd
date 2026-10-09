@@ -63,6 +63,26 @@ func _validate_property(property: Dictionary) -> void:
 	if property.name == "theme":
 		property.usage = PROPERTY_USAGE_NONE
 
+# 這套 UI 放進關卡時（不是單獨編輯它的時候），把底下顯示零件的設定錯誤收集起來顯示在這裡：
+# 放進關卡的場景看不到裡面的子節點，錯誤要掛在看得到的這一層
+func _get_configuration_warnings() -> PackedStringArray:
+	var warnings := PackedStringArray()
+	if not is_inside_tree():
+		return warnings
+	var scene_root := get_tree().edited_scene_root
+	if scene_root == null or scene_root == self:
+		return warnings
+	_collect_warnings(self, scene_root, warnings)
+	return warnings
+
+# 往下找顯示零件，把它們在這個關卡裡的設定錯誤加上零件名稱收集起來
+func _collect_warnings(node: Node, scene_root: Node, warnings: PackedStringArray) -> void:
+	for child in node.get_children():
+		if child.has_method("get_hud_warnings"):
+			for w in child.get_hud_warnings(scene_root):
+				warnings.append("%s：%s" % [child.name, w])
+		_collect_warnings(child, scene_root, warnings)
+
 # 讀目前配色裡某個角色的顏色（text、dim、panel、button、hover、pressed、accent、back），
 # 配色是「預設」時回傳 fallback；顯示零件畫自己的預設樣式時用這個
 func get_palette_color(role: String, fallback: Color) -> Color:
