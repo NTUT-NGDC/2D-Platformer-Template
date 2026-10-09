@@ -727,7 +727,8 @@
 	  （驗證：`tests/ui/HudTemplateTest.tscn`）
 - [x] U174 `UISettings`＋接法 A（欄位、類型檢查、跟接法 B 同時接的警告）
 	  （驗證：`tests/ui/UISettingsTest.tscn`、`tests/ui/UISettingsConflictTest.tscn`）
-- [ ] U175 `MenuAction`、`VolumeSlider`、`PauseMenuTemplate`；`PauseMenu` 改成實例化範本或學員的場景
+- [x] U175 `MenuAction`、`VolumeSlider`、`PauseMenuTemplate`；`PauseMenu` 改成實例化範本或學員的場景
+	  （驗證：`tests/ui/PauseMenuTemplateTest.tscn`、`tests/systems/PauseMenuTest.tscn`）
 - [ ] U176 `ClearStat`、`ClearScreenTemplate`；`ClearScreen` 改成實例化範本或學員的場景
 
 ## 階段 50：換皮

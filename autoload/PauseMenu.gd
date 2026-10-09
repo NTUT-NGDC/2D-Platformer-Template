@@ -1,36 +1,33 @@
 extends Node
 
 # 暫停選單：每一關都有，學員不用擺任何東西。按 Esc 或 P 暫停／繼續。
-# 選單裡可以調主音量、音效、音樂三條匯流排的音量（記在 user:// 的設定檔，下次開遊戲還是一樣），
-# 也可以繼續遊戲、整關重來（關卡裡有 RespawnHandler 才有）、離開遊戲（網頁版沒有）。
+# 畫面用 ui/templates/PauseMenuTemplate.tscn 範本；關卡裡有學員自己的暫停選單（UISettings 欄位或直接放進關卡）就改顯示那一個。
+# 這裡管什麼時候打開、關掉，還有三條匯流排的音量（記在 user:// 的設定檔，下次開遊戲還是一樣）；
+# 畫面上的按鈕（MenuAction）、拉桿（VolumeSlider）呼叫這裡的公開函式。
 
+const _TEMPLATE := preload("res://ui/templates/PauseMenuTemplate.tscn")
 const _SETTINGS_PATH := "user://settings.cfg"
-# [匯流排名稱, 選單上顯示的名稱, 預設音量]
-const _BUSES := [["Master", "主音量", 0.8], ["SFX", "音效", 1.0], ["BGM", "音樂", 0.8]]
+# [匯流排名稱, 預設音量]
+const _BUSES := [["Master", 0.8], ["SFX", 1.0], ["BGM", 0.8]]
 const _KEYS := [KEY_ESCAPE, KEY_P]
-const _FONT_SIZE := 12
-const _TITLE_SIZE := 24
 # 拉音效拉桿時播的試聽音效；拖著拉時最快隔這麼久才播一次（毫秒），免得疊成一團
 const _PREVIEW_SOUND := preload("res://sfx/pickup.wav")
 const _PREVIEW_GAP_MS := 120
 
-var _layer: CanvasLayer = null
-var _resume_button: Button = null
-var _restart_button: Button = null
-var _value_labels: Dictionary = {}   # 匯流排名稱 -> 顯示百分比的 Label
+var _default_root: Control = null    # 預設的範本畫面（第一次打開時才生）
+var _shown: Control = null           # 現在顯示中的畫面
 var _volumes: Dictionary = {}        # 匯流排名稱 -> 線性音量 0～1
 var _open: bool = false
 var _warned_p: bool = false
 var _preview: AudioStreamPlayer = null
 var _last_preview_ms: int = -_PREVIEW_GAP_MS
 
-# 讀回上次的音量並套用，建立（先藏起來的）選單畫面；暫停時也要收得到按鍵
+# 讀回上次的音量並套用；暫停時也要收得到按鍵
 func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
 	_load_volumes()
 	for bus in _BUSES:
 		_apply_volume(bus[0])
-	_build_ui()
 	_preview = AudioStreamPlayer.new()
 	_preview.stream = _PREVIEW_SOUND
 	_preview.bus = &"SFX"
@@ -56,24 +53,49 @@ func open() -> void:
 	if _open or get_tree().paused:
 		return
 	_open = true
-	_restart_button.visible = _find_respawn_handler() != null
-	if not _restart_button.visible:
+	if not can_restart():
 		print("[暫停選單] 關卡裡沒有 RespawnHandler，選單裡不會有「整關重來」。想要的話把 blocks/RespawnHandler.tscn 拖進關卡")
-	_layer.visible = true
+	_shown = _pick_screen()
+	_refresh_buttons(_shown)
+	_shown.visible = true
 	get_tree().paused = true
-	_resume_button.grab_focus()
+	var first := _first_button(_shown)
+	if first != null:
+		first.grab_focus()
 
 # 關掉暫停選單，繼續遊戲
 func close() -> void:
 	if not _open:
 		return
 	_open = false
-	_layer.visible = false
+	if is_instance_valid(_shown):
+		_shown.visible = false
+	_shown = null
 	get_tree().paused = false
 
 # 回傳暫停選單現在是不是開著
 func is_open() -> bool:
 	return _open
+
+# 關卡裡能不能整關重來（有 RespawnHandler 才行），「整關重來」按鈕用這個決定要不要出現
+func can_restart() -> bool:
+	return _find_respawn_handler() != null
+
+# 整關重來：關掉選單，終點恢復成還沒踩過，請重生處理者整關重來
+func restart_level() -> void:
+	var handler := _find_respawn_handler()
+	close()
+	if handler == null:
+		print("[暫停選單] 關卡裡沒有 RespawnHandler，沒辦法整關重來。想要的話把 blocks/RespawnHandler.tscn 拖進關卡")
+		return
+	get_tree().call_group("goal", "reset")
+	handler.restart_level_now()
+
+# 離開遊戲（網頁版關不掉，什麼都不做）
+func quit_game() -> void:
+	if OS.has_feature("web"):
+		return
+	get_tree().quit()
 
 # P 已經被學員或組件拿去當別的按鍵（例如按鍵觸發器、按鍵設定）時讓給它，只用 Esc 暫停，第一次提醒一下
 func _is_p_taken() -> bool:
@@ -88,19 +110,6 @@ func _is_p_taken() -> bool:
 				return true
 	return false
 
-# 整關重來：關掉選單，終點恢復成還沒踩過，請重生處理者整關重來
-func _on_restart_pressed() -> void:
-	var handler := _find_respawn_handler()
-	close()
-	if handler == null:
-		return
-	get_tree().call_group("goal", "reset")
-	handler.restart_level_now()
-
-# 離開遊戲（桌面版）
-func _on_quit_pressed() -> void:
-	get_tree().quit()
-
 # 找出場景裡可以整關重來的重生處理者
 func _find_respawn_handler() -> Node:
 	var handler := get_tree().get_first_node_in_group("respawn_handler")
@@ -110,11 +119,16 @@ func _find_respawn_handler() -> Node:
 
 # ---- 音量
 
-# 拉桿拉動：更新音量、百分比文字，存進設定檔
-func _on_volume_changed(value: float, bus_name: String) -> void:
-	_volumes[bus_name] = value
+# 讀某條匯流排現在的音量（0～1），bus 是 "Master"／"SFX"／"BGM"；音量拉桿用這個
+func get_volume(bus_name: String) -> float:
+	return _volumes.get(bus_name, 1.0)
+
+# 設定某條匯流排的音量（0～1，拉到 0 靜音）並存進設定檔；調音效時播一下試聽音效。音量拉桿用這個
+func set_volume(bus_name: String, value: float) -> void:
+	if not _volumes.has(bus_name):
+		return
+	_volumes[bus_name] = clampf(value, 0.0, 1.0)
 	_apply_volume(bus_name)
-	_value_labels[bus_name].text = "%d%%" % roundi(value * 100.0)
 	_save_volumes()
 	if bus_name == "SFX":
 		_play_preview()
@@ -143,7 +157,7 @@ func _load_volumes() -> void:
 	var config := ConfigFile.new()
 	config.load(_SETTINGS_PATH)
 	for bus in _BUSES:
-		_volumes[bus[0]] = clampf(float(config.get_value("audio", bus[0], bus[2])), 0.0, 1.0)
+		_volumes[bus[0]] = clampf(float(config.get_value("audio", bus[0], bus[1])), 0.0, 1.0)
 
 # 把目前的音量存進設定檔
 func _save_volumes() -> void:
@@ -155,82 +169,33 @@ func _save_volumes() -> void:
 
 # ---- 畫面
 
-# 用程式組出選單：半透明黑底、標題、三條音量拉桿、按鈕
-func _build_ui() -> void:
-	_layer = CanvasLayer.new()
-	_layer.layer = 20
-	_layer.visible = false
-	add_child(_layer)
+# 這次要顯示哪個畫面：關卡裡有學員的暫停選單就用它，沒有就用預設範本（第一次才生）
+func _pick_screen() -> Control:
+	var custom := get_tree().get_first_node_in_group("custom_ui_%d" % UIRoot.KIND_PAUSE_MENU)
+	if custom is Control and not custom.is_queued_for_deletion():
+		return custom
+	if _default_root == null:
+		var layer := CanvasLayer.new()
+		layer.layer = 20
+		add_child(layer)
+		_default_root = _TEMPLATE.instantiate()
+		_default_root.set_meta(HudBinding.DEFAULT_META, true)
+		layer.add_child(_default_root)
+	return _default_root
 
-	var dim := ColorRect.new()
-	dim.color = Color(0, 0, 0, 0.6)
-	dim.set_anchors_preset(Control.PRESET_FULL_RECT)
-	_layer.add_child(dim)
+# 通知畫面上的按鈕重新決定要不要出現（例如沒有 RespawnHandler 就藏起「整關重來」）
+func _refresh_buttons(node: Node) -> void:
+	for child in node.get_children():
+		if child.has_method("refresh_menu_action"):
+			child.refresh_menu_action()
+		_refresh_buttons(child)
 
-	var center := CenterContainer.new()
-	center.set_anchors_preset(Control.PRESET_FULL_RECT)
-	_layer.add_child(center)
-
-	var list := VBoxContainer.new()
-	list.add_theme_constant_override("separation", 6)
-	center.add_child(list)
-
-	var title := _make_label("暫停", _TITLE_SIZE)
-	title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	list.add_child(title)
-
-	var grid := GridContainer.new()
-	grid.columns = 3
-	grid.add_theme_constant_override("h_separation", 8)
-	list.add_child(grid)
-	for bus in _BUSES:
-		_add_volume_row(grid, bus[0], bus[1])
-
-	_resume_button = _make_button("繼續遊戲", close)
-	list.add_child(_resume_button)
-	_restart_button = _make_button("整關重來", _on_restart_pressed)
-	list.add_child(_restart_button)
-	if not OS.has_feature("web"):
-		list.add_child(_make_button("離開遊戲", _on_quit_pressed))
-	list.add_child(_make_label("Esc／P 繼續", _FONT_SIZE, Color(0.75, 0.75, 0.75)))
-	center.sort_children.connect(_snap_to_pixels.bind(center))
-
-# 加一列音量：名稱、拉桿、百分比
-func _add_volume_row(grid: GridContainer, bus_name: String, label_text: String) -> void:
-	grid.add_child(_make_label(label_text, _FONT_SIZE))
-	var slider := HSlider.new()
-	slider.min_value = 0.0
-	slider.max_value = 1.0
-	slider.step = 0.05
-	slider.custom_minimum_size = Vector2(120, 12)
-	slider.size_flags_vertical = Control.SIZE_SHRINK_CENTER
-	slider.value = _volumes[bus_name]
-	slider.value_changed.connect(_on_volume_changed.bind(bus_name))
-	grid.add_child(slider)
-	var value_label := _make_label("%d%%" % roundi(_volumes[bus_name] * 100.0), _FONT_SIZE)
-	value_label.custom_minimum_size = Vector2(36, 0)
-	value_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
-	grid.add_child(value_label)
-	_value_labels[bus_name] = value_label
-
-# 做一個指定字級（與顏色）的文字
-func _make_label(text: String, font_size: int, color: Color = Color.WHITE) -> Label:
-	var label := Label.new()
-	label.text = text
-	label.add_theme_font_size_override("font_size", font_size)
-	label.add_theme_color_override("font_color", color)
-	return label
-
-# 做一個按下去會呼叫 callback 的按鈕
-func _make_button(text: String, callback: Callable) -> Button:
-	var button := Button.new()
-	button.text = text
-	button.add_theme_font_size_override("font_size", _FONT_SIZE)
-	button.pressed.connect(callback)
-	return button
-
-# 容器置中算出來的位置常常落在半個像素上，像素字型會糊掉，排好之後捨去成整數像素
-func _snap_to_pixels(container: Container) -> void:
-	for child in container.get_children():
-		if child is Control:
-			(child as Control).position = (child as Control).position.floor()
+# 畫面上第一個看得到、可以按的按鈕，打開時先選它，鍵盤才能直接操作
+func _first_button(node: Node) -> BaseButton:
+	for child in node.get_children():
+		if child is BaseButton and (child as Control).is_visible_in_tree() and (child as Control).focus_mode == Control.FOCUS_ALL:
+			return child
+		var found := _first_button(child)
+		if found != null:
+			return found
+	return null

@@ -61,6 +61,7 @@ func _ready() -> void:
 		return
 	if kind != KIND_HUD:
 		visible = false
+	_snap_containers(self)
 	if not get_meta(HudBinding.DEFAULT_META, false):
 		var group := "custom_ui_%d" % kind
 		var first := get_tree().get_first_node_in_group(group)
@@ -128,6 +129,7 @@ func _apply_theme() -> void:
 	var colors: Dictionary = _PALETTES[palette]
 	if not colors.is_empty():
 		_add_palette(t, colors)
+	_add_variations(t, colors)
 	theme = t
 	_notify_children(self)
 
@@ -151,6 +153,14 @@ func _add_palette(t: Theme, c: Dictionary) -> void:
 	t.set_stylebox("grabber_area_highlight", "HSlider", _box(c.accent, 2))
 	t.set_stylebox("panel", "Panel", _box(c.panel))
 	t.set_stylebox("panel", "PanelContainer", _box(c.panel))
+
+# 範本用的兩種字：標題（TitleLabel，兩倍大）、提示（HintLabel，次要的顏色）；
+# 在 Label 的 Theme Type Variation 選它們，換配色、字的大小時跟著變
+func _add_variations(t: Theme, c: Dictionary) -> void:
+	t.set_type_variation("TitleLabel", "Label")
+	t.set_font_size("font_size", "TitleLabel", font_size * 2)
+	t.set_type_variation("HintLabel", "Label")
+	t.set_color("font_color", "HintLabel", c.get("dim", Color(0.75, 0.75, 0.75)))
 
 # 純色的方框（像素風，不要圓角），margin 是內距
 func _box(color: Color, margin: int = 4) -> StyleBoxFlat:
@@ -180,6 +190,19 @@ func _notify_children(node: Node) -> void:
 # 暫停選單、過關畫面在遊戲暫停時也要能動；HUD 跟著遊戲
 func _apply_process_mode() -> void:
 	process_mode = Node.PROCESS_MODE_INHERIT if kind == KIND_HUD else Node.PROCESS_MODE_ALWAYS
+
+# 置中的容器排出來的位置常常落在半個像素上，像素字型會糊掉：排好之後捨去成整數像素
+func _snap_containers(node: Node) -> void:
+	for child in node.get_children():
+		if child is CenterContainer:
+			child.sort_children.connect(_snap_to_pixels.bind(child))
+		_snap_containers(child)
+
+# 把容器底下每個子節點的位置捨去成整數像素
+func _snap_to_pixels(container: Container) -> void:
+	for child in container.get_children():
+		if child is Control:
+			(child as Control).position = (child as Control).position.floor()
 
 # 移進一個新的 CanvasLayer（擺在原本的位置），之後固定在畫面上、不跟著鏡頭跑
 func _move_to_layer() -> void:
