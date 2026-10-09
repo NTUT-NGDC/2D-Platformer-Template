@@ -696,6 +696,54 @@
 	  `_get_configuration_warnings()`＋`push_warning()`；CLAUDE.md 顯示文字例外、`01a` §4.3／§4.4、零件手冊補上
 	  （驗證：`tests/blocks/ValueSettingsTest.tscn`）
 
+# W4：套皮與 UI（`04_skin_and_ui.md`）
+
+> 講師決定：UI 改成可以再製到 `_my/` 修改的範本場景，兩種接法都做（`UISettings` 欄位／直接拖進場景樹）；
+> 提供通用顯示零件，學員自己選要顯示哪個數值；舊版 UI 改由範本實作（一套程式），學員的 HUD 有綁的來源才讓位；
+> `UIRoot` 整套換字型與配色；範本用右鍵「再製」；零件換皮靜態 `Skin` 與動畫 `SkinAnimated` 都做；
+> 角色動畫用方案一（固定動畫名稱，`AnimationPlayer`／`AnimatedSprite2D` 都支援）；要有練習關。
+
+## 階段 47：顯示來源
+
+- [ ] U167 自動載入 `HudData`（`publish`／`get_value`／`get_max_value`／`has_source`／`source_changed`、`is_claimed`），
+	  `Stats` 數值自動成為來源，內建遊玩時間、死亡次數；`ClearScreen` 改讀 `HudData`（`tests/systems/HudDataTest.tscn`）
+- [ ] U168 體力、存活倒數、脫殼次數、時間軸公開到 `HudData`；預設 UI 顯示前先問 `is_claimed()`
+
+## 階段 48：UI 通用零件
+
+- [ ] U169 `UIRoot`（`kind`、`font`、`font_size`、`palette`，執行時建 Theme、編輯器即時預覽、暫停中也能動）
+- [ ] U170 顯示零件共通部分（`source`／`kind`、打字防呆、編輯器假資料預覽、找不到來源的警告、`flash_on_change`／`shake_on_decrease`、
+	  `value_changed` 等訊號）＋ `HudNumber`、`HudText`
+- [ ] U171 `HudBar`
+- [ ] U172 `HudIcons`
+
+## 階段 49：範本與接法
+
+- [ ] U173 `HudTemplate`；`StatsHud` 改成實例化範本；接法 B（直接拖進場景樹）、多放的警告
+- [ ] U174 `UISettings`＋接法 A（欄位、類型檢查、跟接法 B 同時接的警告）
+- [ ] U175 `MenuAction`、`VolumeSlider`、`PauseMenuTemplate`；`PauseMenu` 改成實例化範本或學員的場景
+- [ ] U176 `ClearStat`、`ClearScreenTemplate`；`ClearScreen` 改成實例化範本或學員的場景
+
+## 階段 50：換皮
+
+- [ ] U177 `Skin`、`SkinAnimated`（欄位、編輯器畫原本色塊的外框、放錯地方的警告、動畫名稱檢查）；零件端的共用接法
+- [ ] U178 零件逐一支援皮：終點、按鈕、重生點、門、開關方塊、道具、尖刺、岩漿（狀態回饋改作用在皮上）
+- [ ] U179 零件逐一支援皮：其餘有色塊的零件（箱子、可破壞、崩塌地板、彈射、風扇、移動平台、單向平台、傳送門…）
+- [ ] U180 敵人支援皮（轉向跟著翻、走路／受傷／死亡動畫）
+- [ ] U181 `Ability_Ranged`／`EnemyShooter` 的 `bullet_texture`、`Ability_Melee` 的 `slash_texture`
+
+## 階段 51：角色動畫
+
+- [ ] U182 `Ability_Melee`／`Ability_Ranged` 新增 `attacked` 訊號
+- [ ] U183 `Juice_Animator`（找播放器、依狀態切換、缺動畫的退路、名稱檢查、動畫改了 scale／modulate 的警告、`play_custom`）
+
+## 階段 52：地形與收尾
+
+- [ ] U184 `art/tile_template.png` 範本圖
+- [ ] U185 `W4_SkinBox` 起始場景（示範用的自訂 UI、皮、角色動畫）
+- [ ] U186 `W4_SkinPractice` 練習關（`PracticeSign` 加 W4 題目）
+- [ ] U187 煙霧測試補上 W4 項目；README、零件手冊、速查表補 W4（含 §9 課堂 SOP、背景圖做法）；跑一次煙霧測試
+
 ## 之後再做（構想，還沒排進單元）
 
 - GameFlow 加上狀態：管理「開始 → 進行中 → 過關／Game Over」，學員可以聽狀態變化的訊號；

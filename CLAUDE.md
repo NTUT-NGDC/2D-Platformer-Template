@@ -111,7 +111,7 @@ Claude Code 在這個專案裡的所有對話回覆、進度回報、驗收結�
 | 對象 | 規範 | 範例 |
 |---|---|---|
 | 檔案／節點名 | 英文 PascalCase | `Mechanic_GravityFlip.tscn` |
-| 組件檔案位置 | `.tscn` 放外層給學員拖，`.gd` 放同層 `_scripts/`（`mechanics/`、`juice/`、`blocks/`、`abilities/`，含 `_extra/`；見 `documents/00_foundation.md` §1） | `mechanics/Mechanic_GravityFlip.tscn`<br>`mechanics/_scripts/Mechanic_GravityFlip.gd` |
+| 組件檔案位置 | `.tscn` 放外層給學員拖，`.gd` 放同層 `_scripts/`（`mechanics/`、`juice/`、`blocks/`、`abilities/`、`ui/`、`skins/`，含 `_extra/`；見 `documents/00_foundation.md` §1） | `mechanics/Mechanic_GravityFlip.tscn`<br>`mechanics/_scripts/Mechanic_GravityFlip.gd` |
 | 腳本內部變數、函式 | 英文 snake_case | `_on_landed`, `impact_force` |
 | `@export` 欄位 | 英文 snake_case + 上方 `##` 中文 doc comment | `## 影響跳躍高度，數值越大跳越高`<br>`@export_range(0.0, 2.0) var strength` |
 | `@export_enum` 選項字串 | **繁體中文** | `@export_enum("跳躍時", "落地時")` |
@@ -178,7 +178,8 @@ godot --headless --path . res://_tests/SmokeTest.tscn
    - `documents/01c_blocks_and_abilities.md` — 零件（`blocks/`）與攻擊能力（`abilities/`）
    - `documents/01d_showroom_and_toybox.md` — 展示間與玩具箱
 3. W3：`documents/03_game_feel_juice.md` — 手感果汁（Juice 組件、表現層 API、音效素材）
-4. 之後的週次規格會在該週開課前才提供
+4. W4：`documents/04_skin_and_ui.md` — 套皮與 UI（UI 範本與通用顯示零件、零件換皮、角色動畫、地形圖塊）
+5. 之後的週次規格會在該週開課前才提供
 
 ---
 
@@ -189,7 +190,7 @@ godot --headless --path . res://_tests/SmokeTest.tscn
 - **一次只做一個單元**，做完就停，等使用者說「繼續」才做下一個。只改這個單元需要的檔案，不順手重構別的地方。
 - **規格不清楚、或需要做決定時，停下來問**，不要自己猜。講師的決定寫進 progress.md 該單元底下（`　　→ 講師決定：…`）。
 - 系統層級的單元（自動載入、跨組件機制）要附一個 `tests/` 底下的測試場景，讓使用者按 F6 手動驗證。
-  `tests/` 依類別分資料夾（`systems/`、`mechanics/`、`mechanics/_extra/`、`blocks/`、`abilities/`、`juice/`、`juice/_extra/`），
+  `tests/` 依類別分資料夾（`systems/`、`mechanics/`、`mechanics/_extra/`、`blocks/`、`abilities/`、`juice/`、`juice/_extra/`、`ui/`、`skins/`），
   `.tscn` 放在類別資料夾，`.gd` 放在同層 `_scripts/`；場景腳本用 `print("[測試] …")` 印出操作步驟與預期結果。
 - **做完回報**：做了什麼（1～2 句）、改了哪些檔案、怎麼驗證（哪個場景、做什麼、應該看到什麼）、已知限制。
 - **使用者在編輯器驗收通過才 commit**，同一批把 progress.md 該單元打勾（`- [ ]` → `- [x]`）。
