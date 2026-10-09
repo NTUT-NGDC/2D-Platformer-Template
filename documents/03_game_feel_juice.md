@@ -120,7 +120,7 @@ func clear_juice(source: Node) -> void:
 | `Juice_SquashStretch` | 擠壓拉伸 | 一次 | 落地時 | `shape`（壓扁／拉長）、`strength`、`duration` |
 | `Juice_Flash` | 閃色 | 一次 | 受傷時 | `color`（白／紅／黃／黑）、`duration`、`count`（閃幾次）、`stop_others`（開始閃時停掉同一個角色身上其他還在閃的閃色，預設勾；講師決定 U160） |
 | `Juice_Particles` | 粒子噴發 | 一次 | 落地時 | `style`（塵土／火花／星星／碎片／煙霧／自訂場景）、`amount`、`color`（跟著樣式／白／黃／紅／藍／綠）、`custom_particles`（選「自訂場景」才出現，此時 `amount`／`color` 隱藏）、`spawn_at`（腳底／身體中心／事件發生處） |
-| `Juice_Sound` | 音效 | 一次 | 跳躍時 | `sound`（內建音效下拉＋「自訂」）、`custom_sound`（選「自訂」才出現）、`volume`、`pitch_mode`（隨機／固定／由低到高）、`pitch_random`（隨機才出現）、`notes`（五聲音階／大調音階／半音／琶音）、`steps`、`at_top`（停在最高／從頭再來）、`reset_delay`（後四個由低到高才出現） |
+| `Juice_Sound` | 音效 | 一次 | 跳躍時 | `sound`（內建音效下拉＋「自訂」）、`custom_sound`（選「自訂」才出現）、`volume`、`pitch_mode`（隨機／固定／由低到高）、`pitch_random`（隨機才出現）、`notes`（五聲音階／大調音階／半音／琶音）、`steps`、`at_top`（停在最高／從頭再來）、`reset_delay`（後四個由低到高才出現）、`play_when_paused`（預設勾：遊戲暫停時把聲音播完；不勾暫停時停住；觸發時機「過關時」隱藏、一律播完） |
 | `Juice_CameraZoom` | 鏡頭推近 | 一次 | 打倒敵人時 | `strength`、`duration`、`focus`（畫面中心／玩家／觸發位置，預設玩家）、`focus_style`（偏一點／定在原地／拉到正中央，選畫面中心時隱藏） |
 | `Juice_Trail` | 殘影 | 持續 | — | `min_speed`（超過才出現）、`spacing`（間隔）、`duration`（殘留時間）、`color` |
 | `Juice_TrailLine` | 拖尾線 | 持續 | — | `mode`（速度夠快時／用訊號開關）、`min_speed`（速度模式才出現，預設 450，衝刺這類很快的移動才拖出來）、`duration`（拖尾長度，用時間算）、`color`（有 `Line2D` 樣板時隱藏） |
@@ -177,7 +177,7 @@ func clear_juice(source: Node) -> void:
 - 內建至少 8 種：跳躍、落地、受傷、爆炸、撿東西、金幣、雷射、嗶。格式 `.wav`（短音效 Web 匯出最穩），
   每個檔案 < 100 KB。
 - **音訊匯流排**（講師決定 U153）：`default_bus_layout.tres` 有 Master／SFX／BGM 三條（SFX、BGM 送進 Master）。
-  `Juice_Sound` 走 SFX、`Juice_BGM` 走 BGM；暫停選單（`autoload/PauseMenu.gd`，U157）分開調三條的音量，存在 `user://settings.cfg`。
+  `Juice_Sound` 走 SFX、`Juice_BGM` 走 BGM；`Juice_BGM` 遊戲暫停時照樣播，`Juice_Sound` 由 `play_when_paused` 決定（「過關時」一律照樣播，過關畫面會暫停遊戲，過關音效不能被吃掉）；暫停選單（`autoload/PauseMenu.gd`，U157）分開調三條的音量，存在 `user://settings.cfg`。
 
 ---
 

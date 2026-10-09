@@ -668,6 +668,15 @@
 	  選畫面中心時隱藏）；`Events.zoom_requested` 多兩個參數 `focus`、`focus_style`，`CameraRig` 依此計算偏移；
 	  `00`、`01a`、`03`、零件手冊補上（驗證：`tests/juice/Juice_CameraZoomTest.tscn`，Q／E 切換）
 
+## 階段 44：過關時音效被暫停吃掉
+
+> 講師決定：學員回報踩到終點叫出 ClearScreen 時聲音發不出來。原因是過關畫面把遊戲暫停，`Juice_Sound` 的播放器跟著暫停；
+> 改成播放器暫停時照樣播（`Juice_BGM` 原本就是）；學員可以勾選要不要暫停時截斷，「過關時」一律播完（不然又是沒聲音）。
+
+- [x] U164 `Juice_Sound` 新增 `play_when_paused`（預設勾：暫停時照樣播完；不勾：暫停時停住，繼續後接著播；觸發時機「過關時」
+	  隱藏、一律播完）；`ClearScreenTest` 加一個「過關時」播金幣聲的 `Juice_Sound`；`03` §4、零件手冊補上
+	  （驗證：`tests/blocks/ClearScreenTest.tscn`）
+
 ## 之後再做（構想，還沒排進單元）
 
 - GameFlow 加上狀態：管理「開始 → 進行中 → 過關／Game Over」，學員可以聽狀態變化的訊號；

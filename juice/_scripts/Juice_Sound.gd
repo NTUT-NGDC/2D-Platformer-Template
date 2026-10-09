@@ -3,7 +3,7 @@ extends JuiceBase
 
 # 音效：觸發時播放一個音效。拖進 Player → Juice 底下就能用，預設是跳躍時播跳躍聲。
 # 想用自己的音檔：sound 選「自訂」，把音檔（.wav／.ogg／.mp3，建議放在 _my/ 底下）從檔案系統拖進 custom_sound。
-# 音效不受頓幀影響，頓幀時照常播完。
+# 音效不受頓幀影響，頓幀時照常播完；遊戲暫停時要不要播完由 play_when_paused 決定。
 
 ## 要播哪一種內建音效；選「自訂」可以放自己的音檔
 @export_enum("跳躍", "落地", "受傷", "爆炸", "撿東西", "金幣", "雷射", "嗶", "自訂") var sound: int = 0:
@@ -33,6 +33,11 @@ extends JuiceBase
 @export_enum("停在最高", "從頭再來") var at_top: int = 0
 ## 多久沒觸發就回到最低的音（秒）
 @export_range(0.1, 2.0) var reset_delay: float = 0.6
+## 勾選時遊戲暫停（過關畫面、暫停選單）也會把聲音播完；不勾的話暫停時聲音停住，等遊戲繼續才接著播。觸發時機選「過關時」一律播完
+@export var play_when_paused: bool = true:
+	set(value):
+		play_when_paused = value
+		_apply_pause_mode()
 
 const _SOUND_CUSTOM := 8
 const _PITCH_RANDOM := 0
@@ -64,13 +69,14 @@ var _audio: AudioStreamPlayer = null
 var _step: int = 0          # 由低到高：下一聲是第幾聲（從 0 開始）
 var _last_play_sec: float = -100.0
 
-# 建立播放器、決定要播哪個音效；選「自訂」卻沒放音檔就警告並改播跳躍聲
+# 建立播放器、設定暫停時要不要照樣播、決定要播哪個音效；選「自訂」卻沒放音檔就警告並改播跳躍聲
 func _on_setup() -> void:
 	if _audio == null:
 		_audio = AudioStreamPlayer.new()
 		_audio.max_polyphony = _MAX_OVERLAP
 		_audio.bus = &"SFX"
 		add_child(_audio)
+	_apply_pause_mode()
 	if sound == _SOUND_CUSTOM and custom_sound == null:
 		push_warning("[%s] sound 選了「自訂」，但 custom_sound 是空的，請把音檔拖進來；先改播跳躍聲" % name)
 		printerr("⚠ [%s] sound 選了「自訂」，但 custom_sound 是空的，請把音檔拖進來；先改播跳躍聲" % name)
@@ -116,7 +122,14 @@ func _get_stream() -> AudioStream:
 		return custom_sound if custom_sound else _SOUNDS[0]
 	return _SOUNDS[sound]
 
-# 只顯示用得到的欄位：選「自訂」才有 custom_sound；隨機才有 pitch_random；由低到高才有音階那幾個
+# 依 play_when_paused 決定播放器暫停時要不要照樣播；「過關時」一律照樣播，不然過關畫面一暫停，過關音效就發不出來
+func _apply_pause_mode() -> void:
+	if _audio == null:
+		return
+	var keep_playing := play_when_paused or timing == TIMING_LEVEL_CLEARED
+	_audio.process_mode = Node.PROCESS_MODE_ALWAYS if keep_playing else Node.PROCESS_MODE_INHERIT
+
+# 只顯示用得到的欄位：「過關時」不顯示 play_when_paused；選「自訂」才有 custom_sound；隨機才有 pitch_random；由低到高才有音階那幾個
 func _validate_property(property: Dictionary) -> void:
 	super(property)
 	var should_hide := false
@@ -124,6 +137,7 @@ func _validate_property(property: Dictionary) -> void:
 		"custom_sound": should_hide = sound != _SOUND_CUSTOM
 		"pitch_random": should_hide = pitch_mode != _PITCH_RANDOM
 		"notes", "steps", "at_top", "reset_delay": should_hide = pitch_mode != _PITCH_RISING
+		"play_when_paused": should_hide = timing == TIMING_LEVEL_CLEARED
 	if should_hide:
 		property.usage &= ~PROPERTY_USAGE_EDITOR
 
