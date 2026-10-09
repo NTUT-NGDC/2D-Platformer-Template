@@ -729,7 +729,8 @@
 	  （驗證：`tests/ui/UISettingsTest.tscn`、`tests/ui/UISettingsConflictTest.tscn`）
 - [x] U175 `MenuAction`、`VolumeSlider`、`PauseMenuTemplate`；`PauseMenu` 改成實例化範本或學員的場景
 	  （驗證：`tests/ui/PauseMenuTemplateTest.tscn`、`tests/systems/PauseMenuTest.tscn`）
-- [ ] U176 `ClearStat`、`ClearScreenTemplate`；`ClearScreen` 改成實例化範本或學員的場景
+- [x] U176 `ClearStat`、`ClearScreenTemplate`；`ClearScreen` 改成實例化範本或學員的場景
+	  （驗證：`tests/ui/ClearScreenTemplateTest.tscn`、`tests/blocks/ClearScreenTest.tscn`）
 
 ## 階段 50：換皮
 

@@ -45,6 +45,8 @@ func _get_configuration_warnings() -> PackedStringArray:
 			warnings.append(problem)
 		elif get(_FIELDS[kind]) != null and scene_root != null and _has_direct(scene_root, kind):
 			warnings.append("%s：關卡裡已經直接放了一個自訂%s，會用那一個，這個欄位不會用到" % [_FIELDS[kind], _KIND_NAMES[kind]])
+		elif kind == UIRoot.KIND_CLEAR_SCREEN and clear_screen_scene != null and scene_root != null 				and not UIRoot.has_clear_screen(scene_root):
+			warnings.append("clear_screen_scene：" + UIRoot.NO_CLEAR_SCREEN)
 	if scene_root != null and _count_settings(scene_root) > 1:
 		warnings.append("場景裡有不只一個 UISettings，只會用第一個")
 	return warnings

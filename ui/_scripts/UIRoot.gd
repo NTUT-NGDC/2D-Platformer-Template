@@ -34,6 +34,9 @@ const KIND_CLEAR_SCREEN := 2
 
 const PALETTE_DEFAULT := 0
 
+const NO_CLEAR_SCREEN := "關卡裡沒有 ClearScreen，過關時這個過關畫面不會出現：把 blocks/ClearScreen.tscn 拖進關卡"
+const _CLEAR_SCREEN_SCRIPT := "res://blocks/_scripts/ClearScreen.gd"
+
 # 每一種畫面放在哪一層：數字越大蓋在越上面（跟原本的預設 UI 一樣）
 const _LAYERS := [1, 20, 10]
 const _KIND_NAMES := ["HUD", "暫停選單", "過關畫面"]
@@ -72,6 +75,8 @@ func _ready() -> void:
 			queue_free()
 			return
 		add_to_group(group)
+		if kind == KIND_CLEAR_SCREEN:
+			_check_clear_screen.call_deferred()
 	if not get_parent() is CanvasLayer:
 		_move_to_layer.call_deferred()
 
@@ -92,8 +97,27 @@ func _get_configuration_warnings() -> PackedStringArray:
 	var first := _first_of_kind(scene_root)
 	if first != null and first != self:
 		warnings.append("關卡裡已經有一個自訂%s「%s」，這個不會用到：一個關卡只能放一個%s" % [_KIND_NAMES[kind], first.name, _KIND_NAMES[kind]])
+	if kind == KIND_CLEAR_SCREEN and not has_clear_screen(scene_root):
+		warnings.append(NO_CLEAR_SCREEN)
 	_collect_warnings(self, scene_root, warnings)
 	return warnings
+
+# 關卡裡有沒有 ClearScreen（過關的流程靠它，自訂過關畫面只管長相）
+static func has_clear_screen(scene_root: Node) -> bool:
+	var stack: Array[Node] = [scene_root]
+	while not stack.is_empty():
+		var node: Node = stack.pop_back()
+		var node_script: Script = node.get_script()
+		if node_script != null and node_script.resource_path == _CLEAR_SCREEN_SCRIPT:
+			return true
+		stack.append_array(node.get_children())
+	return false
+
+# 遊戲中：自訂過關畫面在關卡裡，卻沒有 ClearScreen 叫它出來時提醒
+func _check_clear_screen() -> void:
+	if is_inside_tree() and get_tree().get_first_node_in_group("clear_screen") == null:
+		push_warning("[%s] %s" % [name, NO_CLEAR_SCREEN])
+		printerr("⚠ [%s] %s" % [name, NO_CLEAR_SCREEN])
 
 # 關卡裡第一個跟自己同一種畫面的 UIRoot（照場景樹由上到下的順序）
 func _first_of_kind(node: Node) -> UIRoot:
