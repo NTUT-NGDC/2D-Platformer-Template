@@ -10,7 +10,7 @@ signal value_increased
 ## 數值變少時發出（例如扣血）
 signal value_decreased
 ## 數值變化時發出，帶著變化前、變化後的值
-signal value_changed(old_value: float, new_value: float)
+signal amount_changed(old_value: float, new_value: float)
 
 ## 要顯示哪一個數值：選「數值」再打名稱（例如金幣），或直接選內建的（遊玩時間、死亡次數、體力…）
 @export_enum("數值", "遊玩時間", "死亡次數", "體力", "存活倒數", "脫殼次數", "時間軸") var source: int = 0:
@@ -73,7 +73,7 @@ func _on_hud_value(value: float, max_value: float, found: bool) -> void:
 func _on_hud_changed(old_value: float, new_value: float) -> void:
 	var increased := new_value > old_value
 	_binding.play_change(increased, flash_on_change, shake_on_decrease)
-	value_changed.emit(old_value, new_value)
+	amount_changed.emit(old_value, new_value)
 	if increased:
 		value_increased.emit()
 	else:

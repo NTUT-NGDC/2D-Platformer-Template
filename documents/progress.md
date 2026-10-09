@@ -717,8 +717,8 @@
 - [x] U169 `UIRoot`（`kind`、`font`、`font_size`、`palette`，執行時建 Theme、編輯器即時預覽、暫停中也能動）
 	  （驗證：`tests/ui/UIRootTest.tscn`）
 - [x] U170 顯示零件共通部分（`source`／`kind`、打字防呆、編輯器假資料預覽、找不到來源的警告、`flash_on_change`／`shake_on_decrease`、
-	  `value_changed` 等訊號）＋ `HudNumber`、`HudText`（驗證：`tests/ui/HudNumberTest.tscn`）
-- [ ] U171 `HudBar`
+	  `amount_changed` 等訊號）＋ `HudNumber`、`HudText`（驗證：`tests/ui/HudNumberTest.tscn`）
+- [x] U171 `HudBar`（驗證：`tests/ui/HudBarTest.tscn`）
 - [ ] U172 `HudIcons`
 
 ## 階段 49：範本與接法

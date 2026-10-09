@@ -140,7 +140,7 @@ const TIMELINE := "時間軸"
 
 | 零件 | 繼承 | 做什麼 | 自己的欄位 |
 |---|---|---|---|
-| `HudBar` | `TextureProgressBar` | 條：血條、體力條 | 填滿方向、圖片用原生屬性；沒放圖時用預設樣式（跟現在的血條一樣） |
+| `HudBar` | `TextureProgressBar` | 條：血條、體力條 | 填滿方向（Fill Mode）、圖片（Under／Progress，建議勾 Nine Patch Stretch）用原生屬性；沒放圖時自己畫，用 ProgressBar 的底與填滿樣式（跟現在的血條一樣、跟著配色），支援左到右／右到左／上到下／下到上；沒有上限的數值用出現過的最大值當滿格；找不到來源時畫空條加「?」 |
 | `HudNumber` | `Label` | 數字 | `format`：數字／數字÷上限／分:秒；`show_name`：前面要不要加名字（數值用 `display_name`）。預設 `kind` 是金幣 |
 | `HudIcons` | `HBoxContainer` | 一顆一顆的圖示（愛心、鑰匙） | `full_icon`／`empty_icon`（拖圖片，空白用預設色塊）、`max_icons` 拉桿（超過就只畫這麼多） |
 | `HudText` | `Label` | 固定的一行字（標題、說明） | 只用原生 `text`（顯示文字例外），沒有共通欄位 |
@@ -153,7 +153,7 @@ const TIMELINE := "時間軸"
     內建來源找不到時，警告寫要掛什麼卡（例如「體力」要有 `Mechanic_Stamina`）。
   - 共通邏輯放在 `ui/_scripts/HudBinding.gd`（每個顯示零件帶一個），零件自己只管怎麼畫。
 - 值改變時零件自己更新（聽 `HudData.source_changed`），不用連線。
-- 零件發出 `value_changed(old_value, new_value)`、`value_increased`、`value_decreased` 訊號，
+- 零件發出 `amount_changed(old_value, new_value)`、`value_increased`、`value_decreased` 訊號（不叫 `value_changed`／`changed`：`HudBar` 繼承的 Range 已經有這兩個名字），
   想做更多效果（例如扣血時播音效）可以連到 Juice 的 `play()`。
 - `flash_on_change`、`shake_on_decrease` 是 UI 自己的動畫，不受 Juice 總開關影響（總開關只管 Player → Juice）。
 
