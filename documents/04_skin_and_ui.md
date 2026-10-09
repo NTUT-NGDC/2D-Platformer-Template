@@ -43,8 +43,19 @@ func get_max_value(source_name: String) -> float:
 
 # 這個顯示來源有沒有人公開過（拿來提示「找不到這個名稱」）
 func has_source(source_name: String) -> bool:
+# 目前所有顯示來源的名稱，找不到名稱時列出來給學員看
+func get_source_names() -> Array:
+
+# 學員的 HUD 零件認領一個來源（零件離開場景時自動放掉）；預設 UI 顯示前先問有沒有被認領
+func claim(source_name: String, by: Node) -> void:
+func is_claimed(source_name: String) -> bool:
+
+# 這一輪重新開始：遊玩時間、死亡次數歸零（過關畫面按 R 再玩一次時呼叫）
+func reset_run() -> void:
 
 signal source_changed(source_name: String)
+const PLAY_TIME := "遊玩時間"
+const DEATHS := "死亡次數"
 ```
 
 - `Stats` 的所有數值種類自動算顯示來源（名稱就是 `kind`，顯示名稱用 `ValueSettings.display_name`）。
@@ -52,8 +63,8 @@ signal source_changed(source_name: String)
 
   | 來源 | 誰公開 | 值／上限 |
   |---|---|---|
-  | 遊玩時間 | `HudData` 自己算（暫停中不算，`ClearScreen` 按 R 重來時歸零） | 秒／無 |
-  | 死亡次數 | `HudData` 聽 `Events.player_died`（按 R 重來時歸零） | 次／無 |
+  | 遊玩時間 | `HudData` 自己算（暫停中不算，`ClearScreen` 按 R 再玩一次時歸零；暫停選單的「整關重來」、死掉整關重來不歸零，同 W3） | 秒／無 |
+  | 死亡次數 | `HudData` 聽 `Events.player_died`（歸零時機同上） | 次／無 |
   | 體力 | `Mechanic_Stamina` | 剩餘秒數／`stamina_seconds` |
   | 存活倒數 | `Mechanic_SurvivalTimer` | 剩餘秒數／`target_seconds` |
   | 脫殼次數 | `Extra_Molt` | 剩餘次數／上限 |

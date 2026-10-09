@@ -705,7 +705,7 @@
 
 ## 階段 47：顯示來源
 
-- [ ] U167 自動載入 `HudData`（`publish`／`get_value`／`get_max_value`／`has_source`／`source_changed`、`is_claimed`），
+- [x] U167 自動載入 `HudData`（`publish`／`get_value`／`get_max_value`／`has_source`／`source_changed`、`is_claimed`），
 	  `Stats` 數值自動成為來源，內建遊玩時間、死亡次數；`ClearScreen` 改讀 `HudData`（`tests/systems/HudDataTest.tscn`）
 - [ ] U168 體力、存活倒數、脫殼次數、時間軸公開到 `HudData`；預設 UI 顯示前先問 `is_claimed()`
 

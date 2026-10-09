@@ -19,8 +19,6 @@ extends CanvasLayer
 @onready var _center: CenterContainer = $CenterContainer
 @onready var _list: VBoxContainer = $CenterContainer/VBoxContainer
 
-var _elapsed: float = 0.0
-var _deaths: int = 0
 var _showing: bool = false
 
 ## 顯示過關畫面（已經在顯示就不重複）
@@ -29,17 +27,19 @@ func activate() -> void:
 		return
 	_showing = true
 	_time_label.visible = show_time
-	_time_label.text = "用了 %.1f 秒" % _elapsed
+	var elapsed := HudData.get_value(HudData.PLAY_TIME)
+	var deaths := int(HudData.get_value(HudData.DEATHS))
+	_time_label.text = "用了 %.1f 秒" % elapsed
 	_deaths_label.visible = show_deaths
-	_deaths_label.text = "死了 %d 次" % _deaths
+	_deaths_label.text = "死了 %d 次" % deaths
 	var clean_message := message.strip_edges()
 	_message_label.visible = clean_message != ""
 	_message_label.text = clean_message
 	visible = true
 	get_tree().paused = true
-	print("[過關畫面] 過關！用了 %.1f 秒、死了 %d 次，按 R 再玩一次" % [_elapsed, _deaths])
+	print("[過關畫面] 過關！用了 %.1f 秒、死了 %d 次，按 R 再玩一次" % [elapsed, deaths])
 
-# 加入群組（讓終點、重生記憶知道場景裡有過關畫面），接上過關、死亡事件；暫停時也要能收按鍵
+# 加入群組（讓終點、重生記憶知道場景裡有過關畫面），接上過關事件；暫停時也要能收按鍵
 func _ready() -> void:
 	add_to_group("clear_screen")
 	process_mode = Node.PROCESS_MODE_ALWAYS
@@ -47,7 +47,6 @@ func _ready() -> void:
 	Events.level_cleared.connect(activate)
 	_center.sort_children.connect(_snap_to_pixels.bind(_center))
 	_list.sort_children.connect(_snap_to_pixels.bind(_list))
-	Events.player_died.connect(func(): _deaths += 1)
 	if get_tree().get_nodes_in_group("clear_screen").size() > 1:
 		push_warning("[過關畫面] 場景裡有不只一個 ClearScreen，會疊在一起")
 		printerr("⚠ [過關畫面] 場景裡有不只一個 ClearScreen，%s 可以刪掉" % name)
@@ -57,11 +56,6 @@ func _snap_to_pixels(container: Container) -> void:
 	for child in container.get_children():
 		if child is Control:
 			(child as Control).position = (child as Control).position.floor()
-
-# 沒在顯示的時候累計遊玩時間（暫停中不算）
-func _process(delta: float) -> void:
-	if not _showing and not get_tree().paused:
-		_elapsed += delta
 
 # 顯示中按 R（restart 動作）：關掉畫面、解除暫停、整關重來
 func _unhandled_input(event: InputEvent) -> void:
@@ -75,8 +69,7 @@ func _play_again() -> void:
 	_showing = false
 	visible = false
 	get_tree().paused = false
-	_elapsed = 0.0
-	_deaths = 0
+	HudData.reset_run()
 	get_tree().call_group("goal", "reset")
 	var handler := get_tree().get_first_node_in_group("respawn_handler")
 	if handler == null or not handler.has_method("restart_level_now"):
