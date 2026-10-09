@@ -714,7 +714,8 @@
 
 ## 階段 48：UI 通用零件
 
-- [ ] U169 `UIRoot`（`kind`、`font`、`font_size`、`palette`，執行時建 Theme、編輯器即時預覽、暫停中也能動）
+- [x] U169 `UIRoot`（`kind`、`font`、`font_size`、`palette`，執行時建 Theme、編輯器即時預覽、暫停中也能動）
+	  （驗證：`tests/ui/UIRootTest.tscn`）
 - [ ] U170 顯示零件共通部分（`source`／`kind`、打字防呆、編輯器假資料預覽、找不到來源的警告、`flash_on_change`／`shake_on_decrease`、
 	  `value_changed` 等訊號）＋ `HudNumber`、`HudText`
 - [ ] U171 `HudBar`

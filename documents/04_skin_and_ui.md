@@ -181,6 +181,11 @@ const TIMELINE := "時間軸"
 - 個別零件想要不一樣的字或顏色，用原生的「主題覆寫」改（進階，不在課堂上教）；主題覆寫優先於 `UIRoot`。
 - `font` 屬於資源欄位例外：拖錯類型 Inspector 本身就不會接受；空白用預設，不需要警告。
 - 「預設」配色＝現在的樣子。
+- `theme` 由欄位自動產生，不存進場景檔、Inspector 也不顯示。
+- 遊戲開始時 `UIRoot` 如果不在 `CanvasLayer` 底下（接法 B 直接拖進關卡），自己移進一個新的 `CanvasLayer`，固定在畫面上；
+  圖層照原本的預設 UI：HUD 1、過關畫面 10、暫停選單 20。
+- 顯示零件畫自己的預設樣式時要用配色：`UIRoot` 套用後往下通知有 `_on_ui_root_changed(root)` 的零件，零件再呼叫
+  `root.get_palette_color(role, fallback)`（角色：text、dim、panel、button、hover、pressed、accent、back）。零件不往上找根節點。
 
 ---
 
