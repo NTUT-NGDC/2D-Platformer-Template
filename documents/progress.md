@@ -707,7 +707,10 @@
 
 - [x] U167 自動載入 `HudData`（`publish`／`get_value`／`get_max_value`／`has_source`／`source_changed`、`is_claimed`），
 	  `Stats` 數值自動成為來源，內建遊玩時間、死亡次數；`ClearScreen` 改讀 `HudData`（`tests/systems/HudDataTest.tscn`）
-- [ ] U168 體力、存活倒數、脫殼次數、時間軸公開到 `HudData`；預設 UI 顯示前先問 `is_claimed()`
+- [x] U168 體力、存活倒數、脫殼次數、時間軸公開到 `HudData`；預設 UI 顯示前先問 `is_claimed()`
+	  （驗證：`tests/systems/HudSourcesTest.tscn`）
+　　→ 講師決定：右上角的預設 UI（存活倒數、脫殼、時間軸）原本各自擺固定位置會疊在一起，併進這個單元修：
+　　　`StatsHud.get_corner()` 提供右上角／左下角共用容器，這幾張卡的預設 UI 都放進去自動上下排
 
 ## 階段 48：UI 通用零件
 

@@ -41,6 +41,9 @@ func publish(source_name: String, value: float, max_value: float = 0.0) -> void:
 func get_value(source_name: String) -> float:
 func get_max_value(source_name: String) -> float:
 
+# 拿掉一個顯示來源（公開它的卡片、零件被拔掉時呼叫）
+func remove_source(source_name: String) -> void:
+
 # 這個顯示來源有沒有人公開過（拿來提示「找不到這個名稱」）
 func has_source(source_name: String) -> bool:
 # 目前所有顯示來源的名稱，找不到名稱時列出來給學員看
@@ -56,6 +59,10 @@ func reset_run() -> void:
 signal source_changed(source_name: String)
 const PLAY_TIME := "遊玩時間"
 const DEATHS := "死亡次數"
+const STAMINA := "體力"
+const SURVIVAL := "存活倒數"
+const MOLT := "脫殼次數"
+const TIMELINE := "時間軸"
 ```
 
 - `Stats` 的所有數值種類自動算顯示來源（名稱就是 `kind`，顯示名稱用 `ValueSettings.display_name`）。
@@ -72,7 +79,8 @@ const DEATHS := "死亡次數"
 
 - `ClearScreen` 改成讀 `HudData` 的遊玩時間與死亡次數，不再自己算（避免兩邊數字不一樣）。
 - 之後新增機制卡要顯示數值時，只要 `HudData.publish()`，並把名稱加進內建來源的下拉清單。
-- 卡片沒掛（例如沒有體力卡）時，那個來源不存在，綁它的零件照 §4.1 的「找不到來源」處理。
+- 卡片沒掛（例如沒有體力卡）時，那個來源不存在，綁它的零件照 §4.1 的「找不到來源」處理；卡片在遊戲中被拔掉時 `remove_source()`。
+- 脫殼次數是「目前選中的殼」還能脫幾次，不限次數時是 0／0。時間軸只公開場景裡第一個時間軸的秒數（有好幾個時間軸時，其他的看不到）。
 
 ### 2.2 舊版 UI 一個一個讓位（講師決定）
 
@@ -80,6 +88,8 @@ const DEATHS := "死亡次數"
 - 學員的 HUD 有綁「體力」→ 藏起體力卡自己的體力條；沒綁的照舊顯示。學員不會因為漏放某個零件而「東西不見」。
 - 判斷方式：自訂 HUD 開場時把自己底下所有顯示零件的來源登記到 `HudData`，預設 UI 顯示前先問 `HudData.is_claimed(source_name)`。
 - 機制卡原本的「要不要顯示」勾選（`show_stamina_bar`、`show_timer`）照舊有效：不勾就是不顯示預設的，跟自訂 HUD 無關。
+- 機制卡、零件的預設 UI 一律放進 `StatsHud.get_corner()` 的共用容器（右上角／左下角），好幾個同時出現時自動上下排。
+  容器裡的東西不跟著卡片刪除，卡片被拔掉時自己 `queue_free()`。
 
 ---
 

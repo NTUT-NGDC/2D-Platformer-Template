@@ -7,6 +7,10 @@ extends Node
 
 const PLAY_TIME := "遊玩時間"
 const DEATHS := "死亡次數"
+const STAMINA := "體力"           # Mechanic_Stamina 公開
+const SURVIVAL := "存活倒數"      # Mechanic_SurvivalTimer 公開
+const MOLT := "脫殼次數"          # Extra_Molt 公開（目前選中的殼還能脫幾次）
+const TIMELINE := "時間軸"        # Timeline 公開（場景裡第一個時間軸的秒數）
 
 signal source_changed(source_name: String)
 
@@ -36,6 +40,14 @@ func publish(source_name: String, value: float, max_value: float = 0.0) -> void:
 		return
 	_values[source_name] = value
 	_max_values[source_name] = max_value
+	source_changed.emit(source_name)
+
+# 拿掉一個顯示來源（公開它的卡片、零件被拔掉時呼叫），綁著它的 HUD 零件會變成「找不到來源」
+func remove_source(source_name: String) -> void:
+	if not _values.has(source_name):
+		return
+	_values.erase(source_name)
+	_max_values.erase(source_name)
 	source_changed.emit(source_name)
 
 # 讀取某個顯示來源目前的值，沒有這個來源就是 0

@@ -9,6 +9,11 @@ var _hud_container: VBoxContainer = null
 var _bars: Dictionary = {}    # kind(String) -> ProgressBar，血量這種特殊種類用這個
 var _labels: Dictionary = {}  # kind(String) -> Label，其他種類用這個顯示「名稱：數字」
 var _titles: Dictionary = {}  # kind(String) -> Label，血條前面的名字
+var _corner_layer: CanvasLayer = null
+var _corners: Dictionary = {}  # 角落 -> VBoxContainer，機制卡、零件的預設 UI 放這裡自動上下排
+
+const CORNER_TOP_RIGHT := 0
+const CORNER_BOTTOM_LEFT := 1
 
 # 開始監聽 Stats 的數值變動與設定
 func _ready() -> void:
@@ -39,6 +44,38 @@ func _set_row_visible(kind: String, row_visible: bool) -> void:
 	var control: Control = _bars.get(kind, _labels.get(kind, null))
 	if control != null:
 		control.get_parent().visible = row_visible
+
+# 拿到畫面某個角落的共用容器：機制卡、零件把自己的預設 UI 加進來，好幾個同時出現時自動上下排、不會疊在一起。
+# 加進來的東西屬於這裡，不會跟著卡片一起刪掉，卡片被拔掉時要自己 queue_free 掉
+func get_corner(corner: int) -> VBoxContainer:
+	if _corners.has(corner):
+		return _corners[corner]
+	if _corner_layer == null:
+		_corner_layer = CanvasLayer.new()
+		add_child(_corner_layer)
+	var box := VBoxContainer.new()
+	if corner == CORNER_TOP_RIGHT:
+		box.anchor_left = 1.0
+		box.anchor_right = 1.0
+		box.offset_left = -4.0
+		box.offset_right = -4.0
+		box.offset_top = 4.0
+		box.grow_horizontal = Control.GROW_DIRECTION_BEGIN
+		box.alignment = BoxContainer.ALIGNMENT_BEGIN
+		box.child_entered_tree.connect(func(child: Node):
+			if child is Control:
+				child.size_flags_horizontal = Control.SIZE_SHRINK_END)
+	else:
+		box.anchor_top = 1.0
+		box.anchor_bottom = 1.0
+		box.offset_left = 4.0
+		box.offset_top = -4.0
+		box.offset_bottom = -4.0
+		box.grow_vertical = Control.GROW_DIRECTION_BEGIN
+		box.alignment = BoxContainer.ALIGNMENT_END
+	_corner_layer.add_child(box)
+	_corners[corner] = box
+	return box
 
 # 建立 HUD 用的 CanvasLayer，只在第一次真的需要顯示東西時才做
 func _ensure_hud() -> void:
