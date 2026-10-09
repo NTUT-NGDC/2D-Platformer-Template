@@ -174,7 +174,8 @@ signal value_changed(kind: String, old_value: int, new_value: int)
 
 | 欄位 | 說明 |
 |---|---|
-| `kind` | 種類名稱（字串，學員自己打；打字防呆見 4.1） |
+| `kind` | 種類名稱（字串，學員自己打；打字防呆見 4.1）。打成 `HP`、`health`、`生命`、`生命值`、`血`、`血條`、`血值`、`血量值` 這類血量別名時，編輯器黃色驚嘆號＋執行時中文警告（那會變成新的數值，不是血量） |
+| `display_name` | HUD、跳字上顯示的名字（顯示文字例外：空白就顯示 `kind`、只去頭尾空白）；想把血量顯示成「HP」用這個，不要改 `kind` |
 | `start_value` | 初始值 |
 | `max_value` | 上限（0 為不限） |
 | `show_in_hud` | 打勾一開場就顯示在 HUD；不勾永遠不顯示 |
@@ -188,7 +189,7 @@ signal value_changed(kind: String, old_value: int, new_value: int)
   `Stats` 本身只管數值，不知道也不在意畫面有沒有人在監聽，兩者分開避免混在一起。
 - 有 `ValueSettings` 且 `show_in_hud` 打勾的種類一開場就出現；沒有 `ValueSettings` 的種類，第一次在場景中
   被用到時才出現。
-- 血量顯示為血條，其他顯示為圖示加數字。
+- 血量顯示為血條，其他顯示為圖示加數字；名字用 `Stats.get_display_name(kind)`（`display_name` 空白就是種類名稱）。
 
 ### 4.5 血量與傷害
 

@@ -8,6 +8,7 @@ var _hud: CanvasLayer = null
 var _hud_container: VBoxContainer = null
 var _bars: Dictionary = {}    # kind(String) -> ProgressBar，血量這種特殊種類用這個
 var _labels: Dictionary = {}  # kind(String) -> Label，其他種類用這個顯示「名稱：數字」
+var _titles: Dictionary = {}  # kind(String) -> Label，血條前面的名字
 
 # 開始監聽 Stats 的數值變動與設定
 func _ready() -> void:
@@ -55,7 +56,7 @@ func _add_row(kind: String) -> void:
 	var row := HBoxContainer.new()
 	if kind == Stats.HEALTH_KIND:
 		var title := Label.new()
-		title.text = "血量"
+		_titles[kind] = title
 		var bar := ProgressBar.new()
 		bar.custom_minimum_size = Vector2(60, 12)
 		bar.show_percentage = false
@@ -73,8 +74,10 @@ func _add_row(kind: String) -> void:
 		_labels[kind] = label
 	_hud_container.add_child(row)
 
-# 把某個種類那一列的畫面內容同步成 Stats 目前的數值
+# 把某個種類那一列的畫面內容同步成 Stats 目前的數值與顯示名稱
 func _refresh_row(kind: String) -> void:
+	if _titles.has(kind):
+		_titles[kind].text = Stats.get_display_name(kind)
 	if _bars.has(kind):
 		var bar: ProgressBar = _bars[kind]
 		var max_value := Stats.get_max_value(kind)
@@ -82,4 +85,4 @@ func _refresh_row(kind: String) -> void:
 		bar.value = Stats.get_value(kind)
 	elif _labels.has(kind):
 		var label: Label = _labels[kind]
-		label.text = "%s：%d" % [kind, Stats.get_value(kind)]
+		label.text = "%s：%d" % [Stats.get_display_name(kind), Stats.get_value(kind)]

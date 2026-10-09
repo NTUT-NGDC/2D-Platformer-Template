@@ -103,11 +103,11 @@ func _show(changed_kind: String, amount: int) -> void:
 	while _popups.size() > _MAX_POPUPS:
 		_popups.pop_front().node.queue_free()
 
-# 更新字的內容，從頭頂重新開始往上飄、淡掉
+# 更新字的內容（數值名稱用 ValueSettings 的 display_name），從頭頂重新開始往上飄、淡掉
 func _restart(popup: Dictionary) -> void:
 	var node: Node2D = popup.node
 	var label: Label = node.get_child(0)
-	label.text = "%+d %s" % [popup.amount, popup.kind]
+	label.text = "%+d %s" % [popup.amount, Stats.get_display_name(popup.kind)]
 	var tint: Color
 	if color == 0:
 		tint = _UP_COLOR if popup.amount > 0 else _DOWN_COLOR

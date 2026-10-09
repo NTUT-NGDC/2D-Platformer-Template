@@ -685,6 +685,17 @@
 - [x] U165 `Mechanic_AutoRun` 重生後第一幀不檢查撞牆；新增可以連訊號的 `run_left()`／`run_right()`／`turn_around()`
 	  （不發 `turned_around`）；`01b` §2、零件手冊補上（驗證：`tests/mechanics/Mechanic_AutoRunTest.tscn`，K／1／2／3）
 
+## 階段 46：數值的顯示名稱
+
+> 講師決定：學員回報「血量的顯示名稱無法修改」「血量不勾 show_in_hud 仍會顯示」，同一個原因：學員把 `kind` 改成 HP
+> 想改名，結果設定到新的數值 HP，真正的血量照預設顯示，而且沒有任何警告（HP 跟血量字面不像，打錯字檢查抓不到）。
+> `ValueSettings` 加 `display_name`（顯示文字例外，同 `ClearScreen.message`）；`kind` 打成血量別名時編輯器黃色驚嘆號＋執行時警告。
+
+- [x] U166 `ValueSettings` 新增 `display_name`，`Stats.configure()` 多一個參數、新增 `get_display_name()`；`StatsHud`、
+	  `Juice_TextPopup` 改顯示 `display_name`；`kind` 打成 HP／health／生命／生命值／血／血條／血值／血量值時
+	  `_get_configuration_warnings()`＋`push_warning()`；CLAUDE.md 顯示文字例外、`01a` §4.3／§4.4、零件手冊補上
+	  （驗證：`tests/blocks/ValueSettingsTest.tscn`）
+
 ## 之後再做（構想，還沒排進單元）
 
 - GameFlow 加上狀態：管理「開始 → 進行中 → 過關／Game Over」，學員可以聽狀態變化的訊號；
