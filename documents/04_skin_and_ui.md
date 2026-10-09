@@ -142,7 +142,7 @@ const TIMELINE := "時間軸"
 |---|---|---|---|
 | `HudBar` | `TextureProgressBar` | 條：血條、體力條 | 填滿方向（Fill Mode）、圖片（Under／Progress，建議勾 Nine Patch Stretch）用原生屬性；沒放圖時自己畫，用 ProgressBar 的底與填滿樣式（跟現在的血條一樣、跟著配色），支援左到右／右到左／上到下／下到上；沒有上限的數值用出現過的最大值當滿格；找不到來源時畫空條加「?」 |
 | `HudNumber` | `Label` | 數字 | `format`：數字／數字÷上限／分:秒；`show_name`：前面要不要加名字（數值用 `display_name`）。預設 `kind` 是金幣 |
-| `HudIcons` | `HBoxContainer` | 一顆一顆的圖示（愛心、鑰匙） | `full_icon`／`empty_icon`（拖圖片，空白用預設色塊）、`max_icons` 拉桿（超過就只畫這麼多） |
+| `HudIcons` | `HBoxContainer` | 一顆一顆的圖示（愛心、鑰匙） | `full_icon`／`empty_icon`（拖圖片，原本大小；空白畫 10×10 小方塊，顏色用配色的 accent／back）、`show_empty`（要不要畫扣掉的；沒有上限的數值不畫）、`max_icons` 拉桿（超過就只畫這麼多）；間距用原生的 Separation。圖示是內部子節點，不存進場景檔、不出現在場景樹；值有小數時捨去 |
 | `HudText` | `Label` | 固定的一行字（標題、說明） | 只用原生 `text`（顯示文字例外），沒有共通欄位 |
 
 - 編輯器裡也看得到預覽：`@tool`，在編輯器中用假資料顯示（例如血條半滿、數字 99），擺位置時才看得出大小。

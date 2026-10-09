@@ -719,7 +719,7 @@
 - [x] U170 顯示零件共通部分（`source`／`kind`、打字防呆、編輯器假資料預覽、找不到來源的警告、`flash_on_change`／`shake_on_decrease`、
 	  `amount_changed` 等訊號）＋ `HudNumber`、`HudText`（驗證：`tests/ui/HudNumberTest.tscn`）
 - [x] U171 `HudBar`（驗證：`tests/ui/HudBarTest.tscn`）
-- [ ] U172 `HudIcons`
+- [x] U172 `HudIcons`（驗證：`tests/ui/HudIconsTest.tscn`）
 
 ## 階段 49：範本與接法
 
