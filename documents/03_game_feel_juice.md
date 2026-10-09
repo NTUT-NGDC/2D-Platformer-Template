@@ -56,8 +56,10 @@ func clear_juice(source: Node) -> void:
 ### 2.2 鏡頭
 
 - `CameraRig` 收到新的震動請求時，**取比較強的那個**（剩餘強度 vs 新強度），不再直接覆蓋。
-- `Events` 新增 `zoom_requested(strength: float, duration: float)`，`CameraRig` 執行：放大到 `1 + strength`
-  再回到原本大小，放大時鏡頭往玩家位置偏一點。房間內跟隨模式的限制範圍要用放大後的畫面大小計算。
+- `Events` 新增 `zoom_requested(strength: float, duration: float, focus: Variant, focus_style: int)`，`CameraRig` 執行：
+  放大到 `1 + strength` 再回到原本大小，放大時鏡頭往放大中心偏。`focus` 是 Node2D 就跟著它、Vector2 是固定位置、
+  null 是畫面中心（不偏）；`focus_style` 0 偏一點（放大中心在畫面上移動一半）、1 定在原地（放大中心在畫面上不動）、
+  2 拉到正中央（放大到最大時放大中心在畫面正中間）。房間內跟隨模式的限制範圍要用放大後的畫面大小計算。
 
 ### 2.3 JuiceBase 擴充
 
@@ -119,7 +121,7 @@ func clear_juice(source: Node) -> void:
 | `Juice_Flash` | 閃色 | 一次 | 受傷時 | `color`（白／紅／黃／黑）、`duration`、`count`（閃幾次）、`stop_others`（開始閃時停掉同一個角色身上其他還在閃的閃色，預設勾；講師決定 U160） |
 | `Juice_Particles` | 粒子噴發 | 一次 | 落地時 | `style`（塵土／火花／星星／碎片／煙霧／自訂場景）、`amount`、`color`（跟著樣式／白／黃／紅／藍／綠）、`custom_particles`（選「自訂場景」才出現，此時 `amount`／`color` 隱藏）、`spawn_at`（腳底／身體中心／事件發生處） |
 | `Juice_Sound` | 音效 | 一次 | 跳躍時 | `sound`（內建音效下拉＋「自訂」）、`custom_sound`（選「自訂」才出現）、`volume`、`pitch_mode`（隨機／固定／由低到高）、`pitch_random`（隨機才出現）、`notes`（五聲音階／大調音階／半音／琶音）、`steps`、`at_top`（停在最高／從頭再來）、`reset_delay`（後四個由低到高才出現） |
-| `Juice_CameraZoom` | 鏡頭推近 | 一次 | 打倒敵人時 | `strength`、`duration` |
+| `Juice_CameraZoom` | 鏡頭推近 | 一次 | 打倒敵人時 | `strength`、`duration`、`focus`（畫面中心／玩家／觸發位置，預設玩家）、`focus_style`（偏一點／定在原地／拉到正中央，選畫面中心時隱藏） |
 | `Juice_Trail` | 殘影 | 持續 | — | `min_speed`（超過才出現）、`spacing`（間隔）、`duration`（殘留時間）、`color` |
 | `Juice_TrailLine` | 拖尾線 | 持續 | — | `mode`（速度夠快時／用訊號開關）、`min_speed`（速度模式才出現，預設 450，衝刺這類很快的移動才拖出來）、`duration`（拖尾長度，用時間算）、`color`（有 `Line2D` 樣板時隱藏） |
 | `Juice_GooglyEyes` | 咕嚕眼 | 持續 | — | `look`（跟著移動方向轉頭／擺正中間）、`eye_count`（一隻／兩隻）、`eye_size`、`pupil_size`、`wobble`（晃動程度） |

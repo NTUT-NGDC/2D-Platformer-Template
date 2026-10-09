@@ -659,6 +659,15 @@
 	  （跟著翻轉／不翻轉）；`pushed(body)` 訊號；編輯器畫箭頭與範圍方框；Enemy 新增公開 `add_impulse()`；零件手冊、速查表、
 	  `01c` §2.2 補上（驗證：`tests/blocks/PusherTest.tscn`）
 
+## 階段 43：鏡頭推近的放大中心
+
+> 講師決定：學員希望鏡頭推近可以調整放大中心，例如放大在玩家身上。下拉選放大中心（畫面中心／玩家／觸發位置，
+> 預設玩家），再一個下拉選偏多少（偏一點／定在原地／拉到正中央，預設偏一點＝原本的效果，舊關卡不變）。
+
+- [x] U163 `Juice_CameraZoom` 新增 `focus`（畫面中心／玩家／觸發位置）、`focus_style`（偏一點／定在原地／拉到正中央，
+	  選畫面中心時隱藏）；`Events.zoom_requested` 多兩個參數 `focus`、`focus_style`，`CameraRig` 依此計算偏移；
+	  `00`、`01a`、`03`、零件手冊補上（驗證：`tests/juice/Juice_CameraZoomTest.tscn`，Q／E 切換）
+
 ## 之後再做（構想，還沒排進單元）
 
 - GameFlow 加上狀態：管理「開始 → 進行中 → 過關／Game Over」，學員可以聽狀態變化的訊號；

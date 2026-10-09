@@ -321,7 +321,7 @@ Player 提供幾個不帶參數、給學員從任何訊號（零件、按鍵觸�
 | `Events.level_cleared` | 終點、存活計時 | 既有 |
 | `Events.mechanic_event(card, event)` | 主限制卡 | 既有（見 `01b_mechanic_cards.md`） |
 | `Events.shake_requested(strength, duration)` | W3 Juice（螢幕震動） | 鏡頭震動；同時有好幾個時取比較強的 |
-| `Events.zoom_requested(strength, duration)` | W3 Juice（鏡頭推近） | 鏡頭放大到 `1 + strength` 倍再回到原本大小 |
+| `Events.zoom_requested(strength, duration, focus, focus_style)` | W3 Juice（鏡頭推近） | 鏡頭放大到 `1 + strength` 倍再回到原本大小，往放大中心 `focus` 偏 |
 
 `Events` 是系統之間的溝通管道；第 6 節各零件的訊號是給學員連接用的，兩者分開。
 
