@@ -132,7 +132,7 @@ W1 的課堂活動是：學員線上抽一張**主限制卡** → 把對應的 `
 
 #### 2. 只能往前 `Mechanic_AutoRun`
 ```gdscript
-## 遊戲開始時往哪個方向跑
+## 遊戲開始時、重生時往哪個方向跑
 @export_enum("向右", "向左") var start_direction: int = 0
 ## 撞到牆壁或箱子時要不要自動轉向
 @export var turn_at_wall: bool = true
@@ -142,6 +142,8 @@ W1 的課堂活動是：學員線上抽一張**主限制卡** → 把對應的 `
 設定 `ctx.auto_run_dir`，玩家只能按跳躍。
 `turn_at_wall` 開啟時，`is_on_wall()` 且牆面法線與前進方向相反 → 反轉方向，`visual.scale.x` 同步翻轉。
 可推箱子也算牆（箱子是轉向工具）。
+重生後第一幀不檢查撞牆（死掉期間 `is_on_wall()` 停在死掉那一刻，貼著牆死會一重生就轉向）。
+可以被連的函式：`run_left()`、`run_right()`、`turn_around()`（接任意參數；不發 `turned_around`，避免連回自己變無限迴圈）。
 事件：`wall_turned`
 
 #### 3. 蓄力青蛙跳 `Mechanic_ChargeJump`

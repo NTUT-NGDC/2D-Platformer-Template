@@ -677,6 +677,14 @@
 	  隱藏、一律播完）；`ClearScreenTest` 加一個「過關時」播金幣聲的 `Juice_Sound`；`03` §4、零件手冊補上
 	  （驗證：`tests/blocks/ClearScreenTest.tscn`）
 
+## 階段 45：只能往前的重生方向與改方向函式
+
+> 講師決定：學員回報重生後跑的方向有時跟設定不一樣，也想要可以直接連訊號改成往左／往右。
+> 原因是死掉期間 Player 不跑物理，`is_on_wall()` 停在死掉那一刻，貼著右牆死、重生又往右時第一幀就被當成撞牆轉向。
+
+- [x] U165 `Mechanic_AutoRun` 重生後第一幀不檢查撞牆；新增可以連訊號的 `run_left()`／`run_right()`／`turn_around()`
+	  （不發 `turned_around`）；`01b` §2、零件手冊補上（驗證：`tests/mechanics/Mechanic_AutoRunTest.tscn`，K／1／2／3）
+
 ## 之後再做（構想，還沒排進單元）
 
 - GameFlow 加上狀態：管理「開始 → 進行中 → 過關／Game Over」，學員可以聽狀態變化的訊號；
