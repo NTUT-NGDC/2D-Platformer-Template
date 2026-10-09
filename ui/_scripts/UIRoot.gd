@@ -52,13 +52,15 @@ const _PALETTES := [
 ]
 
 # 套用配色與字型、決定暫停時能不能動；學員的同一種畫面已經有一個的話自己刪掉並警告；
-# 遊戲中不在 CanvasLayer 底下的話移進一個
+# 暫停選單、過關畫面先藏起來，等暫停、過關時才出現；遊戲中不在 CanvasLayer 底下的話移進一個
 func _ready() -> void:
 	mouse_filter = Control.MOUSE_FILTER_IGNORE
 	_apply_process_mode()
 	_apply_theme()
 	if Engine.is_editor_hint():
 		return
+	if kind != KIND_HUD:
+		visible = false
 	if not get_meta(HudBinding.DEFAULT_META, false):
 		var group := "custom_ui_%d" % kind
 		var first := get_tree().get_first_node_in_group(group)

@@ -98,6 +98,8 @@ Claude Code 在這個專案裡的所有對話回覆、進度回報、驗收結�
 `Juice_Particles.custom_particles`（`PackedScene`）同一套規則：學員把自己做的粒子場景拖進欄位，只在樣式選「自訂場景」時出現，
 空白或根節點不是 `CPUParticles2D` 時黃色驚嘆號＋中文警告，改用塵土照常運作。
 `Juice_BGM.music`（`AudioStream`）同屬資源欄位例外：學員把自己的音樂檔拖進來；沒有內建曲目，空白時黃色驚嘆號＋執行時中文警告、不播放（見 `documents/progress.md` U154）。
+`UISettings.hud_scene`／`pause_menu_scene`／`clear_screen_scene`（`PackedScene`）同屬資源欄位例外：學員把從 `ui/templates/` 再製改好的場景拖進來；
+空白就用預設的（不警告）；最上層不是 `UIRoot`、種類拖錯欄位、跟直接放進關卡的同一種畫面重複時，黃色驚嘆號＋執行時中文警告，改用預設的（見 `documents/04_skin_and_ui.md` §3.1）。
 
 ### 5. 組件之間不准打架
 
