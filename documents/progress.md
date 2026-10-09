@@ -723,7 +723,8 @@
 
 ## 階段 49：範本與接法
 
-- [ ] U173 `HudTemplate`；`StatsHud` 改成實例化範本；接法 B（直接拖進場景樹）、多放的警告
+- [x] U173 `HudTemplate`；`StatsHud` 改成實例化範本；接法 B（直接拖進場景樹）、多放的警告
+	  （驗證：`tests/ui/HudTemplateTest.tscn`）
 - [ ] U174 `UISettings`＋接法 A（欄位、類型檢查、跟接法 B 同時接的警告）
 - [ ] U175 `MenuAction`、`VolumeSlider`、`PauseMenuTemplate`；`PauseMenu` 改成實例化範本或學員的場景
 - [ ] U176 `ClearStat`、`ClearScreenTemplate`；`ClearScreen` 改成實例化範本或學員的場景

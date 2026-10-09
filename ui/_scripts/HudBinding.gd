@@ -15,6 +15,8 @@ const SOURCE_NEEDS := {
 	"脫殼次數": "Player → Mechanics 底下要有「脫殼」卡（Extra_Molt）",
 	"時間軸": "關卡裡要有時間軸（blocks/Timeline.tscn）",
 }
+# 預設 HUD（StatsHud 用範本生出來的）裡的零件會被標上這個 meta
+const DEFAULT_META := &"hud_default"
 # 這些來源是秒數，「數字」格式顯示到小數一位
 const SECOND_SOURCES := ["遊玩時間", "體力", "存活倒數", "時間軸"]
 
@@ -53,12 +55,14 @@ static func editor_warnings(source: int, kind: String, scene_root: Node) -> Pack
 		warnings.append(_not_found_message(clean_kind, kinds))
 	return warnings
 
-# 開始顯示：接上 HudData、認領這個來源、先畫一次目前的值；下一幀檢查來源到底存不存在
+# 開始顯示：接上 HudData、認領這個來源（預設 HUD 的零件不認領，不然預設的會自己讓位給自己）、
+# 先畫一次目前的值；下一幀檢查來源到底存不存在
 func start(source: int, kind: String) -> void:
 	_source_name = source_name_of(source, kind)
 	_base_modulate = _owner.modulate
 	HudData.source_changed.connect(_on_source_changed)
-	HudData.claim(_source_name, _owner)
+	if not _owner.get_meta(DEFAULT_META, false):
+		HudData.claim(_source_name, _owner)
 	_refresh(false)
 	_check_found.call_deferred(source)
 
@@ -112,8 +116,11 @@ func _in_scene_kinds() -> bool:
 	var scene := _owner.get_tree().current_scene
 	return scene != null and _source_name in _scene_kinds(scene)
 
-# 下一幀檢查來源存不存在，不存在就印中文警告（列出現有的名稱、附近似名稱建議）
+# 下一幀檢查來源存不存在，不存在就印中文警告（列出現有的名稱、附近似名稱建議）；
+# 預設 HUD 的零件不警告（還沒用到的種類那一列本來就藏著）
 func _check_found(source: int) -> void:
+	if _owner.get_meta(DEFAULT_META, false):
+		return
 	if HudData.has_source(_source_name) or _in_scene_kinds():
 		return
 	var message: String

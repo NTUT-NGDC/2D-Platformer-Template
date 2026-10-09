@@ -36,6 +36,7 @@ const PALETTE_DEFAULT := 0
 
 # 每一種畫面放在哪一層：數字越大蓋在越上面（跟原本的預設 UI 一樣）
 const _LAYERS := [1, 20, 10]
+const _KIND_NAMES := ["HUD", "暫停選單", "過關畫面"]
 
 # 每套配色的顏色：text 字、dim 次要的字、panel 底色、button 按鈕、hover 滑過、pressed 按下、accent 條和拉桿、back 條的底
 const _PALETTES := [
@@ -50,12 +51,25 @@ const _PALETTES := [
 		"hover": Color("ffb0d2"), "pressed": Color("f598c0"), "accent": Color("ff6fae"), "back": Color("ffe0ee") },
 ]
 
-# 套用配色與字型、決定暫停時能不能動；遊戲中不在 CanvasLayer 底下的話移進一個
+# 套用配色與字型、決定暫停時能不能動；學員的同一種畫面已經有一個的話自己刪掉並警告；
+# 遊戲中不在 CanvasLayer 底下的話移進一個
 func _ready() -> void:
 	mouse_filter = Control.MOUSE_FILTER_IGNORE
 	_apply_process_mode()
 	_apply_theme()
-	if not Engine.is_editor_hint() and not get_parent() is CanvasLayer:
+	if Engine.is_editor_hint():
+		return
+	if not get_meta(HudBinding.DEFAULT_META, false):
+		var group := "custom_ui_%d" % kind
+		var first := get_tree().get_first_node_in_group(group)
+		if first != null:
+			var message := "關卡裡已經有一個自訂%s「%s」，「%s」不會用到，先拿掉" % [_KIND_NAMES[kind], first.name, name]
+			push_warning("[%s] %s" % [name, message])
+			printerr("⚠ [%s] %s" % [name, message])
+			queue_free()
+			return
+		add_to_group(group)
+	if not get_parent() is CanvasLayer:
 		_move_to_layer.call_deferred()
 
 # theme 由欄位自動產生：不存進場景檔、Inspector 也不顯示，學員改字型配色用上面的欄位
@@ -72,8 +86,21 @@ func _get_configuration_warnings() -> PackedStringArray:
 	var scene_root := get_tree().edited_scene_root
 	if scene_root == null or scene_root == self:
 		return warnings
+	var first := _first_of_kind(scene_root)
+	if first != null and first != self:
+		warnings.append("關卡裡已經有一個自訂%s「%s」，這個不會用到：一個關卡只能放一個%s" % [_KIND_NAMES[kind], first.name, _KIND_NAMES[kind]])
 	_collect_warnings(self, scene_root, warnings)
 	return warnings
+
+# 關卡裡第一個跟自己同一種畫面的 UIRoot（照場景樹由上到下的順序）
+func _first_of_kind(node: Node) -> UIRoot:
+	if node is UIRoot and node.kind == kind:
+		return node
+	for child in node.get_children():
+		var found := _first_of_kind(child)
+		if found != null:
+			return found
+	return null
 
 # 往下找顯示零件，把它們在這個關卡裡的設定錯誤加上零件名稱收集起來
 func _collect_warnings(node: Node, scene_root: Node, warnings: PackedStringArray) -> void:

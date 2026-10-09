@@ -201,8 +201,13 @@ const TIMELINE := "時間軸"
 | `PauseMenuTemplate.tscn` | 暫停選單 | 半透明底、標題、三條 `VolumeSlider`、`MenuAction` 繼續遊戲／整關重來／離開遊戲、「Esc／P 繼續」提示 |
 | `ClearScreenTemplate.tscn` | 過關畫面 | 「過關！」、`ClearStat` 時間／死亡次數／製作者的話、「按 R 再玩一次」提示 |
 
-- 預設 HUD 範本只放血量和金幣；其他數值（鑰匙、學員自訂的數值）照現在的規則，第一次用到時由預設 HUD 自動加一列。
+- 預設 HUD 範本只放血量（`HudNumber` 只有名字＋`HudBar`）和金幣（色塊＋`HudNumber`）；其他數值（鑰匙、學員自訂的數值）
+  照現在的規則，第一次用到時由預設 HUD 自動加一列「色塊＋`HudNumber`」。每一列照原本的規則出現（`show_in_hud` 打勾或被用到過），
+  被學員的 HUD 認領時藏起來（`HudData.claims_changed`）。
   學員的自訂 HUD **不會**自動加列：學員要顯示什麼就自己放零件（不然學員擺好的版面會被打亂）。
+- 預設 HUD 的節點都標上 meta `hud_default`：裡面的零件不認領來源（不然預設的會讓位給自己）、不印「找不到來源」的警告，
+  `UIRoot` 不算學員的自訂畫面。
+- 認領在零件真的離開場景時才放掉；只是換位置（`UIRoot` 自己移進 CanvasLayer）不算。
 - 按鍵（暫停的 Esc／P、過關的 R）由系統處理，不靠學員的按鈕，所以學員把按鈕全刪掉也不會卡死在畫面裡。
 - 暫停、過關畫面的「暫停中也要能動」（`process_mode = ALWAYS`）由 `UIRoot` 自己設好，學員不用管。
 - 現在的 `StatsHud`、`PauseMenu` 自動載入保留「什麼時候顯示」的邏輯，畫面改成實例化範本（或學員的場景）。

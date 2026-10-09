@@ -23,8 +23,8 @@ signal amount_changed(old_value: float, new_value: float)
 	set(value):
 		kind = value
 		_refresh_editor()
-## 怎麼顯示：數字（12）、數字／上限（3/5）、分:秒（1:05，適合時間）
-@export_enum("數字", "數字/上限", "分:秒") var format: int = 0:
+## 怎麼顯示：數字（12）、數字／上限（3/5）、分:秒（1:05，適合時間）、只有名字（當標題用，例如血條前面的「血量」）
+@export_enum("數字", "數字/上限", "分:秒", "只有名字") var format: int = 0:
 	set(value):
 		format = value
 		_refresh_editor()
@@ -41,6 +41,7 @@ signal amount_changed(old_value: float, new_value: float)
 const _FORMAT_NUMBER := 0
 const _FORMAT_OF_MAX := 1
 const _FORMAT_CLOCK := 2
+const _FORMAT_NAME_ONLY := 3
 
 var _binding: HudBinding = null
 
@@ -81,6 +82,8 @@ func _on_hud_changed(old_value: float, new_value: float) -> void:
 
 # 依格式組出要顯示的文字
 func _compose(number_text: String, value: float, max_value: float, found: bool) -> String:
+	if format == _FORMAT_NAME_ONLY:
+		return _display_name()
 	var body := number_text
 	if found and format == _FORMAT_OF_MAX and max_value > 0.0:
 		body = "%s/%s" % [number_text, _binding.format_number(max_value) if _binding else str(roundi(max_value))]
