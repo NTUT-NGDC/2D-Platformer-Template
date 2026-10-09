@@ -10,11 +10,8 @@
 [ext_resource type="PackedScene" path="res://blocks/KeySettings.tscn" id="8"]
 [ext_resource type="PackedScene" path="res://blocks/Pickup.tscn" id="9"]
 [ext_resource type="PackedScene" path="res://blocks/Enemy.tscn" id="10"]
-[ext_resource type="PackedScene" path="res://juice/Juice_Sound.tscn" id="10_7a3eq"]
-[ext_resource type="PackedScene" path="res://juice/Juice_ScreenShake.tscn" id="10_36dyw"]
 [ext_resource type="PackedScene" path="res://blocks/Spike.tscn" id="11"]
 [ext_resource type="PackedScene" path="res://blocks/Goal.tscn" id="12"]
-[ext_resource type="PackedScene" path="res://juice/Juice_Particles.tscn" id="12_1hkpe"]
 [ext_resource type="PackedScene" path="res://blocks/ClearScreen.tscn" id="13"]
 [ext_resource type="PackedScene" path="res://abilities/Ability_Melee.tscn" id="14"]
 [ext_resource type="PackedScene" path="res://blocks/Button.tscn" id="15"]
@@ -99,14 +96,6 @@ region_rect = Rect2(0, 0, 16, 32)
 [node name="Mechanics" type="Node2D" parent="Player" unique_id=1160013837]
 
 [node name="Juice" type="Node2D" parent="Player" unique_id=528486991]
-
-[node name="Juice_Sound" parent="Player/Juice" unique_id=1536796457 instance=ExtResource("10_7a3eq")]
-
-[node name="Juice_ScreenShake" parent="Player/Juice" unique_id=531039929 instance=ExtResource("10_36dyw")]
-
-[node name="Juice_Particles" parent="Player/Juice" unique_id=1450424245 instance=ExtResource("12_1hkpe")]
-style = 2
-timing = 10
 
 [node name="Abilities" type="Node2D" parent="Player" unique_id=2059169590]
 
