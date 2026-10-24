@@ -2,7 +2,8 @@ extends Node
 
 # 手機按鈕的共用狀態：記住玩家現在是不是在用觸控（手指碰螢幕就算，改按鍵盤、手把就不算），換關也記得。
 # 手機按鈕、套件、搖桿的 show_on 選「摸到螢幕才出現」時看這裡決定要不要顯示，狀態變了會發 changed。
-# 玩家在選單（TouchSwitch）選的「自動／顯示／隱藏」也記在這裡，存進設定檔（跟音量同一份），下次開遊戲還是一樣。
+# 玩家在選單（TouchSwitch）選的「自動／顯示／隱藏」也記在這裡，存進設定檔（跟音量同一份），下次開遊戲還是一樣；
+# show_on 選「一直顯示」的零件不管玩家選什麼都顯示。
 
 signal changed
 
@@ -41,17 +42,14 @@ func set_mode(value: int) -> void:
 	config.save(_SETTINGS_PATH)
 	changed.emit()
 
-# 依玩家的選擇和零件的 show_on 決定現在要不要顯示，手機按鈕、套件、搖桿用這個
+# 依玩家的選擇和零件的 show_on 決定現在要不要顯示，手機按鈕、套件、搖桿用這個（show_on 選一直顯示的不管玩家的選擇）
 func should_show(show_on: int) -> bool:
-	if mode == MODE_SHOW:
+	if show_on == SHOW_ALWAYS or mode == MODE_SHOW:
 		return true
 	if mode == MODE_HIDE:
 		return false
-	match show_on:
-		SHOW_ALWAYS:
-			return true
-		SHOW_AUTO:
-			return touch_used
+	if show_on == SHOW_AUTO:
+		return touch_used
 	return DisplayServer.is_touchscreen_available()
 
 # 手機按鈕送出假按鍵前先說一聲，收到這個按鍵事件時不會當成玩家改按鍵盤

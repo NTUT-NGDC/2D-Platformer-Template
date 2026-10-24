@@ -4,6 +4,7 @@ extends Node2D
 # SwitchCheck（勾選框）、SwitchList（下拉選單）、OwnApi（不顯示，只當接口），
 # 加上學員自己做的按鈕「切換手機按鈕」（pressed 連到 OwnApi 的 toggle_controls）、勾選框「隱藏手機按鈕」（toggled 連到 OwnApi 的 set_off）。
 # 關卡裡的手機按鈕套件選「只在觸控裝置」，電腦上平常看不到。開場自動檢查完會把設定改回「自動」。
+# U250：show_on 選「一直顯示」的不管玩家選什麼都顯示。
 
 const _BUTTON_SCENE := preload("res://ui/TouchButton.tscn")
 
@@ -21,6 +22,7 @@ func _ready() -> void:
 	print("[測試] ④ 按「切換手機按鈕」：看得到就藏、看不到就出現；勾「隱藏手機按鈕」：藏起來，取消勾：出現")
 	print("[測試] ⑤ 選「顯示」後關掉遊戲再開：按鈕還在（記在設定檔）；測完記得改回「自動」")
 	print("[測試] ⑥ 選 SwitchCheck 改 style：編輯器裡馬上換成下拉選單或消失")
+	print("[測試] ⑦ 套件的 show_on 改成「一直顯示」再按 F6，暫停選單選「隱藏」：按鈕還在（不受開關影響）")
 
 # 輪流用勾選框、下拉選單、自己的按鈕和勾選框切換，檢查手機按鈕跟著變、設定有存檔
 func _run_checks() -> void:
@@ -50,6 +52,11 @@ func _run_checks() -> void:
 	check.button_pressed = false
 	_check("取消勾勾選框：套件藏起來", not _kit.visible)
 	_check("下拉選單跟著變成「隱藏」", list.selected == TouchSettings.MODE_HIDE)
+	var always := _BUTTON_SCENE.instantiate()
+	always.show_on = TouchSettings.SHOW_ALWAYS
+	add_child(always)
+	_check("選了「隱藏」：show_on 選「一直顯示」的手機按鈕照樣顯示（U250）", always.visible)
+	always.queue_free()
 
 	own_toggle.pressed.emit()
 	_check("按自己的「切換手機按鈕」：出現", _kit.visible)

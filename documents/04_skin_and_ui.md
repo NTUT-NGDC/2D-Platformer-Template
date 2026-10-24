@@ -244,7 +244,7 @@ Input Map 沒有「觸控」可以加，所以手機操控做成畫面上的虛�
 
 `show_on`：只在觸控裝置（`DisplayServer.is_touchscreen_available()`）／一直顯示／摸到螢幕才出現（U230）。
 自動載入 `TouchSettings`：記住「現在是不是在用觸控」（碰螢幕算、按鍵盤或手把不算；手機按鈕送假按鍵前先 `expect_fake_key()`，收到時不算），
-以及玩家在 `TouchSwitch` 選的 `mode`（存 `user://settings.cfg` 的 `[touch] mode`）；狀態變了發 `changed`，三種零件都聽它更新顯示。
+以及玩家在 `TouchSwitch` 選的 `mode`（存 `user://settings.cfg` 的 `[touch] mode`）；狀態變了發 `changed`，三種零件都聽它更新顯示。`show_on` 選一直顯示的不看 `mode`（U250）。
 學員自己把按鈕「可見」取消勾的，一直藏著（套件藏 Left、Right 換搖桿靠這個）。
 不用內建 `TouchScreenButton`：它的動作名稱要打字，而且是 Node2D 會跟著鏡頭跑。
 
