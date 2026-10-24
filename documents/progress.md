@@ -1240,6 +1240,17 @@
 　　→ 講師決定：學員回報「一直顯示」選了還是看不到，原因是之前在設定頁選過「隱藏」（記在設定檔），U231「顯示／隱藏蓋過 show_on」改成一直顯示不受影響；
 　　　按鈕、套件、搖桿都一樣
 
+## 階段 63：換字零件
+
+- [x] U251 換字零件 `ui/SwitchText`（繼承 Label）：`normal_text`／`active_text`／`more_texts`（按「新增元素」打字）、`loop_texts`、
+	  `color_style` 不換顏色／換顏色（選了才出現 `active_color` 取色器）；Label 原本的 `text` 欄位藏起來，編輯器裡顯示 `normal_text`；
+	  接口 `show_normal`／`show_active`／`toggle`（按鈕的 pressed）、`set_on`／`set_off`（勾選框的 toggled）、`next_text`／`previous_text`／`show_first`／`show_last`；
+	  沒有字可以換、空格子、顏色透明度 0 時黃色驚嘆號＋中文警告；CLAUDE.md 例外清單、04、零件手冊、速查表補上
+	  （驗證：`tests/ui/SwitchTextTest.tscn`）
+　　→ 講師決定：學員想按按鈕、勾勾選框後換字；兩段＋可加更多段（比照 Skin 的 texture_normal／texture_active／more_textures）；
+　　　做成一個 Label 零件；換顏色做成選項。打字欄算顯示文字例外、取色器算取色器例外
+　　　已知限制：軟重生、整關重來不會換回平常的字；換字不會記住（換關、重開都回到平常的字）
+
 ## 之後再做（構想，還沒排進單元）
 
 - GameFlow 加上狀態：管理「開始 → 進行中 → 過關／Game Over」，學員可以聽狀態變化的訊號；

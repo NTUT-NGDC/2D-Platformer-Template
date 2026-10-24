@@ -1,0 +1,73 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://tests/ui/_scripts/SwitchTextTest.gd" id="1"]
+[ext_resource type="PackedScene" path="res://ui/SwitchText.tscn" id="2"]
+
+[node name="SwitchTextTest" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1")
+
+[node name="ToggleButton" type="Button" parent="."]
+layout_mode = 0
+offset_left = 16.0
+offset_top = 16.0
+offset_right = 96.0
+offset_bottom = 40.0
+text = "換字"
+
+[node name="SwitchA" parent="." instance=ExtResource("2")]
+layout_mode = 0
+offset_left = 112.0
+offset_top = 20.0
+offset_right = 232.0
+offset_bottom = 36.0
+text = "關"
+normal_text = "關"
+active_text = "開"
+
+[node name="CheckBox" type="CheckBox" parent="."]
+layout_mode = 0
+offset_left = 16.0
+offset_top = 56.0
+offset_right = 96.0
+offset_bottom = 80.0
+text = "勾我"
+
+[node name="SwitchB" parent="." instance=ExtResource("2")]
+layout_mode = 0
+offset_left = 112.0
+offset_top = 60.0
+offset_right = 232.0
+offset_bottom = 76.0
+text = "沒勾"
+normal_text = "沒勾"
+active_text = "勾著"
+color_style = 1
+
+[node name="NextButton" type="Button" parent="."]
+layout_mode = 0
+offset_left = 16.0
+offset_top = 96.0
+offset_right = 96.0
+offset_bottom = 120.0
+text = "下一段"
+
+[node name="SwitchC" parent="." instance=ExtResource("2")]
+layout_mode = 0
+offset_left = 112.0
+offset_top = 100.0
+offset_right = 232.0
+offset_bottom = 116.0
+text = "第一段"
+normal_text = "第一段"
+active_text = "第二段"
+more_texts = Array[String](["第三段", "第四段"])
+
+[connection signal="pressed" from="ToggleButton" to="SwitchA" method="toggle"]
+[connection signal="toggled" from="CheckBox" to="SwitchB" method="set_on"]
+[connection signal="pressed" from="NextButton" to="SwitchC" method="next_text"]

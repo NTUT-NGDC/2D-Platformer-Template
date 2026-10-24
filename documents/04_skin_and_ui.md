@@ -167,6 +167,7 @@ const TIMELINE := "時間軸"
 | `VolumeSlider` | `HSlider` | `bus` 下拉：主音量／音效／音樂。跟現在暫停選單的拉桿同一套存檔（`user://settings.cfg`） |
 | `SettingsPage`（U244） | `Control` | 設定頁：平常藏著（場景檔 `visible = false`，遊戲開始時也一律藏起來），底下有三條 `VolumeSlider`、`TouchSwitch`、`MenuAction` 返回。`MenuAction` 的「打開設定」打開同一個場景檔（`owner` 相同）裡的設定頁、選取跳到第一個能選的東西；「返回」關掉自己所在的設定頁、選取回到打開它的按鈕。開著時 Esc 先關設定頁（`set_input_as_handled`，暫停選單收不到）；所在的畫面被藏起來時自己也關。找不到設定頁、「返回」不在設定頁裡時黃色驚嘆號＋中文警告 |
 | `ClearStat` | `Label` | 過關畫面專用：`stat` 下拉：用了幾秒／死了幾次／製作者的話。照 `ClearScreen` 的勾選決定要不要顯示 |
+| `SwitchText`（U251） | `Label` | 換字零件：`normal_text`／`active_text`／`more_texts`（顯示文字例外）、`loop_texts`、`color_style` 不換顏色／換顏色（選了出現 `active_color`）。Label 原本的 `text` 欄位藏起來（只存檔）。接口：`show_normal`／`show_active`／`toggle`／`set_on`／`set_off`／`next_text`／`previous_text`／`show_first`／`show_last`（都收得下訊號帶的參數）；換顏色用 `font_color` 覆寫，換回平常的字還原學員自己設的顏色 |
 
 ### 4.3 整套換字型與配色（講師決定：做）
 

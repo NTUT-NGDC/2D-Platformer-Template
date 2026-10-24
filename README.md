@@ -103,6 +103,9 @@
 要攻擊鍵就另外拖一顆 `TouchButton`，`press` 選「鍵盤按鍵」、`key` 選跟能力一樣的鍵。想用搖桿走路：拖 `TouchStick`，套件開「可編輯的子節點」把 Left、Right 的「可見」取消勾。
 讓玩家自己決定要不要手機按鈕：把 `TouchSwitch` 拖進標題畫面或暫停選單（選的結果會記住）。
 
+**按了會換的字**：從 `ui/` 拖 `SwitchText` 進畫面，打 `normal_text`（平常的字）、`active_text`（換過的字），要換顏色就把 `color_style` 選「換顏色」。
+再把按鈕的 `pressed` 連到它的 `toggle`（兩段互換），或勾選框的 `toggled` 連到 `set_on`（勾著寫換過的字）。字更多段就放進 `more_texts`，按鈕連 `next_text` 輪流換。
+
 **換角色**：Player → Visual 底下的 `Sprite2D` 換成 `AnimatedSprite2D`，在 Sprite Frames 做站著、跑步、跳起、落下的動畫
 （名字隨便取，取 idle、run 這類常見名字會自動對上）→ 從 `juice/` 拖 `Juice_Animator` 到 **Player → Juice**，每個狀態在下拉選播哪段。
 還可以選落地、轉向、撞牆這類一次型動畫，調跑多快才算跑步，見 `零件手冊.md` §7.3。圖朝左畫的，在 `AnimatedSprite2D` 勾 **Flip H**。

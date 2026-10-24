@@ -1,0 +1,9 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://ui/_scripts/SwitchText.gd" id="1"]
+
+[node name="SwitchText" type="Label"]
+offset_right = 60.0
+offset_bottom = 14.0
+text = "平常的字"
+script = ExtResource("1")
