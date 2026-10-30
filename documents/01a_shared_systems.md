@@ -84,7 +84,7 @@
 學員到「專案設定 → Input Map」自己加動作、錄按鍵或手把按鈕。綁定時傳 `bind_input(..., priority, action)`，
 `InputRouter.check_action()` 在動作沒選、找不到（附近似名稱建議）、沒有任何按鍵時印中文警告並不綁定。
 `KeyTrigger` 的 `same_key_as` 同樣改成列出整個 Input Map。`InputRouter` 開場檢查五個基本動作還在、也還有按鍵。
-Input Map 存在 `project.godot`、不在 `_my/`，重灌後要重加（README §5.3、§7.1 提醒）。
+Input Map 存在 `project.godot`、不在 `_my/`，重灌後要重加（零件手冊 §4「進階：Input Map」、README §7.1 提醒）。
 
 ### 3.2 自訂按鍵
 
